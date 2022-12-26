@@ -12,6 +12,7 @@ Microsoft SQL Server
 OpenIddict
 This technology was chosen because of its simplicity and ease of use.
 
+
 ##### Database structure:
 
 | Users              |
