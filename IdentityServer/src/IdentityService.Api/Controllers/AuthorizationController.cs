@@ -6,7 +6,6 @@ namespace IdentityService.Api.Controllers
 {
     [Route("api")]
     [ApiController]
-    [Authorize]
     public class AuthorizationController : ControllerBase
     {
         public AuthorizationController()
@@ -15,23 +14,29 @@ namespace IdentityService.Api.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> RegisterAsync(LoginModel model)
+        public async Task<IActionResult> LogIn(LoginModel model)
         {
-            throw new NotImplementedException();
-        }
+            await Task.Delay(2000);
 
-        [AllowAnonymous]
-        [HttpPost]
-        [Route("signin")]
-        public async Task<IActionResult> SignInAsync(LoginModel model)
-        {
-            throw new NotImplementedException();
+            return Ok(new LoginModel()
+            {
+                UserName = string.Empty,
+                PasswordHash = string.Empty,
+            });
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> SignOutAsync()
+        [Route("signin")]
+        public async Task<IActionResult> LogOut(LoginModel model)
         {
-            throw new NotImplementedException();
+            await Task.Delay(2000);
+
+            return Ok(new LoginModel()
+            {
+                UserName = string.Empty,
+                PasswordHash = string.Empty,
+            });
         }
     }
+}

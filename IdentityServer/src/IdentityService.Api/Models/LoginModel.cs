@@ -1,9 +1,7 @@
-﻿namespace IdentityService.Api.Models
-{
-    public class LoginModel
-    {
-        public string Login { get; set; }
+﻿using Microsoft.AspNetCore.Identity;
 
-        public string Password { get; set; }
-    }
+namespace IdentityService.Api.Models
+{
+    public class LoginModel : IdentityUser
+    { }
 }
