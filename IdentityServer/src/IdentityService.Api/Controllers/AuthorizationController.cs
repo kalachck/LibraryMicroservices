@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityService.Api.Controllers
 {
-    [Route("api")]
+    [Route("api/AuthorizationController")]
     [ApiController]
     public class AuthorizationController : ControllerBase
     {
@@ -13,7 +13,7 @@ namespace IdentityService.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        [Route("register")]
+        [Route("LogIn")]
         public async Task<IActionResult> LogIn(LoginModel model)
         {
             await Task.Delay(2000);
@@ -27,7 +27,7 @@ namespace IdentityService.Api.Controllers
 
         [Authorize]
         [HttpPost]
-        [Route("signin")]
+        [Route("LogOut")]
         public async Task<IActionResult> LogOut(LoginModel model)
         {
             await Task.Delay(2000);
