@@ -1,3 +1,5 @@
+using IdentityService.Api.AppDependenciesConfiguration;
+
 namespace IdentityService.Api
 {
     public class Program
@@ -10,6 +12,8 @@ namespace IdentityService.Api
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.ConfigureDependencies();
 
             var app = builder.Build();
 

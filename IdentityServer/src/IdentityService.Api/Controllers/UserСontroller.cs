@@ -1,5 +1,8 @@
-﻿using IdentityService.Api.Models;
+﻿using AutoMapper;
+using BusinessLogic.Services.Abstarct;
+using IdentityService.Api.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityService.Api.Controllers
@@ -9,46 +12,112 @@ namespace IdentityService.Api.Controllers
     [Authorize]
     public class UserСontroller : ControllerBase
     {
-        public UserСontroller()
-        { }
+        private readonly IUserService _userService;
+
+        private readonly IMapper _autoMapper;
+
+        public UserСontroller(IUserService userService, IMapper autoMapper)
+        {
+            _userService = userService;
+
+            _autoMapper = autoMapper;
+        }
+
+        [HttpGet]
+        [Route("Get/Id")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var result = await _userService.GetAsync(id);
+
+            if (result)
+            {
+                return Ok(new
+                {
+                    result.Value,
+                    result.Message,
+                });
+            }
+
+            return BadRequest(result.ExceptionMessage);
+        }
+
+        [HttpGet]
+        [Route("Get/Email")]
+        public async Task<IActionResult> Get(string email)
+        {
+            var result = await _userService.GetAsync(email);
+
+            if (result)
+            {
+                return Ok(new
+                {
+                    result.Value,
+                    result.Message,
+                });
+            }
+
+            return BadRequest(result.ExceptionMessage);
+        }
 
         [HttpPost]
         [Route("Add")]
         public async Task<IActionResult> Add(LoginModel model)
         {
-            await Task.Delay(2000);
+            var result = await _userService.AddAsync(_autoMapper.Map<IdentityUser>(model));
 
-            return Ok(new LoginModel()
+            if (result)
             {
-                UserName = string.Empty,
-                PasswordHash = string.Empty,
-            });
+                return Ok(new
+                {
+                    result.Value,
+                    result.Message,
+                });
+            }
+
+            return BadRequest(result.ExceptionMessage);
         }
 
         [HttpPut]
         [Route("Update")]
-        public async Task<IActionResult> Update(int id, LoginModel model)
+        public async Task<IActionResult> Update(Guid id, LoginModel model)
         {
-            await Task.Delay(2000);
+            var result = await _userService.UpdateAsync(id, _autoMapper.Map<IdentityUser>(model));
 
-            return Ok(new LoginModel()
+            if (result)
             {
-                UserName = string.Empty,
-                PasswordHash = string.Empty,
-            });
+                return Ok(new
+                {
+                    result.Value,
+                    result.Message,
+                });
+            }
+
+            return BadRequest(result.ExceptionMessage);
         }
 
         [HttpDelete]
         [Route("Delete")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            await Task.Delay(2000);
+            var resultFromGet = await _userService.GetAsync(id);
 
-            return Ok(new LoginModel()
+            if (resultFromGet)
             {
-                UserName = string.Empty,
-                PasswordHash = string.Empty,
-            });
+                var result = await _userService.DeleteAsync(resultFromGet.Value);
+
+                if (result)
+                {
+                    return Ok(new
+                    {
+                        result.Value,
+                        result.Message,
+                    });
+                }
+
+                return BadRequest(result.ExceptionMessage);
+            }
+
+            return BadRequest(resultFromGet.ExceptionMessage);
         }
     }
 }

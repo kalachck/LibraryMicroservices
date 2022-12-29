@@ -1,6 +1,11 @@
-﻿using IdentityService.Api.Models;
+﻿using BusinessLogic.Providers.Abstract;
+using IdentityService.Api.Models;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Server.AspNetCore;
 
 namespace IdentityService.Api.Controllers
 {
@@ -8,21 +13,30 @@ namespace IdentityService.Api.Controllers
     [ApiController]
     public class AuthorizationController : ControllerBase
     {
-        public AuthorizationController()
-        { }
+        private readonly IAuthorizationProvider _authorizationProvider;
+
+        public AuthorizationController(IAuthorizationProvider authorizationProvider)
+        {
+            _authorizationProvider = authorizationProvider;
+        }
 
         [AllowAnonymous]
         [HttpPost]
         [Route("LogIn")]
         public async Task<IActionResult> LogIn(LoginModel model)
         {
-            await Task.Delay(2000);
+            var request = HttpContext.GetOpenIddictServerRequest();
 
-            return Ok(new LoginModel()
+            if (request == null)
             {
-                UserName = string.Empty,
-                PasswordHash = string.Empty,
-            });
+                return BadRequest("The OpenID Connect request cannot be retrieved.");
+            }
+
+            var result = await HttpContext.AuthenticateAsync();
+
+            var claimsPrincipal = await _authorizationProvider.LogIn(request, result);
+
+            return SignIn(claimsPrincipal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
         }
 
         [Authorize]
@@ -35,7 +49,7 @@ namespace IdentityService.Api.Controllers
             return Ok(new LoginModel()
             {
                 UserName = string.Empty,
-                PasswordHash = string.Empty,
+                Password = string.Empty,
             });
         }
     }
