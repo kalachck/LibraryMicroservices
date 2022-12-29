@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using OpenIddict.Abstractions;
-using System.Security.Claims;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace BusinessLogic.Providers.Abstract
 {
     public interface IAuthorizationProvider
     {
-        Task<ClaimsPrincipal> LogIn(OpenIddictRequest request, AuthenticateResult result);
+        Task<Result<string>> LogIn(IdentityUser identityUser);
     }
 }

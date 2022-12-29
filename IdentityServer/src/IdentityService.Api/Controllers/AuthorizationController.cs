@@ -1,9 +1,11 @@
-﻿using BusinessLogic.Providers.Abstract;
+﻿using AutoMapper;
+using BusinessLogic.Providers.Abstract;
 using IdentityService.Api.Models;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Server.AspNetCore;
 
@@ -15,9 +17,13 @@ namespace IdentityService.Api.Controllers
     {
         private readonly IAuthorizationProvider _authorizationProvider;
 
-        public AuthorizationController(IAuthorizationProvider authorizationProvider)
+        private readonly IMapper _mapper;
+
+        public AuthorizationController(IAuthorizationProvider authorizationProvider, IMapper mapper)
         {
             _authorizationProvider = authorizationProvider;
+
+            _mapper = mapper;
         }
 
         [AllowAnonymous]
@@ -25,18 +31,20 @@ namespace IdentityService.Api.Controllers
         [Route("LogIn")]
         public async Task<IActionResult> LogIn(LoginModel model)
         {
-            var request = HttpContext.GetOpenIddictServerRequest();
+            var result = await _authorizationProvider.LogIn(_mapper.Map<IdentityUser>(model));
 
-            if (request == null)
+            if (result)
             {
-                return BadRequest("The OpenID Connect request cannot be retrieved.");
+                return Ok(new
+                {
+                    result.Value,
+                });
             }
 
-            var result = await HttpContext.AuthenticateAsync();
-
-            var claimsPrincipal = await _authorizationProvider.LogIn(request, result);
-
-            return SignIn(claimsPrincipal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+            return BadRequest(new
+            {
+                result.ExceptionMessage,
+            });
         }
 
         [Authorize]
