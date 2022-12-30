@@ -1,7 +1,8 @@
 ﻿using IdentityService.BusinessLogic.Providers.Abstract;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
-using System.Collections.Immutable;
+using OpenIddict.Server.AspNetCore;
 using System.Security.Claims;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
@@ -16,37 +17,40 @@ namespace IdentityService.BusinessLogic.Providers
             _userManager = userManager;
         }
 
-        public async Task<Result<string>> LogIn(IdentityUser identityUser)
+        public async Task<Result<ClaimsPrincipal>> LogInAsync(IdentityUser identityUser, OpenIddictRequest request)
         {
             var user = await _userManager.FindByEmailAsync(identityUser.Email);
 
             if (user != null)
             {
-                var identity = new ClaimsIdentity();
-
-                identity.SetClaim(Claims.Subject, await _userManager.GetUserIdAsync(user))
-                        .SetClaim(Claims.Email, await _userManager.GetEmailAsync(user))
-                        .SetClaim(Claims.Name, await _userManager.GetUserNameAsync(user))
-                        .SetClaims(Claims.Role, (await _userManager.GetRolesAsync(user)).ToImmutableArray());
-
-
-                //There must be token generation logic, let's imagine that there is one here
-                var token = "token";
-
-                return await Task.FromResult(new Result<string>()
+                var claims = new List<Claim>()
                 {
-                    Value = token
+                    new Claim(Claims.Subject, user.Id),
+                    new Claim(Claims.Email, user.Email),
+                    new Claim(Claims.Name, user.UserName),
+                    //new Claim(Claims.Role, (await _userManager.GetRolesAsync(user)).ToImmutableArray()),
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+
+                var claimPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+                claimPrincipal.SetScopes(request.GetScopes());
+
+                return await Task.FromResult(new Result<ClaimsPrincipal>()
+                {
+                    Value = claimPrincipal,
                 });
             }
 
-            return await Task.FromResult(new Result<string>()
+            return await Task.FromResult(new Result<ClaimsPrincipal>()
             {
                 ExceptionMessage = "User doesn't exist"
             });
         }
 
         //This logic has not implemented yet
-        public Task<Result<string>> LogOut(IdentityUser identityUser)
+        public Task<Result<ClaimsPrincipal>> LogOutAsync(IdentityUser identityUser)
         {
             throw new NotImplementedException();
         }

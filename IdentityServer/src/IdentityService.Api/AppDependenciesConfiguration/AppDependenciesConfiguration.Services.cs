@@ -28,12 +28,13 @@ namespace IdentityService.Api.AppDependenciesConfiguration
             builder.Services.AddOpenIddict()
                 .AddServer(options =>
                 {
+                    options.AllowAuthorizationCodeFlow().RequireProofKeyForCodeExchange();
+
                     options.SetAuthorizationEndpointUris("api/Authorization/LogIn");
 
-                    options.AllowAuthorizationCodeFlow();
-
                     options.UseAspNetCore()
-                    .EnableTokenEndpointPassthrough();
+                    .EnableTokenEndpointPassthrough()
+                    .EnableAuthorizationEndpointPassthrough();
                 });
 
             builder.Services.AddScoped<IUserService, UserService>();

@@ -8,14 +8,14 @@
 
         public string ExceptionMessage { get; set; }
 
-        public bool HassException()
+        public bool HasValue()
         {
-            return ExceptionMessage != null;
+            return ExceptionMessage == null;
         }
 
         public static implicit operator bool(Result<T> result)
         {
-            return result.HassException();
+            return result.HasValue();
         }
     }
 }

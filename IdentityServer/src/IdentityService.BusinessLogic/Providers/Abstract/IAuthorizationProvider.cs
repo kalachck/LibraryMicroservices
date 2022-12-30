@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using OpenIddict.Abstractions;
+using System.Security.Claims;
 
 namespace IdentityService.BusinessLogic.Providers.Abstract
 {
     public interface IAuthorizationProvider
     {
-        Task<Result<string>> LogIn(IdentityUser identityUser);
+        Task<Result<ClaimsPrincipal>> LogInAsync(IdentityUser identityUser, OpenIddictRequest request);
 
-        Task<Result<string>> LogOut(IdentityUser identityUser);
+        Task<Result<ClaimsPrincipal>> LogOutAsync(IdentityUser identityUser);
     }
 }

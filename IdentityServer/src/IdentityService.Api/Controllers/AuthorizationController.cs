@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using IdentityService.Api.Models;
 using IdentityService.BusinessLogic.Providers.Abstract;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Server.AspNetCore;
 
 namespace IdentityService.Api.Controllers
 {
@@ -25,16 +27,20 @@ namespace IdentityService.Api.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("LogIn")]
-        public async Task<IActionResult> LogIn(LoginModel model)
+        public async Task<IActionResult> LogInAsync(LoginModel model)
         {
-            var result = await _authorizationProvider.LogIn(_mapper.Map<IdentityUser>(model));
+            var request = HttpContext.GetOpenIddictClientRequest();
+
+            if (request == null)
+            {
+                return BadRequest("The OpenID Connect request cannot be retrieved.");
+            }
+
+            var result = await _authorizationProvider.LogInAsync(_mapper.Map<IdentityUser>(model), request);
 
             if (result)
             {
-                return Ok(new
-                {
-                    result.Value,
-                });
+                return SignIn(result.Value, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
             }
 
             return BadRequest(new
@@ -46,7 +52,7 @@ namespace IdentityService.Api.Controllers
         [Authorize]
         [HttpPost]
         [Route("LogOut")]
-        public async Task<IActionResult> LogOut(LoginModel model)
+        public async Task<IActionResult> LogOutAsync(LoginModel model)
         {
             await Task.Delay(2000);
 
