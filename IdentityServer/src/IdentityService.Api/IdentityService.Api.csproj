@@ -26,8 +26,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\BusinessLogic\BusinessLogic.csproj" />
-    <ProjectReference Include="..\..\DataAccess\DataAccess.csproj" />
+    <ProjectReference Include="..\IdentityService.BusinessLogic\IdentityService.BusinessLogic.csproj" />
+    <ProjectReference Include="..\IdentityService.DataAccess\IdentityService.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>

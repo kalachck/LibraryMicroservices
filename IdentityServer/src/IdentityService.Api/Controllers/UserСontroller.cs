@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using BusinessLogic.Services.Abstarct;
 using IdentityService.Api.Models;
+using IdentityService.BusinessLogic.Services.Abstarct;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

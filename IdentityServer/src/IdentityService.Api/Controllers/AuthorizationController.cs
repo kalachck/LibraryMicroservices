@@ -1,13 +1,9 @@
 ﻿using AutoMapper;
-using BusinessLogic.Providers.Abstract;
 using IdentityService.Api.Models;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using IdentityService.BusinessLogic.Providers.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using OpenIddict.Server.AspNetCore;
 
 namespace IdentityService.Api.Controllers
 {

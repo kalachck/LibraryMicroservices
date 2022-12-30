@@ -1,7 +1,7 @@
-﻿using BusinessLogic.Services.Abstarct;
+﻿using IdentityService.BusinessLogic.Services.Abstarct;
 using Microsoft.AspNetCore.Identity;
 
-namespace BusinessLogic.Services
+namespace IdentityService.BusinessLogic.Services
 {
     public class UserService : IUserService
     {
@@ -29,7 +29,7 @@ namespace BusinessLogic.Services
             {
                 ExceptionMessage = "User not found",
                 Message = "User was found successfully",
-            });;
+            }); ;
         }
 
         public async Task<Result<IdentityUser>> GetAsync(string email)
@@ -45,7 +45,7 @@ namespace BusinessLogic.Services
                 });
             }
 
-            return await Task.FromResult(new Result<IdentityUser>() 
+            return await Task.FromResult(new Result<IdentityUser>()
             {
                 ExceptionMessage = "User was not found"
             });

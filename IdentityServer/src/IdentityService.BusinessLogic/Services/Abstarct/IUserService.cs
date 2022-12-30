@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace BusinessLogic.Services.Abstarct
+namespace IdentityService.BusinessLogic.Services.Abstarct
 {
     public interface IUserService
     {

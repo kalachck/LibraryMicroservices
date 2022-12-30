@@ -1,14 +1,11 @@
-﻿using BusinessLogic.Providers.Abstract;
+﻿using IdentityService.BusinessLogic.Providers.Abstract;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.VisualBasic;
 using OpenIddict.Abstractions;
 using System.Collections.Immutable;
-using System.Net;
 using System.Security.Claims;
 using static OpenIddict.Abstractions.OpenIddictConstants;
-using static System.Net.Mime.MediaTypeNames;
 
-namespace BusinessLogic.Providers
+namespace IdentityService.BusinessLogic.Providers
 {
     public class AuthorizationProvider : IAuthorizationProvider
     {
@@ -46,6 +43,12 @@ namespace BusinessLogic.Providers
             {
                 ExceptionMessage = "User doesn't exist"
             });
+        }
+
+        //This logic has not implemented yet
+        public Task<Result<string>> LogOut(IdentityUser identityUser)
+        {
+            throw new NotImplementedException();
         }
     }
 }

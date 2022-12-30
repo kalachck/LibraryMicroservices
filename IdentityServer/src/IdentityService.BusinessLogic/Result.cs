@@ -1,4 +1,4 @@
-﻿namespace BusinessLogic
+﻿namespace IdentityService.BusinessLogic
 {
     public class Result<T>
     {

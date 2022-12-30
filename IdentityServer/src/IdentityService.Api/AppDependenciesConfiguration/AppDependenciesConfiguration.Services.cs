@@ -1,8 +1,8 @@
-﻿using BusinessLogic.Providers;
-using BusinessLogic.Providers.Abstract;
-using BusinessLogic.Services;
-using BusinessLogic.Services.Abstarct;
-using DataAccess;
+﻿using IdentityService.BusinessLogic.Providers;
+using IdentityService.BusinessLogic.Providers.Abstract;
+using IdentityService.BusinessLogic.Services;
+using IdentityService.BusinessLogic.Services.Abstarct;
+using IdentityService.DataAccess;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
