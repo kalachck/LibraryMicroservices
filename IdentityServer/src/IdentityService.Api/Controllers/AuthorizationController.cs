@@ -1,7 +1,7 @@
-﻿using AutoMapper;
-using IdentityService.Api.Models;
-using IdentityService.BusinessLogic.Providers.Abstract;
+﻿using IdentityService.BusinessLogic.Services.Abstarct;
 using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,21 +13,20 @@ namespace IdentityService.Api.Controllers
     [ApiController]
     public class AuthorizationController : ControllerBase
     {
-        private readonly IAuthorizationProvider _authorizationProvider;
+        private readonly ILogInService _authorizationProvider;
+        private readonly SignInManager<IdentityUser> _signInManager;
 
-        private readonly IMapper _mapper;
-
-        public AuthorizationController(IAuthorizationProvider authorizationProvider, IMapper mapper)
+        public AuthorizationController(ILogInService authorizationProvider,
+            SignInManager<IdentityUser> signInManager)
         {
             _authorizationProvider = authorizationProvider;
-
-            _mapper = mapper;
+            _signInManager = signInManager;
         }
 
         [AllowAnonymous]
         [HttpPost]
         [Route("LogIn")]
-        public async Task<IActionResult> LogInAsync(LoginModel model)
+        public async Task<IActionResult> LogIn()
         {
             var request = HttpContext.GetOpenIddictClientRequest();
 
@@ -36,31 +35,26 @@ namespace IdentityService.Api.Controllers
                 return BadRequest("The OpenID Connect request cannot be retrieved.");
             }
 
-            var result = await _authorizationProvider.LogInAsync(_mapper.Map<IdentityUser>(model), request);
+            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            if (result)
+            if (result.Succeeded)
             {
-                return SignIn(result.Value, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+                return BadRequest("");
             }
 
-            return BadRequest(new
-            {
-                result.ExceptionMessage,
-            });
+            var claimsPrincipal = await _authorizationProvider.LogInAsync(result, request);
+
+            return SignIn(claimsPrincipal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
         }
 
         [Authorize]
         [HttpPost]
         [Route("LogOut")]
-        public async Task<IActionResult> LogOutAsync(LoginModel model)
+        public async Task<IActionResult> LogOut()
         {
-            await Task.Delay(2000);
+            await _signInManager.SignOutAsync();
 
-            return Ok(new LoginModel()
-            {
-                UserName = string.Empty,
-                Password = string.Empty,
-            });
+            return SignOut(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
         }
     }
 }

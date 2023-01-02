@@ -4,14 +4,12 @@ namespace IdentityService.BusinessLogic.Services.Abstarct
 {
     public interface IUserService
     {
-        Task<Result<IdentityUser>> GetAsync(Guid id);
+        Task<IdentityUser> GetAsync(string email);
 
-        Task<Result<IdentityUser>> GetAsync(string email);
+        Task<IdentityUser> AddAsync(IdentityUser user);
 
-        Task<Result<IdentityUser>> AddAsync(IdentityUser user);
+        Task<IdentityUser> UpdateAsync(string email, IdentityUser user);
 
-        Task<Result<IdentityUser>> UpdateAsync(Guid id, IdentityUser user);
-
-        Task<Result<IdentityUser>> DeleteAsync(IdentityUser user);
+        Task<IdentityUser> DeleteAsync(string email);
     }
 }

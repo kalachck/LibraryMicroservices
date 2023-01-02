@@ -1,6 +1,4 @@
-﻿using IdentityService.BusinessLogic.Providers;
-using IdentityService.BusinessLogic.Providers.Abstract;
-using IdentityService.BusinessLogic.Services;
+﻿using IdentityService.BusinessLogic.Services;
 using IdentityService.BusinessLogic.Services.Abstarct;
 using IdentityService.DataAccess;
 using Microsoft.AspNetCore.Identity;
@@ -38,7 +36,7 @@ namespace IdentityService.Api.AppDependenciesConfiguration
                 });
 
             builder.Services.AddScoped<IUserService, UserService>();
-            builder.Services.AddScoped<IAuthorizationProvider, AuthorizationProvider>();
+            builder.Services.AddScoped<ILogInService, LogInService>();
 
             builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 

@@ -1,5 +1,7 @@
-﻿using IdentityService.BusinessLogic.Services.Abstarct;
+﻿using IdentityService.BusinessLogic.Exceptions;
+using IdentityService.BusinessLogic.Services.Abstarct;
 using Microsoft.AspNetCore.Identity;
+using System.Data;
 
 namespace IdentityService.BusinessLogic.Services
 {
@@ -12,108 +14,56 @@ namespace IdentityService.BusinessLogic.Services
             _userManager = userManager;
         }
 
-        public async Task<Result<IdentityUser>> GetAsync(Guid id)
+        public async Task<IdentityUser> GetAsync(string email)
         {
-            var user = await _userManager.FindByIdAsync(id.ToString());
+            var user =  await _userManager.FindByEmailAsync(email);
 
-            if (user is not null)
+            if (user != null)
             {
-                return await Task.FromResult(new Result<IdentityUser>()
-                {
-                    Value = user,
-                    Message = "User was found successfully",
-                });
+                return await Task.FromResult(user);
             }
 
-            return await Task.FromResult(new Result<IdentityUser>()
-            {
-                ExceptionMessage = "User not found",
-                Message = "User was found successfully",
-            }); ;
+            throw new UserNotFoundException("User not found");
         }
 
-        public async Task<Result<IdentityUser>> GetAsync(string email)
+        public async Task<IdentityUser> AddAsync(IdentityUser identityUser)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(identityUser.Email);
 
-            if (user is not null)
-            {
-                return await Task.FromResult(new Result<IdentityUser>()
-                {
-                    Value = user,
-                    Message = "User was found successfully",
-                });
-            }
-
-            return await Task.FromResult(new Result<IdentityUser>()
-            {
-                ExceptionMessage = "User was not found"
-            });
-        }
-
-        public async Task<Result<IdentityUser>> AddAsync(IdentityUser identityUser)
-        {
-            var user = await _userManager.FindByIdAsync(identityUser.Id);
-
-            if (user is null)
+            if (user == null)
             {
                 await _userManager.CreateAsync(identityUser);
 
-                return await Task.FromResult(new Result<IdentityUser>()
-                {
-                    Value = identityUser,
-                    Message = "User was added successfully",
-                });
+                return await Task.FromResult(identityUser);
             }
 
-            return await Task.FromResult(new Result<IdentityUser>()
-            {
-                ExceptionMessage = "User already exists"
-            });
+            throw new UserAlreadyExists("This user already exists");
         }
 
-        public async Task<Result<IdentityUser>> UpdateAsync(Guid id, IdentityUser identityUser)
+        public async Task<IdentityUser> UpdateAsync(string email, IdentityUser identityUser)
         {
-            var user = await _userManager.FindByIdAsync(id.ToString());
-
-            if (user is not null)
+            if (await _userManager.FindByEmailAsync(email) != null)
             {
-                user = identityUser;
+                await _userManager.UpdateAsync(identityUser);
 
-                await _userManager.UpdateAsync(user);
-
-                return await Task.FromResult(new Result<IdentityUser>()
-                {
-                    Value = user,
-                    Message = "User was added successfully",
-                });
+                return await Task.FromResult(identityUser);
             }
 
-            return await Task.FromResult(new Result<IdentityUser>()
-            {
-                ExceptionMessage = "User doesn't exist"
-            });
+            throw new UserNotFoundException("User not found");
         }
-
-        public async Task<Result<IdentityUser>> DeleteAsync(IdentityUser identityUser)
+        
+        public async Task<IdentityUser> DeleteAsync(string email)
         {
-            var user = await _userManager.FindByIdAsync(identityUser.Id);
+            var user = await _userManager.FindByEmailAsync(email);
 
-            if (user is not null)
+            if (user != null)
             {
-                await _userManager.DeleteAsync(identityUser);
+                await _userManager.DeleteAsync(user);
 
-                return await Task.FromResult(new Result<IdentityUser>()
-                {
-                    Value = identityUser,
-                    Message = "User was added successfully",
-                });
+                return await Task.FromResult(user);
             }
 
-            return await Task.FromResult(new Result<IdentityUser>()
-            {
-                ExceptionMessage = "User doesn't exist"
-            });
+            throw new UserNotFoundException("User not found");
         }
     }
 }
