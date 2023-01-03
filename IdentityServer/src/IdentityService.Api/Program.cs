@@ -17,16 +17,17 @@ namespace IdentityService.Api
 
             var app = builder.Build();
 
+            app.UseAuthentication();
+
+            app.UseAuthorization();
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
-
+            app.UseHttpsRedirection(); 
 
             app.MapControllers();
 

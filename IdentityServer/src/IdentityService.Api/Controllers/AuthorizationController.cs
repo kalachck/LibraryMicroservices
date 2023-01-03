@@ -1,7 +1,7 @@
-﻿using IdentityService.BusinessLogic.Services.Abstarct;
+﻿using AutoMapper;
+using IdentityService.Api.Models;
+using IdentityService.BusinessLogic.Services.Abstarct;
 using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,18 +15,22 @@ namespace IdentityService.Api.Controllers
     {
         private readonly ILogInService _authorizationProvider;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IMapper _mapper;
 
-        public AuthorizationController(ILogInService authorizationProvider,
-            SignInManager<IdentityUser> signInManager)
+        public AuthorizationController(
+            ILogInService authorizationProvider,
+            SignInManager<IdentityUser> signInManager,
+            IMapper mapper)
         {
             _authorizationProvider = authorizationProvider;
             _signInManager = signInManager;
+            _mapper = mapper;
         }
 
         [AllowAnonymous]
         [HttpPost]
         [Route("LogIn")]
-        public async Task<IActionResult> LogIn()
+        public async Task<IActionResult> LogIn(LoginModel model)
         {
             var request = HttpContext.GetOpenIddictClientRequest();
 
@@ -35,14 +39,7 @@ namespace IdentityService.Api.Controllers
                 return BadRequest("The OpenID Connect request cannot be retrieved.");
             }
 
-            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-            if (result.Succeeded)
-            {
-                return BadRequest("");
-            }
-
-            var claimsPrincipal = await _authorizationProvider.LogInAsync(result, request);
+            var claimsPrincipal = await _authorizationProvider.LogInAsync(_mapper.Map<IdentityUser>(model), request);
 
             return SignIn(claimsPrincipal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
         }

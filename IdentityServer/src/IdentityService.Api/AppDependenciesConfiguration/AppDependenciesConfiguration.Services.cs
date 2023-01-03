@@ -24,15 +24,31 @@ namespace IdentityService.Api.AppDependenciesConfiguration
                 .AddEntityFrameworkStores<ApplicationContext>();
 
             builder.Services.AddOpenIddict()
+                .AddCore(options =>
+                {
+                    options.UseEntityFrameworkCore()
+                    .UseDbContext<ApplicationContext>();
+                })
                 .AddServer(options =>
                 {
-                    options.AllowAuthorizationCodeFlow().RequireProofKeyForCodeExchange();
+                    options.AllowClientCredentialsFlow()
+                    .AllowAuthorizationCodeFlow()
+                    .RequireProofKeyForCodeExchange();
 
-                    options.SetAuthorizationEndpointUris("api/Authorization/LogIn");
+                    options.SetAuthorizationEndpointUris("/api/Authorization/LogIn");
+                    options.SetLogoutEndpointUris("/api/Authorization/LogOut");
+                    options.SetTokenEndpointUris("/api/Authorization/LogIn/token");
+
+                    options
+                        .AddEphemeralEncryptionKey()
+                        .AddEphemeralSigningKey()
+                        .DisableAccessTokenEncryption();
+
+                    options.RegisterScopes("api");
 
                     options.UseAspNetCore()
                     .EnableTokenEndpointPassthrough()
-                    .EnableAuthorizationEndpointPassthrough();
+                    .EnableAuthorizationEndpointPassthrough();             
                 });
 
             builder.Services.AddScoped<IUserService, UserService>();

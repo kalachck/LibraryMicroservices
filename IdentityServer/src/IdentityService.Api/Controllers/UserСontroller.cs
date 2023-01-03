@@ -41,9 +41,9 @@ namespace IdentityService.Api.Controllers
 
         [HttpPut]
         [Route("Update")]
-        public async Task<IActionResult> Update(LoginModel model)
+        public async Task<IActionResult> Update(string email, LoginModel model)
         {
-            var result = await _userService.UpdateAsync(model.Email, _autoMapper.Map<IdentityUser>(model));
+            var result = await _userService.UpdateAsync(email, _autoMapper.Map<IdentityUser>(model));
 
             return Ok(result);
         }

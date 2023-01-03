@@ -1,6 +1,5 @@
 ﻿using IdentityService.BusinessLogic.Exceptions;
 using IdentityService.BusinessLogic.Services.Abstarct;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
@@ -18,17 +17,15 @@ namespace IdentityService.BusinessLogic.Services
             _userManager = userManager;
         }
 
-        public async Task<ClaimsPrincipal> LogInAsync(AuthenticateResult result, OpenIddictRequest request)
+        public async Task<ClaimsPrincipal> LogInAsync(IdentityUser identityUser, OpenIddictRequest request)
         {
-            var user = await _userManager.FindByNameAsync(result.Principal.Identity.Name);
-
-            if (user != null)
+            if (await _userManager.FindByEmailAsync(identityUser.Email) != null)
             {
                 var claims = new List<Claim>()
                 {
-                    new Claim(Claims.Subject, user.UserName),
-                    new Claim(Claims.Email, user.Email).SetDestinations(Destinations.IdentityToken),
-                    new Claim(Claims.Name, user.UserName),
+                    new Claim(Claims.Subject, identityUser.UserName),
+                    new Claim(Claims.Email, identityUser.Email).SetDestinations(Destinations.IdentityToken),
+                    new Claim(Claims.Name, identityUser.UserName),
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
