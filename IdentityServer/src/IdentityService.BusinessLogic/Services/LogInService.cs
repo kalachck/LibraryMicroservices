@@ -19,22 +19,31 @@ namespace IdentityService.BusinessLogic.Services
 
         public async Task<ClaimsPrincipal> LogInAsync(IdentityUser identityUser, OpenIddictRequest request)
         {
-            if (await _userManager.FindByEmailAsync(identityUser.Email) != null)
+            var user = await _userManager.FindByEmailAsync(identityUser.Email);
+
+            var hashPassword = _userManager.PasswordHasher.HashPassword(identityUser, identityUser.PasswordHash);
+
+            if (user != null)
             {
-                var claims = new List<Claim>()
+                if (hashPassword == user.PasswordHash)
                 {
-                    new Claim(Claims.Subject, identityUser.UserName),
-                    new Claim(Claims.Email, identityUser.Email).SetDestinations(Destinations.IdentityToken),
-                    new Claim(Claims.Name, identityUser.UserName),
-                };
+                    var claims = new List<Claim>()
+                    {
+                        new Claim(Claims.Subject, identityUser.UserName),
+                        new Claim(Claims.Email, identityUser.Email).SetDestinations(Destinations.IdentityToken),
+                        new Claim(Claims.Name, identityUser.UserName),
+                    };
 
-                var claimsIdentity = new ClaimsIdentity(claims, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+                    var claimsIdentity = new ClaimsIdentity(claims, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 
-                var claimPrincipal = new ClaimsPrincipal(claimsIdentity);
+                    var claimPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-                claimPrincipal.SetScopes(request.GetScopes());
+                    claimPrincipal.SetScopes(request.GetScopes());
 
-                return await Task.FromResult(claimPrincipal);
+                    return await Task.FromResult(claimPrincipal);
+                }
+
+                throw new InvalidPasswordException("Invalid password");
             }
 
             throw new UserNotFoundException("User not found");

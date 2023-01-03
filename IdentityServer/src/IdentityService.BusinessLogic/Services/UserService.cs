@@ -27,16 +27,16 @@ namespace IdentityService.BusinessLogic.Services
 
         public async Task<IdentityUser> AddAsync(IdentityUser identityUser)
         {
-            var user = await _userManager.FindByEmailAsync(identityUser.Email);
-
-            if (user == null)
+            if (await _userManager.FindByEmailAsync(identityUser.Email) == null)
             {
+                identityUser.PasswordHash = _userManager.PasswordHasher.HashPassword(identityUser, identityUser.PasswordHash);
+
                 await _userManager.CreateAsync(identityUser);
 
                 return await Task.FromResult(identityUser);
             }
 
-            throw new UserAlreadyExists("This user already exists");
+            throw new UserAlreadyExistsException("This user already exists");
         }
 
         public async Task<IdentityUser> UpdateAsync(string email, IdentityUser identityUser)
@@ -45,6 +45,8 @@ namespace IdentityService.BusinessLogic.Services
 
             if (user != null)
             {
+                identityUser.PasswordHash = _userManager.PasswordHasher.HashPassword(identityUser, identityUser.PasswordHash);
+
                 user.UserName = identityUser.UserName;
                 user.Email = identityUser.Email;
                 user.PasswordHash = identityUser.PasswordHash;
