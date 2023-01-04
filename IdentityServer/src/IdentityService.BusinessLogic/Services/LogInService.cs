@@ -25,7 +25,6 @@ namespace IdentityService.BusinessLogic.Services
                 {
                     new Claim(Claims.Subject, identityUser.UserName),
                     new Claim(Claims.Email, identityUser.Email).SetDestinations(Destinations.IdentityToken),
-                    new Claim(Claims.Name, identityUser.UserName),
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);

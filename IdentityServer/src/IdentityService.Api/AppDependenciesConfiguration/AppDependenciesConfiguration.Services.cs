@@ -37,18 +37,18 @@ namespace IdentityService.Api.AppDependenciesConfiguration
 
                     options.SetAuthorizationEndpointUris("/api/Authorization/LogIn");
                     options.SetLogoutEndpointUris("/api/Authorization/LogOut");
-                    options.SetTokenEndpointUris("/api/Authorization/LogIn/token");
+                    options.SetTokenEndpointUris("/api/Authorization/Token");
 
                     options
-                        .AddEphemeralEncryptionKey()
-                        .AddEphemeralSigningKey()
-                        .DisableAccessTokenEncryption();
+                    .AddDevelopmentSigningCertificate()
+                    .AddDevelopmentEncryptionCertificate();
 
                     options.RegisterScopes("api");
 
                     options.UseAspNetCore()
                     .EnableTokenEndpointPassthrough()
-                    .EnableAuthorizationEndpointPassthrough();             
+                    .EnableAuthorizationEndpointPassthrough()
+                    .EnableLogoutEndpointPassthrough();
                 });
 
             builder.Services.AddScoped<IUserService, UserService>();
