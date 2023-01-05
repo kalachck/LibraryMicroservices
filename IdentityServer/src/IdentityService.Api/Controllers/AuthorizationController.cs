@@ -1,6 +1,10 @@
-﻿using IdentityService.Api.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using IdentityService.Api.Models;
+using IdentityService.BusinessLogic.Services.Abstarct;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Server.AspNetCore;
 
 namespace IdentityService.Api.Controllers
 {
@@ -8,35 +12,46 @@ namespace IdentityService.Api.Controllers
     [ApiController]
     public class AuthorizationController : ControllerBase
     {
-        public AuthorizationController()
-        { }
+        private readonly IAuthorizationService _authorizationService;
+        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IMapper _mapper;
 
-        [AllowAnonymous]
-        [HttpPost]
-        [Route("LogIn")]
-        public async Task<IActionResult> LogIn(LoginModel model)
+        public AuthorizationController(
+            IAuthorizationService authorizationService,
+            SignInManager<IdentityUser> signInManager,
+            IMapper mapper)
         {
-            await Task.Delay(2000);
-
-            return Ok(new LoginModel()
-            {
-                UserName = string.Empty,
-                PasswordHash = string.Empty,
-            });
+            _authorizationService = authorizationService;
+            _signInManager = signInManager;
+            _mapper = mapper;
         }
 
-        [Authorize]
+        [HttpGet]
+        [HttpPost]
+        [Route("LogIn")]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> LogIn([FromQuery] LoginModel model)
+        {
+            var request = HttpContext.GetOpenIddictServerRequest();
+
+            if (request == null)
+            {
+                return BadRequest("The OpenID Connect request cannot be retrieved.");
+            }
+
+            var claimsPrincipal = await _authorizationService.LogInAsync(_mapper.Map<IdentityUser>(model), request);
+
+            return SignIn(claimsPrincipal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+        }
+
         [HttpPost]
         [Route("LogOut")]
-        public async Task<IActionResult> LogOut(LoginModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LogOut()
         {
-            await Task.Delay(2000);
+            await _signInManager.SignOutAsync();
 
-            return Ok(new LoginModel()
-            {
-                UserName = string.Empty,
-                PasswordHash = string.Empty,
-            });
+            return SignOut(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
         }
     }
 }

@@ -1,3 +1,5 @@
+using IdentityService.Api.AppDependenciesConfiguration;
+
 namespace IdentityService.Api
 {
     public class Program
@@ -11,7 +13,13 @@ namespace IdentityService.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.ConfigureDependencies();
+
             var app = builder.Build();
+
+            app.UseAuthentication();
+
+            app.UseAuthorization();
 
             if (app.Environment.IsDevelopment())
             {
@@ -19,10 +27,7 @@ namespace IdentityService.Api
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
-
+            app.UseHttpsRedirection(); 
 
             app.MapControllers();
 
