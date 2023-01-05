@@ -53,6 +53,7 @@ namespace IdentityService.Api.AppDependenciesConfiguration
 
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
+            builder.Services.AddScoped<IMailService, MailService>();
 
             builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 

@@ -1,16 +1,20 @@
 ﻿using IdentityService.BusinessLogic.Exceptions;
 using IdentityService.BusinessLogic.Services.Abstarct;
 using Microsoft.AspNetCore.Identity;
+using MimeKit;
 
 namespace IdentityService.BusinessLogic.Services
 {
     public class UserService : IUserService
     {
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IMailService _mailService;
 
-        public UserService(UserManager<IdentityUser> userManager)
+        public UserService(UserManager<IdentityUser> userManager,
+            IMailService mailService)
         {
             _userManager = userManager;
+            _mailService = mailService;
         }
 
         public async Task<IdentityUser> GetAsync(string email)
@@ -45,11 +49,9 @@ namespace IdentityService.BusinessLogic.Services
 
             if (user != null)
             {
-                identityUser.PasswordHash = _userManager.PasswordHasher.HashPassword(identityUser, identityUser.PasswordHash);
 
                 user.UserName = identityUser.UserName;
                 user.Email = identityUser.Email;
-                user.PasswordHash = identityUser.PasswordHash;
 
                 await _userManager.UpdateAsync(user);
 
@@ -71,6 +73,43 @@ namespace IdentityService.BusinessLogic.Services
             }
 
             throw new NotFoundException("User not found");
+        }
+
+        public async Task<IdentityUser> UpdatePasswordAsync(string email, string currentPassword, string newPassword)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user != null)
+            {
+                currentPassword = _userManager.PasswordHasher.HashPassword(user, currentPassword);
+
+                if (await _userManager.CheckPasswordAsync(user, currentPassword))
+                {
+                    newPassword = _userManager.PasswordHasher.HashPassword(user, newPassword);
+
+                    await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+
+                    return await Task.FromResult(user);
+                }
+
+                throw new InvalidPasswordException("Current password doesn't match with the typed one");
+            }
+
+            throw new NotFoundException("User with this email doesn't exists");
+        }
+
+        public async Task<IdentityUser> ResetPasswordAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user != null)
+            {
+                await _mailService.SendMessageAsync(email);
+
+                await Task.FromResult(user);
+            }
+
+            throw new NotFoundException("User with this email doesn't exists");
         }
     }
 }
