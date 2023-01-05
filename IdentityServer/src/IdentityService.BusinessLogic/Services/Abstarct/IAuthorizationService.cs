@@ -4,7 +4,7 @@ using System.Security.Claims;
 
 namespace IdentityService.BusinessLogic.Services.Abstarct
 {
-    public interface ILogInService
+    public interface IAuthorizationService
     {
         Task<ClaimsPrincipal> LogInAsync(IdentityUser user, OpenIddictRequest request);
     }

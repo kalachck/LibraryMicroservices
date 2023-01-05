@@ -12,16 +12,16 @@ namespace IdentityService.Api.Controllers
     [ApiController]
     public class AuthorizationController : ControllerBase
     {
-        private readonly ILogInService _logInService;
+        private readonly IAuthorizationService _authorizationService;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IMapper _mapper;
 
         public AuthorizationController(
-            ILogInService logInService,
+            IAuthorizationService authorizationService,
             SignInManager<IdentityUser> signInManager,
             IMapper mapper)
         {
-            _logInService = logInService;
+            _authorizationService = authorizationService;
             _signInManager = signInManager;
             _mapper = mapper;
         }
@@ -39,7 +39,7 @@ namespace IdentityService.Api.Controllers
                 return BadRequest("The OpenID Connect request cannot be retrieved.");
             }
 
-            var claimsPrincipal = await _logInService.LogInAsync(_mapper.Map<IdentityUser>(model), request);
+            var claimsPrincipal = await _authorizationService.LogInAsync(_mapper.Map<IdentityUser>(model), request);
 
             return SignIn(claimsPrincipal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
         }
