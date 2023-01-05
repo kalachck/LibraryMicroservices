@@ -106,7 +106,7 @@ namespace IdentityService.BusinessLogic.Services
             {
                 await _mailService.SendMessageAsync(email);
 
-                await Task.FromResult(user);
+                return await Task.FromResult(user);
             }
 
             throw new NotFoundException("User with this email doesn't exists");

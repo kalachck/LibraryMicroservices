@@ -6,8 +6,8 @@ namespace IdentityService.BusinessLogic.Services
 {
     public class MailService : IMailService
     {
-        private const string SourceMail = "identityserverbot@gmail.com";
-        private const string SourcePassword = "supersecretkey";
+        private const string SourceMail = "identityservicebot@mail.ru";
+        private const string SourcePassword = "asgvC4ichhKhELZs8Mg6";
 
         public async Task SendMessageAsync(string email)
         {
@@ -16,7 +16,7 @@ namespace IdentityService.BusinessLogic.Services
             var message = new MimeMessage();
 
             message.From.Add(new MailboxAddress("IdentityService", SourceMail));
-            message.To.Add(new MailboxAddress("IdentityUser", "kalachck@gmail.com"));
+            message.To.Add(new MailboxAddress("IdentityUser", email));
             message.Subject = "Reset password";
             message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
             {
@@ -25,7 +25,7 @@ namespace IdentityService.BusinessLogic.Services
 
             using (var client = new SmtpClient())
             {
-                await client.ConnectAsync("smtp.gmail.com", 587, true);
+                await client.ConnectAsync("smtp.mail.ru", 465, true);
                 await client.AuthenticateAsync(SourceMail, SourcePassword);
                 await client.SendAsync(message);
 
