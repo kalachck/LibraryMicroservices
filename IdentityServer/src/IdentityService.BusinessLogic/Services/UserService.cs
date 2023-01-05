@@ -22,7 +22,7 @@ namespace IdentityService.BusinessLogic.Services
                 return await Task.FromResult(user);
             }
 
-            throw new UserNotFoundException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         public async Task<IdentityUser> AddAsync(IdentityUser identityUser)
@@ -36,7 +36,11 @@ namespace IdentityService.BusinessLogic.Services
                 return await Task.FromResult(identityUser);
             }
 
+<<<<<<< HEAD
             throw new UserAlreadyExistsException("This user already exists");
+=======
+            throw new AlreadyExistsException("This user already exists");
+>>>>>>> BLL,DALAndApiImplemantation
         }
 
         public async Task<IdentityUser> UpdateAsync(string email, IdentityUser identityUser)
@@ -56,7 +60,7 @@ namespace IdentityService.BusinessLogic.Services
                 return await Task.FromResult(user);
             }
 
-            throw new UserNotFoundException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         public async Task<IdentityUser> DeleteAsync(string email)
@@ -70,7 +74,7 @@ namespace IdentityService.BusinessLogic.Services
                 return await Task.FromResult(user);
             }
 
-            throw new UserNotFoundException("User not found");
+            throw new NotFoundException("User not found");
         }
     }
 }
