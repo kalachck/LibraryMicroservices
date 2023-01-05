@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using IdentityService.Api.Models;
 using IdentityService.BusinessLogic.Services.Abstarct;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +8,6 @@ namespace IdentityService.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-   // [Authorize]
     public class UserСontroller : ControllerBase
     {
         private readonly IUserService _userService;

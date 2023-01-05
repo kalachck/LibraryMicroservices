@@ -27,19 +27,12 @@ namespace IdentityService.BusinessLogic.Services
             {
                 if (hashPassword == user.PasswordHash)
                 {
-<<<<<<< HEAD:IdentityServer/src/IdentityService.BusinessLogic/Services/LogInService.cs
                     var claims = new List<Claim>()
                     {
                         new Claim(Claims.Subject, identityUser.UserName),
                         new Claim(Claims.Email, identityUser.Email).SetDestinations(Destinations.IdentityToken),
-                        new Claim(Claims.Name, identityUser.UserName),
                     };
-=======
-                    new Claim(Claims.Subject, identityUser.UserName),
-                    new Claim(Claims.Email, identityUser.Email).SetDestinations(Destinations.IdentityToken),
-                };
->>>>>>> BLL,DALAndApiImplemantation:IdentityServer/src/IdentityService.BusinessLogic/Services/AuthorizationService.cs
-
+                    
                     var claimsIdentity = new ClaimsIdentity(claims, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 
                     var claimPrincipal = new ClaimsPrincipal(claimsIdentity);
