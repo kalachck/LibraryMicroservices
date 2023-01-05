@@ -3,6 +3,7 @@ using IdentityService.BusinessLogic.Services.Abstarct;
 using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
+using System.Collections.Immutable;
 using System.Security.Claims;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
@@ -19,24 +20,36 @@ namespace IdentityService.BusinessLogic.Services
 
         public async Task<ClaimsPrincipal> LogInAsync(IdentityUser identityUser, OpenIddictRequest request)
         {
-            if (await _userManager.FindByEmailAsync(identityUser.Email) != null)
+            var user = await _userManager.FindByEmailAsync(identityUser.Email);
+
+            if (user != null)
             {
-                var claims = new List<Claim>()
-                {
-                    new Claim(Claims.Subject, identityUser.UserName),
-                    new Claim(Claims.Email, identityUser.Email).SetDestinations(Destinations.IdentityToken),
-                };
-
-                var claimsIdentity = new ClaimsIdentity(claims, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
-
-                var claimPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-                claimPrincipal.SetScopes(request.GetScopes());
+                var claimPrincipal = await SetClaimsAsync(user, request);
 
                 return await Task.FromResult(claimPrincipal);
             }
 
             throw new NotFoundException("User not found");
+        }
+
+        public async Task<ClaimsPrincipal> SetClaimsAsync(IdentityUser identityUser, OpenIddictRequest request)
+        {
+            var claims = new List<Claim>()
+            {
+                new Claim(Claims.Subject, identityUser.Id).SetDestinations(Destinations.IdentityToken),
+                new Claim(Claims.Email, identityUser.Email).SetDestinations(Destinations.AccessToken),
+                new Claim(Claims.Name, identityUser.UserName).SetDestinations(Destinations.AccessToken),
+            };
+
+            var identity = new ClaimsIdentity(claims, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+
+            identity.AddClaims(Claims.Role, (await _userManager.GetRolesAsync(identityUser)).ToImmutableArray(), Destinations.AccessToken);
+
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+
+            claimsPrincipal.SetScopes(request.GetScopes());
+
+            return await Task.FromResult(claimsPrincipal);
         }
     }
 }

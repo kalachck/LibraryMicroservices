@@ -33,15 +33,20 @@ namespace IdentityService.Api.AppDependenciesConfiguration
                 {
                     options.AllowClientCredentialsFlow()
                     .AllowAuthorizationCodeFlow()
-                    .RequireProofKeyForCodeExchange();
+                    .RequireProofKeyForCodeExchange()
+                    .AllowRefreshTokenFlow();
 
                     options.SetAuthorizationEndpointUris("/api/Authorization/LogIn");
                     options.SetLogoutEndpointUris("/api/Authorization/LogOut");
                     options.SetTokenEndpointUris("/api/Authorization/Token");
 
                     options
-                    .AddDevelopmentSigningCertificate()
-                    .AddDevelopmentEncryptionCertificate();
+                    .AddEphemeralEncryptionKey()
+                    .AddEphemeralSigningKey()
+                    .DisableAccessTokenEncryption();
+
+                    options.SetAccessTokenLifetime(TimeSpan.FromHours(1));
+                    options.SetRefreshTokenLifetime(TimeSpan.FromDays(30));
 
                     options.RegisterScopes("api");
 
