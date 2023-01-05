@@ -36,11 +36,7 @@ namespace IdentityService.BusinessLogic.Services
                 return await Task.FromResult(identityUser);
             }
 
-<<<<<<< HEAD
-            throw new UserAlreadyExistsException("This user already exists");
-=======
             throw new AlreadyExistsException("This user already exists");
->>>>>>> BLL,DALAndApiImplemantation
         }
 
         public async Task<IdentityUser> UpdateAsync(string email, IdentityUser identityUser)
