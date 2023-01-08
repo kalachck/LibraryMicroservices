@@ -52,7 +52,7 @@ As for the FluentValidation tool, it will allow save time when solving problems 
 | AuthorId           |
 
 ##### Logic:
-This service implements a three-layer architecture. The DAL is intended for access to the storage of users, in particular for authorization and authentication. The BLL implements the user validation process for successful authorization or registration. The API Deloged for convenient display of the authorization process in the browser and management of endpoints
+This service implements a three-layer architecture. The DAL is intended for access to the storage of entites, in particular for management library data. The BLL implements the entity validation process for successful operations with database. The API Deloged for convenient display of the menagement process in the browser
 
 # Cases
 
@@ -71,8 +71,6 @@ This service implements a three-layer architecture. The DAL is intended for acce
 **And** error will be returned to an admin 
 
 ---
-
-# Cases
 
 **Feature**: Get entity from database  
 **As an** admin to handle entities  
