@@ -1,0 +1,28 @@
+﻿using LibrarySevice.DataAccess.Entities;
+using LibrarySevice.DataAccess.EntityConfigurations;
+using Microsoft.EntityFrameworkCore;
+
+namespace LibrarySevice.DataAccess
+{
+    public class ApplicationContext : DbContext
+    {
+        public DbSet<BookEntity> Books { get; set; }
+
+        public DbSet<AuthorEntity> Authors { get; set; }
+
+        public DbSet<PublisherEntity> Publishers { get; set; }
+
+        public DbSet<BookAuthorEntity> BookAuthors { get; set; }
+
+        public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
+        { }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration(new BookEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new AuthorEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new PublisherEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new BookAuthorEntityConfiguration());
+        }
+    }
+}
