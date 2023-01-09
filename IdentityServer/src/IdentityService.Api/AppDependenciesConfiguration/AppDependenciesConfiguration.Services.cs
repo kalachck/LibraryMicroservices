@@ -1,4 +1,5 @@
-﻿using IdentityService.BusinessLogic.Services;
+﻿using IdentityService.BusinessLogic.Options;
+using IdentityService.BusinessLogic.Services;
 using IdentityService.BusinessLogic.Services.Abstarct;
 using IdentityService.DataAccess;
 using Microsoft.AspNetCore.Identity;
@@ -56,6 +57,9 @@ namespace IdentityService.Api.AppDependenciesConfiguration
             builder.Services.AddScoped<IMailService, MailService>();
 
             builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+            builder.Services.Configure<MailOptions>(
+                builder.Configuration.GetSection(MailOptions.MailData));
 
             return builder;
         }

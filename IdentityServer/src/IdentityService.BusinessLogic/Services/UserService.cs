@@ -1,4 +1,5 @@
-﻿using IdentityService.BusinessLogic.Exceptions;
+﻿using AutoMapper;
+using IdentityService.BusinessLogic.Exceptions;
 using IdentityService.BusinessLogic.Services.Abstarct;
 using Microsoft.AspNetCore.Identity;
 using MimeKit;
@@ -9,12 +10,15 @@ namespace IdentityService.BusinessLogic.Services
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IMailService _mailService;
+        private readonly IMapper _mapper;
 
         public UserService(UserManager<IdentityUser> userManager,
-            IMailService mailService)
+            IMailService mailService,
+            IMapper mapper)
         {
             _userManager = userManager;
             _mailService = mailService;
+            _mapper = mapper;
         }
 
         public async Task<IdentityUser> GetAsync(string email)
@@ -49,9 +53,11 @@ namespace IdentityService.BusinessLogic.Services
 
             if (user != null)
             {
+                var id = user.Id;
 
-                user.UserName = identityUser.UserName;
-                user.Email = identityUser.Email;
+                user = _mapper.Map(identityUser, user);
+
+                user.Id = id;
 
                 await _userManager.UpdateAsync(user);
 
@@ -100,11 +106,15 @@ namespace IdentityService.BusinessLogic.Services
 
         public async Task<IdentityUser> ResetPasswordAsync(string email)
         {
+            var random = new Random();
+
+            var resetCode = $"Your reset code is: {random.Next(100, 1000)}-{random.Next(100, 1000)}";
+
             var user = await _userManager.FindByEmailAsync(email);
 
             if (user != null)
             {
-                await _mailService.SendMessageAsync(email);
+                await _mailService.SendMessageAsync(email, resetCode, "Reset password");
 
                 return await Task.FromResult(user);
             }
