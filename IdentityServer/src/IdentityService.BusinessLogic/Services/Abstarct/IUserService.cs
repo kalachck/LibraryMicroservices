@@ -14,6 +14,6 @@ namespace IdentityService.BusinessLogic.Services.Abstarct
 
         Task<IdentityUser> UpdatePasswordAsync(string email, string oldPassword, string newPassword);
 
-        Task<IdentityUser> ResetPasswordAsync(string email);
+        Task<string> ResetPasswordAsync(string email);
     }
 }

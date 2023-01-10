@@ -2,7 +2,6 @@
 using IdentityService.BusinessLogic.Exceptions;
 using IdentityService.BusinessLogic.Services.Abstarct;
 using Microsoft.AspNetCore.Identity;
-using MimeKit;
 
 namespace IdentityService.BusinessLogic.Services
 {
@@ -104,11 +103,9 @@ namespace IdentityService.BusinessLogic.Services
             throw new NotFoundException("User with this email doesn't exists");
         }
 
-        public async Task<IdentityUser> ResetPasswordAsync(string email)
+        public async Task<string> ResetPasswordAsync(string email)
         {
-            var random = new Random();
-
-            var resetCode = $"Your reset code is: {random.Next(100, 1000)}-{random.Next(100, 1000)}";
+            var resetCode = await GenerateResetCodeAsync();
 
             var user = await _userManager.FindByEmailAsync(email);
 
@@ -116,10 +113,19 @@ namespace IdentityService.BusinessLogic.Services
             {
                 await _mailService.SendMessageAsync(email, resetCode, "Reset password");
 
-                return await Task.FromResult(user);
+                return await Task.FromResult(resetCode);
             }
 
             throw new NotFoundException("User with this email doesn't exists");
+        }
+
+        private async Task<string> GenerateResetCodeAsync()
+        {
+            var random = new Random();
+
+            var resetCode = $"Your reset code is: {random.Next(100, 1000)}-{random.Next(100, 1000)}";
+
+            return await Task.FromResult(resetCode);
         }
     }
 }
