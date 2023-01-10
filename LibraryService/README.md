@@ -27,6 +27,8 @@ As for the FluentValidation tool, it will allow save time when solving problems 
 | Id                 |
 | Title              |
 | PublicationDate    |
+| AuthorId           |
+| GenreId            |
 | PublisherId        |
 
 | Author             |
@@ -40,12 +42,10 @@ As for the FluentValidation tool, it will allow save time when solving problems 
 | Title              |
 | Address            |
 
-
-| BookAuthor         |
+| Genre              |
 | -------------------|
 | Id                 |
-| BookId             |
-| AuthorId           |
+| Title              |
 
 ##### Logic:
 This service implements a three-layer architecture. The DAL is intended for access to the storage of entites, in particular for management library data. The BLL implements the entity validation process for successful operations with database. The API Deloged for convenient display of the menagement process in the browser
