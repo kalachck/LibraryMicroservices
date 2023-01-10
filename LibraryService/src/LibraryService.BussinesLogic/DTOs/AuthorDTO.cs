@@ -1,13 +1,9 @@
-﻿using LibrarySevice.BussinesLogic.DTOs.Abstract;
-
-namespace LibrarySevice.BussinesLogic.DTOs
+﻿namespace LibrarySevice.BussinesLogic.DTOs
 {
-    public class AuthorDTO : BaseDTO
+    public class AuthorDTO
     {
         public string Name { get; set; }
 
-        public string Surname { get; set; }
-
-        public IList<BookAuthorDTO> BookAuthors { get; set; }
+        public IList<BookDTO> Books { get; set; }
     }
 }

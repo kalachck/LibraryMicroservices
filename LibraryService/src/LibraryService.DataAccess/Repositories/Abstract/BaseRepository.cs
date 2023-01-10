@@ -7,44 +7,40 @@ namespace LibrarySevice.DataAccess.Repositories.Abstract
         where TEntity : BaseEntity
         where TContext: DbContext
     {
-        private readonly TContext _context;
+        private DbSet<TEntity> _dbSet;
 
         public BaseRepository(TContext context)
         {
-            _context = context;
+            _dbSet = context.Set<TEntity>();
         }
 
         public async Task<TEntity> GetAsync(int id)
         {
-            return await _context.Set<TEntity>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            return await _dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<List<TEntity>> TakeAsync(int amount)
         {
-            return await _context.Set<TEntity>().AsNoTracking().Take(amount).ToListAsync();
+            return await _dbSet.AsNoTracking().Take(amount).ToListAsync();
         }
 
-        public async Task<TEntity> UpsertAsync(TEntity entity)
+        public async Task<TEntity> AddAsync(TEntity entity)
         {
-            if (_context.Set<TEntity>().Any(x => x.Id == entity.Id))
-            {
-                _context.Entry(entity).State = EntityState.Modified;
-            }
-            else
-            {
-                _context.Entry(entity).State = EntityState.Added;
-            }
+            _dbSet.Add(entity);
 
-            await _context.SaveChangesAsync();
+            return await Task.FromResult(entity);
+        }
+
+        public async Task<TEntity> UpdateAsync(TEntity entity)
+        {
+            _dbSet.Update(entity);
 
             return await Task.FromResult(entity);
         }
 
         public async Task<TEntity> DeleteAsync(TEntity entity)
         {
-            _context.Entry(entity).State = EntityState.Deleted;
-
-            await _context.SaveChangesAsync();
+            _dbSet.Remove(entity);
 
             return await Task.FromResult(entity);
         }

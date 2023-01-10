@@ -12,7 +12,7 @@ namespace LibrarySevice.DataAccess
 
         public DbSet<PublisherEntity> Publishers { get; set; }
 
-        public DbSet<BookAuthorEntity> BookAuthors { get; set; }
+        public DbSet<GenreEntity> Genres { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         { }
@@ -22,7 +22,7 @@ namespace LibrarySevice.DataAccess
             modelBuilder.ApplyConfiguration(new BookEntityConfiguration());
             modelBuilder.ApplyConfiguration(new AuthorEntityConfiguration());
             modelBuilder.ApplyConfiguration(new PublisherEntityConfiguration());
-            modelBuilder.ApplyConfiguration(new BookAuthorEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new GenreEntityConfiguration());
         }
     }
 }

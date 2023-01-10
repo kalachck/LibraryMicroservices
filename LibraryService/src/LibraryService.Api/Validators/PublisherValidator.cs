@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace LibrarySevice.Api.Validators
 {
-    public class PublisherValidator : AbstractValidator<PublisherModel>
+    public class PublisherValidator : AbstractValidator<PublisherRequestModel>
     {
         public PublisherValidator()
         {

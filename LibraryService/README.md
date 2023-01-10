@@ -1,13 +1,13 @@
 # Library Service
-This project is designed to optimize the data management process of the library
+This project is designed to optimize the process of working with books
 
-| Method                       | Description                    |
-| ---------------------------- | -------------------------------|
-| Take                         | Take amount of entities        |
-| Get                          | Get entity by id               |
-| Add                          | Adds entity into database      |
-| Update                       | Updates entity in the database |
-| Delete                       | Delete entity from database    |
+| Method                       | Description                       |
+| ---------------------------- | ----------------------------------|
+| Take                         | Take amount of entities           |
+| Get                          | Get entity by id                  |
+| Add                          | Adds entity into the database     |
+| Update                       | Updates entity in the database    |
+| Delete                       | Delete entity from the database   |
 
 ## Technologies
 Microsoft SQL Server. This is SQL database. This choice is determined by the speed and portability, then NoSQL databases.
@@ -26,17 +26,13 @@ As for the FluentValidation tool, it will allow save time when solving problems 
 | -------------------|
 | Id                 |
 | Title              |
-| Description        |
 | PublicationDate    |
-| PageCount          |
 | PublisherId        |
 
 | Author             |
 | -------------------|
 | Id                 |
 | Name               |
-| Surname            |
-
 
 | Publisher          |
 | -------------------|
@@ -56,80 +52,80 @@ This service implements a three-layer architecture. The DAL is intended for acce
 
 # Cases
 
-**Feature**: Take entities from database  
+**Feature**: Take entities from the database  
 **As an** admin to handle entities  
-**I want to** take entities from database
+**I want to** take entities from the database
 
 **Scenario** Entities have been found  
-**Given** an admin who want to take entities from database  
+**Given** an admin who want to take entities from the database  
 **Then** Entities have been successfully found   
 **And** entities was returned
 
 **Scenario** Entities have not been found  
-**Given** an admin who want to take entities from database  
+**Given** an admin who want to take entities from the database  
 **Then** entities have not been found  
 **And** error will be returned to an admin 
 
 ---
 
-**Feature**: Get entity from database  
+**Feature**: Get entity from the database  
 **As an** admin to handle entities  
-**I want to** get entity from database
+**I want to** get entity from the database
 
 **Scenario** Entity have been found  
-**Given** an admin who want to get entity from database  
+**Given** an admin who want to get entity from the database  
 **Then** Entity have been successfully found   
 **And** entity was returned
 
 **Scenario** Entity have not been found  
-**Given** an admin who want to get entity from database  
+**Given** an admin who want to get entity from the database  
 **Then** entity have not been found  
 **And** error will be returned to an admin 
 
 ---
 
-**Feature**: Add entity in database  
+**Feature**: Add entity in the database  
 **As an** admin to handle entities  
-**I want to** add entity in database
+**I want to** add entity in the database
 
 **Scenario** Entity was added successfully  
-**Given** an admin who want to add entity in database  
+**Given** an admin who want to add entity in the database  
 **Then** the entity was successfully added  
 **And** entity was returned
 
 **Scenario** Entity wasn't added for some reason  
-**Given** an admin who want to add entity in database  
+**Given** an admin who want to add entity in the database  
 **Then** the entity wasn't added  
 **And** error will be returned to an admin 
 
 ---
 
-**Feature**: Update entity in database  
+**Feature**: Update entity in the database  
 **As an** admin to handle entities  
-**I want to** update entity in database
+**I want to** update entity in the database
 
 **Scenario** Entity was updated successfully  
-**Given** an admin who want to update entity in database  
+**Given** an admin who want to update entity in the database  
 **Then** the entity was successfully updated  
 **And** entity was returned
 
 **Scenario** Entity wasn't update for some reason  
-**Given** an admin who want to update entity in database  
+**Given** an admin who want to update entity in the database  
 **Then** the entity wasn't updated  
 **And** error will be returned to an admin 
 
 ---
 
-**Feature**: Delete entity from database  
+**Feature**: Delete entity from the database  
 **As an** admin to handle entities  
-**I want to** delete entity from database
+**I want to** delete entity from the database
 
 **Scenario** Entity was deleted successfully  
-**Given** an admin who want to delete entity from database  
+**Given** an admin who want to delete entity from the database  
 **Then** the entity was successfully deleted  
 **And** entity was returned
 
 **Scenario** Entity wasn't deleted for some reason  
-**Given** an admin who want to delete entity from database  
+**Given** an admin who want to delete entity from the database  
 **Then** the entity wasn't deleted  
 **And** error will be returned to an admin 

@@ -10,9 +10,20 @@ namespace LibrarySevice.DataAccess.EntityConfigurations
         {
             builder.ToTable("Book");
 
+            builder.HasOne(x => x.Author)
+                .WithMany(x => x.Books)
+                .HasForeignKey(x => x.AuthorId)
+                .IsRequired(false);
+
+            builder.HasOne(x => x.Genre)
+                .WithMany(x => x.Books)
+                .HasForeignKey(x => x.GenreId)
+                .IsRequired(false);
+
             builder.HasOne(x => x.Publisher)
                 .WithMany(x => x.Books)
-                .HasForeignKey(x => x.PublisherId);
+                .HasForeignKey(x => x.PublisherId)
+                .IsRequired(false);
 
             builder.HasKey(x => x.Id);
 
@@ -21,35 +32,28 @@ namespace LibrarySevice.DataAccess.EntityConfigurations
                 .HasMaxLength(50)
                 .HasColumnType("nvarchar");
 
-            builder.Property(x => x.Description)
-                .IsRequired(false)
-                .HasMaxLength(100)
-                .HasColumnType("nvarchar");
-
             builder.Property(x => x.PublicationDate)
                 .IsRequired()
                 .HasColumnType("date");
 
-            builder.Property(x => x.PageCount)
-                .IsRequired()
-                .HasColumnType("smallint");
-
             builder.HasData
                 (
-                    new BookEntity() 
-                    { 
-                        Id = 1, 
-                        Title = "Война и мир", 
+                    new BookEntity()
+                    {
+                        Id = 1,
+                        Title = "Война и мир",
                         PublicationDate = DateTime.UtcNow.Date,
-                        PageCount = 500, 
+                        AuthorId = 1,
+                        GenreId = 1,
                         PublisherId = 1
                     },
                     new BookEntity()
                     {
                         Id = 2,
                         Title = "Борис Годунов",
+                        AuthorId = 2,
+                        GenreId = 2,
                         PublicationDate = DateTime.UtcNow.Date,
-                        PageCount = 300,
                         PublisherId = 2
                     }
                 );

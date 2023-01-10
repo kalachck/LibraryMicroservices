@@ -6,6 +6,7 @@ using LibrarySevice.DataAccess.Repositories;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using LibrarySevice.BussinesLogic.Services.Abstract;
 
 namespace LibrarySevice.Api.AppDependeciesConfiguration
 {
@@ -21,19 +22,19 @@ namespace LibrarySevice.Api.AppDependeciesConfiguration
             builder.Services.AddScoped<AuthorRepository>();
             builder.Services.AddScoped<BookRepository>();
             builder.Services.AddScoped<PublisherRepository>();
-            builder.Services.AddScoped<BookAuthorRepository>();
+            builder.Services.AddScoped<GenreRepository>();
 
-            builder.Services.AddScoped<AuthorService>();
-            builder.Services.AddScoped<BussinesLogic.Services.BookService>();
-            builder.Services.AddScoped<PublisherService>();
-            builder.Services.AddScoped<BookAuthorService>();
+            builder.Services.AddScoped<IAuthorService, AuthorService>();
+            builder.Services.AddScoped<IBookService, BussinesLogic.Services.BookService>();
+            builder.Services.AddScoped<IPublisherService, PublisherService>();
+            builder.Services.AddScoped<IGenreService, GenreService>();
 
             builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-            builder.Services.AddScoped<IValidator<BookModel>, BookValidator>();
-            builder.Services.AddScoped<IValidator<AuthorModel>, AuthorValidator>();
-            builder.Services.AddScoped<IValidator<PublisherModel>, PublisherValidator>();
-            builder.Services.AddScoped<IValidator<BookAuthorModel>, BookAuthorValidator>();
+            builder.Services.AddScoped<IValidator<BookRequestModel>, BookValidator>();
+            builder.Services.AddScoped<IValidator<AuthorRequestModel>, AuthorValidator>();
+            builder.Services.AddScoped<IValidator<PublisherRequestModel>, PublisherValidator>();
+            builder.Services.AddScoped<IValidator<GenreRequestModel>, GenreValidator>();
 
             return builder;
         }

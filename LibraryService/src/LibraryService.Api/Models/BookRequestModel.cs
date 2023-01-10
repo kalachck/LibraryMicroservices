@@ -1,6 +1,6 @@
-﻿namespace LibrarySevice.BussinesLogic.DTOs
+﻿namespace LibrarySevice.Api.Models
 {
-    public class BookDTO
+    public class BookRequestModel
     {
         public string Title { get; set; }
 
@@ -8,14 +8,14 @@
 
         public int AuthorId { get; set; }
 
-        public AuthorDTO Author { get; set; }
+        public AuthorRequestModel Author { get; set; }
 
         public int GenreId { get; set; }
 
-        public GenreDTO Genre { get; set; }
+        public GenreRequestModel Genre { get; set; }
 
         public int PublisherId { get; set; }
 
-        public PublisherDTO Publisher { get; set; }
+        public PublisherRequestModel Publisher { get; set; }
     }
 }

@@ -9,8 +9,15 @@ namespace LibrarySevice.Api.Mappings
     {
         public AuthorProfile()
         {
-            CreateMap<AuthorDTO, AuthorEntity>().ReverseMap();
-            CreateMap<AuthorModel, AuthorDTO>().ReverseMap();
+            CreateMap<AuthorRequestModel, AuthorDTO>();
+
+            CreateMap<AuthorDTO, AuthorRequestModel>();
+
+            CreateMap<AuthorDTO, AuthorEntity>()
+                .ForMember(dest => dest.Id, options => options.Ignore());
+
+            CreateMap<AuthorEntity, AuthorDTO>()
+                .ForSourceMember(dest => dest.Id, options => options.DoNotValidate());
         }
     }
 }

@@ -8,7 +8,9 @@ namespace LibrarySevice.DataAccess.Repositories.Abstract
 
         Task<TEntity> GetAsync(int id);
 
-        Task<TEntity> UpsertAsync(TEntity entity);
+        Task<TEntity> UpdateAsync(TEntity entity);
+
+        Task<TEntity> AddAsync(TEntity entity);
 
         Task<TEntity> DeleteAsync(TEntity entity);
     }

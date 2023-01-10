@@ -3,9 +3,9 @@ using LibrarySevice.DataAccess.Repositories.Abstract;
 
 namespace LibrarySevice.DataAccess.Repositories
 {
-    public class BookAuthorRepository : BaseRepository<BookAuthorEntity, ApplicationContext>
+    public class GenreRepository : BaseRepository<GenreEntity, ApplicationContext>
     {
-        public BookAuthorRepository(ApplicationContext context) : base(context)
+        public GenreRepository(ApplicationContext context) : base(context)
         { }
     }
 }

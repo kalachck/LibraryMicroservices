@@ -9,8 +9,13 @@ namespace LibrarySevice.Api.Mappings
     {
         public BookProfile()
         {
-            CreateMap<BookDTO, BookEntity>().ReverseMap();
-            CreateMap<BookDTO, BookModel>().ReverseMap();
+            CreateMap<BookRequestModel, BookDTO>();
+
+            CreateMap<BookDTO, BookRequestModel>();
+
+            CreateMap<BookDTO, BookEntity>();
+
+            CreateMap<BookEntity, BookDTO>();
         }
     }
 }

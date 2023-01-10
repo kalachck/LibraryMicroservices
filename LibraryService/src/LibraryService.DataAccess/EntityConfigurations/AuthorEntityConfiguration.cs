@@ -17,15 +17,10 @@ namespace LibrarySevice.DataAccess.EntityConfigurations
                 .HasMaxLength(30)
                 .HasColumnType("nvarchar");
 
-            builder.Property(x => x.Surname)
-                .IsRequired()
-                .HasMaxLength(30)
-                .HasColumnType("nvarchar");
-
             builder.HasData
                 (
-                    new AuthorEntity() { Id = 1, Name = "Лев", Surname = "Толстой"},
-                    new AuthorEntity() { Id = 2, Name = "Александр", Surname = "Пушкин"}
+                    new AuthorEntity() { Id = 1, Name = "Лев"},
+                    new AuthorEntity() { Id = 2, Name = "Александр"}
                 );
         }
     }
