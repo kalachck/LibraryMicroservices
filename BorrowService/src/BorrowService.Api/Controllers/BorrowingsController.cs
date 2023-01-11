@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BorrowService.Api.Models;
+using BorrowService.Api.RequestModels;
 using BorrowService.Borrowings.Components.Abstract;
 using BorrowService.Borrowings.Entities;
 using FluentValidation;
@@ -13,10 +13,10 @@ namespace BorrowService.Api.Controllers
     {
         private readonly IBorrowingComponent _component;
         private readonly IMapper _mapper;
-        private readonly IValidator<BorrowingModel> _validator;
+        private readonly IValidator<BorrowingRequestModel> _validator;
 
         public BorrowingsController(IBorrowingComponent component,
-            IMapper mapper, IValidator<BorrowingModel> validator)
+            IMapper mapper, IValidator<BorrowingRequestModel> validator)
         {
             _component = component;
             _mapper = mapper;
@@ -61,13 +61,13 @@ namespace BorrowService.Api.Controllers
 
         [HttpPost]
         [Route("Add")]
-        public async Task<IActionResult> Add([FromQuery] BorrowingModel model)
+        public async Task<IActionResult> Add([FromQuery] BorrowingRequestModel model)
         {
             var validationResult = await _validator.ValidateAsync(model);
 
             if (validationResult.IsValid)
             {
-                var borrowing = await _component.UpsertAsync(_mapper.Map<BorrowingEntity>(model));
+                var borrowing = await _component.AddAsync(_mapper.Map<BorrowingEntity>(model));
 
                 return Ok(borrowing);
             }
@@ -77,7 +77,7 @@ namespace BorrowService.Api.Controllers
 
         [HttpPut]
         [Route("Update")]
-        public async Task<IActionResult> Update(int id, [FromQuery] BorrowingModel model)
+        public async Task<IActionResult> Update(int id, [FromQuery] BorrowingRequestModel model)
         {
             var validationResult = await _validator.ValidateAsync(model);
 
@@ -85,9 +85,7 @@ namespace BorrowService.Api.Controllers
             {
                 var borrowing = _mapper.Map<BorrowingEntity>(model);
 
-                borrowing.Id = id;
-
-                return Ok(await _component.UpsertAsync(borrowing));
+                return Ok(await _component.UpdateAsync(id, borrowing));
             }
 
             return BadRequest("Invalid data! Pleasy try again");

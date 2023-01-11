@@ -33,18 +33,16 @@ namespace BorrowService.Borrowings.Repositories
             return await _applicationContext.Borrowings.AsNoTracking().FirstOrDefaultAsync(x => x.UserEmail == email);
         }
 
-        public async Task<BorrowingEntity> UpsertAsync(BorrowingEntity entity)
+        public async Task<BorrowingEntity> AddAsync(BorrowingEntity entity)
         {
-            if (_applicationContext.Borrowings.Any(entity => entity.Id == entity.Id))
-            {
-                _applicationContext.Entry(entity).State = EntityState.Modified;
-            }
-            else
-            {
-                _applicationContext.Entry(entity).State = EntityState.Added;
-            }
+            _applicationContext.Borrowings.Add(entity);
 
-            await _applicationContext.SaveChangesAsync();
+            return await Task.FromResult(entity);
+        }
+
+        public async Task<BorrowingEntity> UpdateAsync(BorrowingEntity entity)
+        {
+            _applicationContext.Borrowings.Update(entity);
 
             return await Task.FromResult(entity);
         }

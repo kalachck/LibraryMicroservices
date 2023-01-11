@@ -1,18 +1,25 @@
-﻿using BorrowService.Borrowings.Entities;
-using BorrowService.Borrowings.Repositories.Abstract;
+﻿using AutoMapper;
 using BorrowService.Borrowings.Components.Abstract;
+using BorrowService.Borrowings.Entities;
 using BorrowService.Borrowings.Exceptions;
-using System.Net;
+using BorrowService.Borrowings.Repositories.Abstract;
+using Npgsql.TypeMapping;
 
 namespace BorrowService.Borrowings.Components
 {
     public class BorrowingComponent : IBorrowingComponent
     {
         private readonly IBorrowingRepository _repository;
+        private readonly ApplicationContext _applicationContext;
+        private readonly IMapper _mapper;
 
-        public BorrowingComponent(IBorrowingRepository repository)
+        public BorrowingComponent(IBorrowingRepository repository,
+            ApplicationContext applicationContext,
+            IMapper mapper)
         {
             _repository = repository;
+            _applicationContext = applicationContext;
+            _mapper = mapper;
         }
 
         public async Task<List<BorrowingEntity>> TakeAsync(int amount)
@@ -63,13 +70,30 @@ namespace BorrowService.Borrowings.Components
             throw new NotFoundException("Record was not found");
         }
 
-        public async Task<BorrowingEntity> UpsertAsync(BorrowingEntity entity)
+        public async Task<BorrowingEntity> AddAsync(BorrowingEntity borrowing)
         {
-            if (entity != null)
-            {
-                var updatedDto = await _repository.UpsertAsync(entity);
+            var result = await _repository.AddAsync(borrowing);
 
-                return await Task.FromResult(updatedDto);
+            await _applicationContext.SaveChangesAsync();
+
+            return await Task.FromResult(result);
+        }
+
+        public async Task<BorrowingEntity> UpdateAsync(int id, BorrowingEntity borrowing)
+        {
+            var borrowingEntity = await _repository.GetAsync(id);
+
+            if (borrowingEntity != null)
+            {
+                borrowingEntity = _mapper.Map<BorrowingEntity>(borrowing);
+
+                borrowingEntity.Id = id;
+
+                var result = await _repository.UpdateAsync(borrowingEntity);
+
+                await _applicationContext.SaveChangesAsync();
+
+                return await Task.FromResult(result);
             }
 
             throw new ArgumentNullException("Null argument, check parameters");

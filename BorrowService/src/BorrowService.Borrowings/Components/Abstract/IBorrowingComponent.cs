@@ -12,7 +12,9 @@ namespace BorrowService.Borrowings.Components.Abstract
 
         Task<BorrowingEntity> GetByEmailAsync(string email);
 
-        Task<BorrowingEntity> UpsertAsync(BorrowingEntity entity);
+        Task<BorrowingEntity> AddAsync(BorrowingEntity entity);
+
+        Task<BorrowingEntity> UpdateAsync(int id, BorrowingEntity entity);
 
         Task<BorrowingEntity> DeleteAsync(int id);
     }

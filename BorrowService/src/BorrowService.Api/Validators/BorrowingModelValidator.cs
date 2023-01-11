@@ -1,9 +1,9 @@
-﻿using BorrowService.Api.Models;
+﻿using BorrowService.Api.RequestModels;
 using FluentValidation;
 
 namespace BorrowService.Api.Validators
 {
-    public class BorrowingModelValidator : AbstractValidator<BorrowingModel>
+    public class BorrowingModelValidator : AbstractValidator<BorrowingRequestModel>
     {
         public BorrowingModelValidator()
         {

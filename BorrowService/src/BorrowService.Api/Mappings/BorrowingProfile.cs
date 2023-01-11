@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BorrowService.Api.Models;
+using BorrowService.Api.RequestModels;
 using BorrowService.Borrowings.Entities;
 
 namespace BorrowService.Api.Mappings
@@ -8,7 +8,15 @@ namespace BorrowService.Api.Mappings
     {
         public BorrowingProfile()
         {
-            CreateMap<BorrowingModel, BorrowingEntity>().ForMember(x => x.Id, opt => opt.Ignore()).ReverseMap();
+            CreateMap<BorrowingRequestModel, BorrowingEntity>()
+                .ForMember(x => x.Id, opt => opt.Ignore());
+
+            CreateMap<BorrowingEntity, BorrowingRequestModel>()
+                .ForSourceMember(x => x.Id, opt => opt.DoNotValidate());
+
+            CreateMap<BorrowingEntity, BorrowingEntity>()
+                .ForMember(x => x.Id, opt => opt.Ignore())
+                .ForSourceMember(x => x.Id, opt => opt.DoNotValidate());
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using BorrowService.Api.Models;
+﻿using BorrowService.Api.RequestModels;
 using BorrowService.Api.Validators;
 using BorrowService.Borrowings;
 using BorrowService.Borrowings.Components;
@@ -22,7 +22,7 @@ namespace BorrowService.Api.AppDependenciesConfiguration
 
             builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-            builder.Services.AddScoped<IValidator<BorrowingModel>, BorrowingModelValidator>();
+            builder.Services.AddScoped<IValidator<BorrowingRequestModel>, BorrowingModelValidator>();
 
             return builder;
         }

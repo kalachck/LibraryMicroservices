@@ -1,6 +1,6 @@
-﻿namespace BorrowService.Api.Models
+﻿namespace BorrowService.Api.RequestModels
 {
-    public class BorrowingModel
+    public class BorrowingRequestModel
     {
         public string UserEmail { get; set; }
 
