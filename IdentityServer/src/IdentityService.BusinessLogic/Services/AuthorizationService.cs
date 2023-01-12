@@ -8,11 +8,11 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace IdentityService.BusinessLogic.Services
 {
-    public class LogInService : ILogInService
+    public class AuthorizationService : IAuthorizationService
     {
         private readonly UserManager<IdentityUser> _userManager;
 
-        public LogInService(UserManager<IdentityUser> userManager)
+        public AuthorizationService(UserManager<IdentityUser> userManager)
         {
             _userManager = userManager;
         }
@@ -25,7 +25,6 @@ namespace IdentityService.BusinessLogic.Services
                 {
                     new Claim(Claims.Subject, identityUser.UserName),
                     new Claim(Claims.Email, identityUser.Email).SetDestinations(Destinations.IdentityToken),
-                    new Claim(Claims.Name, identityUser.UserName),
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
@@ -37,7 +36,7 @@ namespace IdentityService.BusinessLogic.Services
                 return await Task.FromResult(claimPrincipal);
             }
 
-            throw new UserNotFoundException("User not found");
+            throw new NotFoundException("User not found");
         }
     }
 }

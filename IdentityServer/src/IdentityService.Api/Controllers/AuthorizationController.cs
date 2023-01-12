@@ -2,7 +2,6 @@
 using IdentityService.Api.Models;
 using IdentityService.BusinessLogic.Services.Abstarct;
 using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Server.AspNetCore;
@@ -13,40 +12,41 @@ namespace IdentityService.Api.Controllers
     [ApiController]
     public class AuthorizationController : ControllerBase
     {
-        private readonly ILogInService _authorizationProvider;
+        private readonly IAuthorizationService _authorizationService;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IMapper _mapper;
 
         public AuthorizationController(
-            ILogInService authorizationProvider,
+            IAuthorizationService authorizationService,
             SignInManager<IdentityUser> signInManager,
             IMapper mapper)
         {
-            _authorizationProvider = authorizationProvider;
+            _authorizationService = authorizationService;
             _signInManager = signInManager;
             _mapper = mapper;
         }
 
-        [AllowAnonymous]
+        [HttpGet]
         [HttpPost]
         [Route("LogIn")]
-        public async Task<IActionResult> LogIn(LoginModel model)
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> LogIn([FromQuery] LoginModel model)
         {
-            var request = HttpContext.GetOpenIddictClientRequest();
+            var request = HttpContext.GetOpenIddictServerRequest();
 
             if (request == null)
             {
                 return BadRequest("The OpenID Connect request cannot be retrieved.");
             }
 
-            var claimsPrincipal = await _authorizationProvider.LogInAsync(_mapper.Map<IdentityUser>(model), request);
+            var claimsPrincipal = await _authorizationService.LogInAsync(_mapper.Map<IdentityUser>(model), request);
 
             return SignIn(claimsPrincipal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
         }
 
-        [Authorize]
         [HttpPost]
         [Route("LogOut")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOut()
         {
             await _signInManager.SignOutAsync();
