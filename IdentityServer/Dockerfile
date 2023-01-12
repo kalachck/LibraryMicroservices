@@ -1,5 +1,3 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
@@ -7,13 +5,9 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-<<<<<<< HEAD
 COPY ["src/IdentityService.Api/IdentityService.Api.csproj", "src/IdentityService.Api/"]
 COPY ["src/IdentityService.BusinessLogic/IdentityService.BusinessLogic.csproj", "src/IdentityService.BusinessLogic/"]
 COPY ["src/IdentityService.DataAccess/IdentityService.DataAccess.csproj", "src/IdentityService.DataAccess/"]
-=======
-
->>>>>>> dev
 RUN dotnet restore "src/IdentityService.Api/IdentityService.Api.csproj"
 COPY . .
 WORKDIR "/src/src/IdentityService.Api"
