@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using IdentityService.Api.Models;
 using IdentityService.BusinessLogic.Services.Abstarct;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +8,6 @@ namespace IdentityService.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-   // [Authorize]
     public class UserСontroller : ControllerBase
     {
         private readonly IUserService _userService;
@@ -53,6 +51,24 @@ namespace IdentityService.Api.Controllers
         public async Task<IActionResult> Delete(string email)
         {
             var result = await _userService.DeleteAsync(email);
+
+            return Ok(result);
+        }
+
+        [HttpPut]
+        [Route("UpdatePassword")]
+        public async Task<IActionResult> UpdatePassword(string email, string currentPassword, string newPassword)
+        {
+            var result = await _userService.UpdatePasswordAsync(email, currentPassword, newPassword);
+
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("ResetPassword")]
+        public async Task<IActionResult> ResetPassword(string email)
+        {
+            var result = await _userService.ResetPasswordAsync(email);
 
             return Ok(result);
         }
