@@ -5,7 +5,7 @@ services:
       container_name: sql_server2019_library
       environment:
         ACCEPT_EULA: "Y"
-        SA_PASSWORD: "Password2019"
+        SA_PASSWORD: "SALibrary2023"
         MSSQL_PID: Express
       ports:
         - "1433:1433"

@@ -1,5 +1,5 @@
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost, 1433;Initial Catalog=bookservicedatabase;User ID=kalachck;Password=LibraryPassword2023;"
+    "DefaultConnection": "Server=localhost, 1433;Initial Catalog=bookservicedatabase;User ID=library;Password=LibraryPassword2023;"
   }
 }
