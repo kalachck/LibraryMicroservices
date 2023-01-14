@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-  ms-sql-library-server:
+  library-server:
       image: "mcr.microsoft.com/mssql/server:2019-latest"
       container_name: sql_server2019_library
       environment:
@@ -11,7 +11,7 @@ services:
         - "1433:1433"
 
   library:
-    image: libraryimage
+    image: library_image
     container_name: library_service_container
     environment:
       ASPNETCORE_ENVIRONMENT: Development
