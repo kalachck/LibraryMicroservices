@@ -86,13 +86,15 @@ namespace IdentityService.BusinessLogic.Services
 
             if (user != null)
             {
-                currentPassword = _userManager.PasswordHasher.HashPassword(user, currentPassword);
+                var verificationResult = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, currentPassword);
 
-                if (await _userManager.CheckPasswordAsync(user, currentPassword))
+                if (((byte)verificationResult) == 1)
                 {
                     newPassword = _userManager.PasswordHasher.HashPassword(user, newPassword);
 
-                    await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+                    user.PasswordHash = newPassword;
+
+                    await _userManager.UpdateAsync(user);
 
                     return await Task.FromResult(user);
                 }
