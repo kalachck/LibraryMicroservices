@@ -13,13 +13,15 @@ namespace LibrarySevice.Api.Controllers
     {
         private readonly IBookService _bookService;
         private readonly IMapper _mapper;
-        private readonly IValidator<BookRequestModel> _validator;
+        private readonly IValidator<BookRequestModel> _bookValidator;
 
-        public BookController(IBookService bookService, IMapper mapper, IValidator<BookRequestModel> validator)
+        public BookController(IBookService bookService,
+            IMapper mapper,
+            IValidator<BookRequestModel> bookValidator)
         {
             _bookService = bookService;
             _mapper = mapper;
-            _validator = validator;
+            _bookValidator = bookValidator;
         }
 
         [HttpGet]
@@ -44,7 +46,7 @@ namespace LibrarySevice.Api.Controllers
         [Route("Add")]
         public async Task<IActionResult> Add([FromQuery] BookRequestModel model)
         {
-            var validationResult = await _validator.ValidateAsync(model);
+            var validationResult = await _bookValidator.ValidateAsync(model);
 
             if (validationResult.IsValid)
             {
@@ -57,10 +59,10 @@ namespace LibrarySevice.Api.Controllers
         }
 
         [HttpPut]
-        [Route("Update")]
-        public async Task<IActionResult> Update(int id, [FromQuery] BookRequestModel model)
+        [Route("UpdateBook")]
+        public async Task<IActionResult> UpdateBook(int id, [FromQuery] BookRequestModel model)
         {
-            var validationResult = await _validator.ValidateAsync(model);
+            var validationResult = await _bookValidator.ValidateAsync(model);
 
             if (validationResult.IsValid)
             {

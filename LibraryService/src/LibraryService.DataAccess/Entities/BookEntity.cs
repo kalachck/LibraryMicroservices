@@ -8,15 +8,15 @@ namespace LibrarySevice.DataAccess.Entities
 
         public DateTime PublicationDate { get; set; }
 
-        public int AuthorId { get; set; }
+        public int? AuthorId { get; set; } = null;
 
         public AuthorEntity Author { get; set; }
 
-        public int GenreId { get; set; }
+        public int? GenreId { get; set; } = null;
 
         public GenreEntity Genre { get; set; }
 
-        public int PublisherId { get; set; }
+        public int? PublisherId { get; set; } = null;
 
         public PublisherEntity Publisher { get; set; }
     }
