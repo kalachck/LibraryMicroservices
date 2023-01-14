@@ -6,15 +6,15 @@
 
         public DateTime PublicationDate { get; set; }
 
-        public int AuthorId { get; set; }
+        public int? AuthorId { get; set; } = null;
 
         public AuthorDTO Author { get; set; }
 
-        public int GenreId { get; set; }
+        public int? GenreId { get; set; } = null;
 
         public GenreDTO Genre { get; set; }
 
-        public int PublisherId { get; set; }
+        public int? PublisherId { get; set; } = null;
 
         public PublisherDTO Publisher { get; set; }
     }

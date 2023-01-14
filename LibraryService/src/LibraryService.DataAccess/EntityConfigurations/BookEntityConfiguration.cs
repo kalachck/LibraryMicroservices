@@ -12,20 +12,26 @@ namespace LibrarySevice.DataAccess.EntityConfigurations
 
             builder.HasOne(x => x.Author)
                 .WithMany(x => x.Books)
-                .HasForeignKey(x => x.AuthorId)
-                .IsRequired(false);
+                .HasForeignKey(x => x.AuthorId);
 
             builder.HasOne(x => x.Genre)
                 .WithMany(x => x.Books)
-                .HasForeignKey(x => x.GenreId)
-                .IsRequired(false);
+                .HasForeignKey(x => x.GenreId);
 
             builder.HasOne(x => x.Publisher)
                 .WithMany(x => x.Books)
-                .HasForeignKey(x => x.PublisherId)
-                .IsRequired(false);
+                .HasForeignKey(x => x.PublisherId);
 
             builder.HasKey(x => x.Id);
+
+            builder.Property(x => x.AuthorId)
+                .IsRequired(false);
+
+            builder.Property(x => x.GenreId)
+                .IsRequired(false);
+
+            builder.Property(x => x.PublisherId)
+                .IsRequired(false);
 
             builder.Property(x => x.Title)
                 .IsRequired()
