@@ -17,5 +17,3 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
     ports:
       - "5001:80"
-
-  
