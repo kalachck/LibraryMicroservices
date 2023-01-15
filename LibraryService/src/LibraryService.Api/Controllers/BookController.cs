@@ -4,6 +4,7 @@ using LibrarySevice.Api.Models;
 using LibrarySevice.BussinesLogic.DTOs;
 using LibrarySevice.BussinesLogic.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 
 namespace LibrarySevice.Api.Controllers
 {
@@ -28,40 +29,68 @@ namespace LibrarySevice.Api.Controllers
         [Route("Get")]
         public async Task<IActionResult> Get(int id)
         {
-            var book = await _bookService.GetAsync(id);
+            try
+            {
+                var book = await _bookService.GetAsync(id);
 
-            return Ok(book);
+                return Ok(book);
+            }
+            catch (SqlException)
+            {
+                return Conflict("Can't get this record. There were technical problems");
+            }
         }
 
         [HttpPost]
         [Route("Add")]
         public async Task<IActionResult> Add([FromQuery] BookRequestModel model)
         {
-            await _bookValidator.ValidateAsync(model);
+            try
+            {
+                await _bookValidator.ValidateAsync(model);
 
-            var result = await _bookService.AddAsync(_mapper.Map<BookDTO>(model));
+                var result = await _bookService.AddAsync(_mapper.Map<BookDTO>(model));
 
-            return Ok(result);
+                return Ok(result);
+            }
+            catch (SqlException)
+            {
+                return Conflict("The record was not added. There were technical problems");
+            }
         }
 
         [HttpPut]
         [Route("UpdateBook")]
         public async Task<IActionResult> UpdateBook(int id, [FromQuery] BookRequestModel model)
         {
-            await _bookValidator.ValidateAsync(model);
+            try
+            {
+                await _bookValidator.ValidateAsync(model);
 
-            var result = await _bookService.UpdateAsync(id, _mapper.Map<BookDTO>(model))
+                var result = await _bookService.UpdateAsync(id, _mapper.Map<BookDTO>(model));
 
-            return Ok(result);
+                return Ok(result);
+            }
+            catch (SqlException)
+            {
+                return Conflict("The record was not updated. There were technical problems");
+            }
         }
 
         [HttpDelete]
         [Route("Delete")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _bookService.DeleteAsync(id);
+            try
+            {
+                var result = await _bookService.DeleteAsync(id);
 
-            return Ok(result);
+                return Ok(result);
+            }
+            catch (SqlException)
+            {
+                return Conflict("The record was not deleted. There were technical problems");
+            }
         }
     }
 }

@@ -26,14 +26,21 @@ namespace LibrarySevice.BussinesLogic.Services
 
         public async Task<GenreDTO> GetAsync(int id)
         {
-            var genre = _repository.GetAsync(id);
-
-            if (genre != null)
+            try
             {
-                return await Task.FromResult(_mapper.Map<GenreDTO>(genre));
-            }
+                var genre = _repository.GetAsync(id);
 
-            throw new NotFoundException("Record was not found");
+                if (genre != null)
+                {
+                    return await Task.FromResult(_mapper.Map<GenreDTO>(genre));
+                }
+
+                throw new NotFoundException("Record was not found");
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
         }
 
         public async Task<string> AddAsync(GenreDTO genre)
@@ -48,44 +55,44 @@ namespace LibrarySevice.BussinesLogic.Services
             }
             catch (SqlException)
             {
-                return await Task.FromResult("The record was not added. There were technical problems");
+                throw;
             }
         }
 
         public async Task<string> UpdateAsync(int id, GenreDTO genre)
         {
-            var genreEntity = _repository.GetAsync(id);
-
-            if (genreEntity != null)
+            try
             {
-                genreEntity = _mapper.Map<Genre>(genre);
+                var genreEntity = _repository.GetAsync(id);
 
-                genreEntity.Id = id;
-
-                try
+                if (genreEntity != null)
                 {
+                    genreEntity = _mapper.Map<Genre>(genre);
+
+                    genreEntity.Id = id;
+
                     _repository.UpdateAsync(genreEntity);
 
                     await _applicationContext.SaveChangesAsync();
 
                     return await Task.FromResult("The record was successfully updated");
                 }
-                catch (SqlException)
-                {
-                    return await Task.FromResult("The record was not updated. There were technical problems");
-                }
-            }
 
-            throw new NotFoundException("Record was not found");
+                throw new NotFoundException("Record was not found");
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
         }
 
         public async Task<string> DeleteAsync(int id)
         {
-            var genre = _repository.GetAsync(id);
-
-            if (genre != null)
+            try
             {
-                try
+                var genre = _repository.GetAsync(id);
+
+                if (genre != null)
                 {
                     _repository.DeleteAsync(genre);
 
@@ -93,13 +100,13 @@ namespace LibrarySevice.BussinesLogic.Services
 
                     return await Task.FromResult("The record was successfully deleted");
                 }
-                catch (SqlException)
-                {
-                    return await Task.FromResult("The record was not deleted. There were technical problems");
-                }
-            }
 
-            throw new NotFoundException("Record was not found");
+                throw new NotFoundException("Record was not found");
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
         }
     }
 }
