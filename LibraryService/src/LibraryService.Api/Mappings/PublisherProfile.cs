@@ -13,10 +13,10 @@ namespace LibrarySevice.Api.Mappings
 
             CreateMap<PublisherDTO, PublisherRequestModel>();
 
-            CreateMap<PublisherDTO, PublisherEntity>()
+            CreateMap<PublisherDTO, Publisher>()
                 .ForMember(dest => dest.Id, options => options.Ignore());
 
-            CreateMap<PublisherEntity, PublisherDTO>()
+            CreateMap<Publisher, PublisherDTO>()
                 .ForSourceMember(dest => dest.Id, options => options.DoNotValidate());
         }
     }

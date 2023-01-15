@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LibrarySevice.DataAccess.EntityConfigurations
 {
-    public class AuthorEntityConfiguration : IEntityTypeConfiguration<AuthorEntity>
+    public class AuthorEntityConfiguration : IEntityTypeConfiguration<Author>
     {
-        public void Configure(EntityTypeBuilder<AuthorEntity> builder)
+        public void Configure(EntityTypeBuilder<Author> builder)
         {
             builder.ToTable("Author");
 
@@ -14,13 +14,12 @@ namespace LibrarySevice.DataAccess.EntityConfigurations
 
             builder.Property(x => x.Name)
                 .IsRequired()
-                .HasMaxLength(30)
                 .HasColumnType("nvarchar");
 
             builder.HasData
                 (
-                    new AuthorEntity() { Id = 1, Name = "Лев"},
-                    new AuthorEntity() { Id = 2, Name = "Александр"}
+                    new Author() { Id = 1, Name = "Лев"},
+                    new Author() { Id = 2, Name = "Александр"}
                 );
         }
     }

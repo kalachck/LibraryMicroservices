@@ -13,10 +13,10 @@ namespace LibrarySevice.Api.Mappings
 
             CreateMap<GenreDTO, GenreRequestModel>();
 
-            CreateMap<GenreDTO, GenreEntity>()
+            CreateMap<GenreDTO, Genre>()
                 .ForMember(dest => dest.Id, options => options.Ignore());
 
-            CreateMap<GenreEntity, GenreDTO>()
+            CreateMap<Genre, GenreDTO>()
                 .ForSourceMember(dest => dest.Id, options => options.DoNotValidate()); ;
         }
     }

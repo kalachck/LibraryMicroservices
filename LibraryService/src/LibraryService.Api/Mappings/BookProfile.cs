@@ -13,9 +13,9 @@ namespace LibrarySevice.Api.Mappings
 
             CreateMap<BookDTO, BookRequestModel>();
 
-            CreateMap<BookDTO, BookEntity>();
+            CreateMap<BookDTO, Book>();
 
-            CreateMap<BookEntity, BookDTO>();
+            CreateMap<Book, BookDTO>();
         }
     }
 }

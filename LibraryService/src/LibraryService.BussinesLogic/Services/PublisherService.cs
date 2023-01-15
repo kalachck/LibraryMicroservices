@@ -4,17 +4,18 @@ using LibrarySevice.BussinesLogic.Exceptions;
 using LibrarySevice.BussinesLogic.Services.Abstract;
 using LibrarySevice.DataAccess;
 using LibrarySevice.DataAccess.Entities;
-using LibrarySevice.DataAccess.Repositories;
+using LibrarySevice.DataAccess.Repositories.Abstract;
+using Microsoft.Data.SqlClient;
 
 namespace LibrarySevice.BussinesLogic.Services
 {
     public class PublisherService : IPublisherService
     {
-        private readonly PublisherRepository _repository;
+        private readonly IBaseRepository<Publisher, ApplicationContext> _repository;
         private readonly ApplicationContext _applicationContext;
         private readonly IMapper _mapper;
 
-        public PublisherService(PublisherRepository repository,
+        public PublisherService(IBaseRepository<Publisher, ApplicationContext> repository,
             ApplicationContext applicationContext,
             IMapper mapper)
         {
@@ -23,21 +24,9 @@ namespace LibrarySevice.BussinesLogic.Services
             _mapper = mapper;
         }
 
-        public async Task<List<PublisherDTO>> TakeAsync(int amount)
-        {
-            var publishers = await _repository.TakeAsync(amount);
-
-            if (publishers != null)
-            {
-                return _mapper.Map<List<PublisherDTO>>(publishers);
-            }
-
-            throw new NotFoundException("Not a single record was found");
-        }
-
         public async Task<PublisherDTO> GetAsync(int id)
         {
-            var publisher = await _repository.GetAsync(id);
+            var publisher = _repository.GetAsync(id);
 
             if (publisher != null)
             {
@@ -47,46 +36,67 @@ namespace LibrarySevice.BussinesLogic.Services
             throw new NotFoundException("Record was not found");
         }
 
-        public async Task<PublisherDTO> AddAsync(PublisherDTO publisher)
+        public async Task<string> AddAsync(PublisherDTO publisher)
         {
-            var result = await _repository.AddAsync(_mapper.Map<PublisherEntity>(publisher));
-
-            await _applicationContext.SaveChangesAsync();
-
-            return await Task.FromResult(_mapper.Map<PublisherDTO>(result));
-        }
-
-        public async Task<PublisherDTO> UpdateAsync(int id, PublisherDTO publisher)
-        {
-            var publisherEntity = await _repository.GetAsync(id);
-
-            if (publisherEntity != null)
+            try
             {
-                publisherEntity = _mapper.Map<PublisherEntity>(publisher);
-
-                publisherEntity.Id = id;
-
-                var result = await _repository.UpdateAsync(publisherEntity);
+                _repository.AddAsync(_mapper.Map<Publisher>(publisher));
 
                 await _applicationContext.SaveChangesAsync();
 
-                return await Task.FromResult(_mapper.Map<PublisherDTO>(result));
+                return await Task.FromResult("The record was successfully added");
+            }
+            catch (SqlException)
+            {
+                return await Task.FromResult("The record was not added. There were technical problems");
+            }
+        }
+
+        public async Task<string> UpdateAsync(int id, PublisherDTO publisher)
+        {
+            var publisherEntity = _repository.GetAsync(id);
+
+            if (publisherEntity != null)
+            {
+                publisherEntity = _mapper.Map<Publisher>(publisher);
+
+                publisherEntity.Id = id;
+
+                try
+                {
+                    _repository.UpdateAsync(publisherEntity);
+
+                    await _applicationContext.SaveChangesAsync();
+
+                    return await Task.FromResult("The record was successfully updated");
+                }
+                catch (SqlException)
+                {
+                    return await Task.FromResult("The record was not updated. There were technical problems");
+                }
             }
 
             throw new NotFoundException("Record was not found");
         }
 
-        public async Task<PublisherDTO> DeleteAsync(int id)
+        public async Task<string> DeleteAsync(int id)
         {
-            var publisher = await _repository.GetAsync(id);
+            var publisher = _repository.GetAsync(id);
 
             if (publisher != null)
             {
-                var result = await _repository.DeleteAsync(publisher);
+                try
+                {
+                    _repository.DeleteAsync(publisher);
 
-                await _applicationContext.SaveChangesAsync();
+                    await _applicationContext.SaveChangesAsync();
 
-                return await Task.FromResult(_mapper.Map<PublisherDTO>(result));
+                    return await Task.FromResult("The record was successfully deleted");
+                }
+                catch (Exception)
+                {
+                    return await Task.FromResult("The record was not deleted. There were technical problems");
+                }
             }
 
             throw new NotFoundException("Record was not found");

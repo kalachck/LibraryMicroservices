@@ -15,20 +15,13 @@ namespace LibrarySevice.Api.Controllers
         private readonly IMapper _mapper;
         private readonly IValidator<PublisherRequestModel> _validator;
 
-        public PublisherController(IPublisherService publisherService, IMapper mapper, IValidator<PublisherRequestModel> validator)
+        public PublisherController(IPublisherService publisherService, 
+            IMapper mapper, 
+            IValidator<PublisherRequestModel> validator)
         {
             _publisherService = publisherService;
             _mapper = mapper;
             _validator = validator;
-        }
-
-        [HttpGet]
-        [Route("Take")]
-        public async Task<IActionResult> Take(int amount)
-        {
-            var publishers = await _publisherService.TakeAsync(amount);
-
-            return Ok(publishers);
         }
 
         [HttpGet]
@@ -44,41 +37,31 @@ namespace LibrarySevice.Api.Controllers
         [Route("Add")]
         public async Task<IActionResult> Add([FromQuery] PublisherRequestModel model)
         {
-            var validationResult = await _validator.ValidateAsync(model);
+            await _validator.ValidateAsync(model);
 
-            if (validationResult.IsValid)
-            {
-                var publisher = await _publisherService.AddAsync(_mapper.Map<PublisherDTO>(model));
+            var result = await _publisherService.AddAsync(_mapper.Map<PublisherDTO>(model));
 
-                return Ok(publisher);
-            }
-
-            return BadRequest("Invalid data! Pleasy try again");
+            return Ok(result);
         }
 
         [HttpPut]
         [Route("Update")]
         public async Task<IActionResult> Update(int id, [FromQuery] PublisherRequestModel model)
         {
-            var validationResult = await _validator.ValidateAsync(model);
+            await _validator.ValidateAsync(model);
 
-            if (validationResult.IsValid)
-            {
-                var publisher = _mapper.Map<PublisherDTO>(model);
+            var result = await _publisherService.UpdateAsync(id, _mapper.Map<PublisherDTO>(model));
 
-                return Ok(await _publisherService.UpdateAsync(id, publisher));
-            }
-
-            return BadRequest("Invalid data! Pleasy try again");
+            return Ok(result);
         }
 
         [HttpDelete]
         [Route("Delete")]
         public async Task<IActionResult> Delete(int id)
         {
-            var publisher = await _publisherService.DeleteAsync(id);
+            var result = await _publisherService.DeleteAsync(id);
 
-            return Ok(publisher);
+            return Ok(result);
         }
     }
 }

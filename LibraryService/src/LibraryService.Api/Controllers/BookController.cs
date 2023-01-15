@@ -25,15 +25,6 @@ namespace LibrarySevice.Api.Controllers
         }
 
         [HttpGet]
-        [Route("Take")]
-        public async Task<IActionResult> Take(int amount)
-        {
-            var books = await _bookService.TakeAsync(amount);
-
-            return Ok(books);
-        }
-
-        [HttpGet]
         [Route("Get")]
         public async Task<IActionResult> Get(int id)
         {
@@ -46,41 +37,31 @@ namespace LibrarySevice.Api.Controllers
         [Route("Add")]
         public async Task<IActionResult> Add([FromQuery] BookRequestModel model)
         {
-            var validationResult = await _bookValidator.ValidateAsync(model);
+            await _bookValidator.ValidateAsync(model);
 
-            if (validationResult.IsValid)
-            {
-                var book = await _bookService.AddAsync(_mapper.Map<BookDTO>(model));
+            var result = await _bookService.AddAsync(_mapper.Map<BookDTO>(model));
 
-                return Ok(book);
-            }
-
-            return BadRequest("Invalid data! Pleasy try again");
+            return Ok(result);
         }
 
         [HttpPut]
         [Route("UpdateBook")]
         public async Task<IActionResult> UpdateBook(int id, [FromQuery] BookRequestModel model)
         {
-            var validationResult = await _bookValidator.ValidateAsync(model);
+            await _bookValidator.ValidateAsync(model);
 
-            if (validationResult.IsValid)
-            {
-                var book = _mapper.Map<BookDTO>(model);
+            var result = await _bookService.UpdateAsync(id, _mapper.Map<BookDTO>(model))
 
-                return Ok(await _bookService.UpdateAsync(id, book));
-            }
-
-            return BadRequest("Invalid data! Pleasy try again");
+            return Ok(result);
         }
 
         [HttpDelete]
         [Route("Delete")]
         public async Task<IActionResult> Delete(int id)
         {
-            var book = await _bookService.DeleteAsync(id);
+            var result = await _bookService.DeleteAsync(id);
 
-            return Ok(book);
+            return Ok(result);
         }
     }
 }

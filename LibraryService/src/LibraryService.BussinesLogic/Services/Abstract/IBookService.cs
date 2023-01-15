@@ -4,14 +4,12 @@ namespace LibrarySevice.BussinesLogic.Services.Abstract
 {
     public interface IBookService
     {
-        Task<List<BookDTO>> TakeAsync(int amount);
-
         Task<BookDTO> GetAsync(int id);
 
-        Task<BookDTO> AddAsync(BookDTO book);
+        Task<string> AddAsync(BookDTO book);
 
-        Task<BookDTO> UpdateAsync(int id, BookDTO book);
+        Task<string> UpdateAsync(int id, BookDTO book);
 
-        Task<BookDTO> DeleteAsync(int id);
+        Task<string> DeleteAsync(int id);
     }
 }

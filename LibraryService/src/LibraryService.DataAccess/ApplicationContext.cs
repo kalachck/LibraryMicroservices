@@ -6,13 +6,13 @@ namespace LibrarySevice.DataAccess
 {
     public class ApplicationContext : DbContext
     {
-        public DbSet<BookEntity> Books { get; set; }
+        public DbSet<Book> Books { get; set; }
 
-        public DbSet<AuthorEntity> Authors { get; set; }
+        public DbSet<Author> Authors { get; set; }
 
-        public DbSet<PublisherEntity> Publishers { get; set; }
+        public DbSet<Publisher> Publishers { get; set; }
 
-        public DbSet<GenreEntity> Genres { get; set; }
+        public DbSet<Genre> Genres { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         { }

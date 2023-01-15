@@ -15,20 +15,13 @@ namespace LibrarySevice.Api.Controllers
         private readonly IMapper _mapper;
         private readonly IValidator<AuthorRequestModel> _validator;
 
-        public AuthorController(IAuthorService authorService, IMapper mapper, IValidator<AuthorRequestModel> validator)
+        public AuthorController(IAuthorService authorService, 
+            IMapper mapper,
+            IValidator<AuthorRequestModel> validator)
         {
             _authorService = authorService;
             _mapper = mapper;
             _validator = validator;
-        }
-
-        [HttpGet]
-        [Route("Take")]
-        public async Task<IActionResult> Take(int amount)
-        {
-            var authors = await _authorService.TakeAsync(amount);
-
-            return Ok(authors);
         }
 
         [HttpGet]
@@ -44,41 +37,31 @@ namespace LibrarySevice.Api.Controllers
         [Route("Add")]
         public async Task<IActionResult> Add([FromQuery] AuthorRequestModel model)
         {
-            var validationResult = await _validator.ValidateAsync(model);
+            await _validator.ValidateAsync(model);
 
-            if (validationResult.IsValid)
-            {
-                var author = await _authorService.AddAsync(_mapper.Map<AuthorDTO>(model));
+            var result = await _authorService.AddAsync(_mapper.Map<AuthorDTO>(model));
 
-                return Ok(author);
-            }
-
-            return BadRequest("Invalid data! Pleasy try again");
+            return Ok(result);
         }
 
         [HttpPut]
         [Route("Update")]
         public async Task<IActionResult> Update(int id, [FromQuery] AuthorRequestModel model)
         {
-            var validationResult = await _validator.ValidateAsync(model);
+            await _validator.ValidateAsync(model);
 
-            if (validationResult.IsValid)
-            {
-                var author = _mapper.Map<AuthorDTO>(model);
+            var result = await _authorService.UpdateAsync(id, _mapper.Map<AuthorDTO>(model));
 
-                return Ok(await _authorService.UpdateAsync(id, author));
-            }
-
-            return BadRequest("Invalid data! Pleasy try again");
+            return Ok(result);
         }
 
         [HttpDelete]
         [Route("Delete")]
         public async Task<IActionResult> Delete(int id)
         {
-            var dto = await _authorService.DeleteAsync(id);
+            var result = await _authorService.DeleteAsync(id);
 
-            return Ok(dto);
+            return Ok(result);
         }
     }
 }

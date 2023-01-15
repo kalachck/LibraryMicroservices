@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LibrarySevice.DataAccess.EntityConfigurations
 {
-    public class GenreEntityConfiguration : IEntityTypeConfiguration<GenreEntity>
+    public class GenreEntityConfiguration : IEntityTypeConfiguration<Genre>
     {
-        public void Configure(EntityTypeBuilder<GenreEntity> builder)
+        public void Configure(EntityTypeBuilder<Genre> builder)
         {
             builder.ToTable("Genres");
 
@@ -14,13 +14,12 @@ namespace LibrarySevice.DataAccess.EntityConfigurations
 
             builder.Property(x => x.Title)
                 .IsRequired()
-                .HasColumnType("nvarchar")
-                .HasMaxLength(30);
+                .HasColumnType("nvarchar");
 
             builder.HasData
                 (
-                    new GenreEntity() { Id = 1, Title = "Драма" },
-                    new GenreEntity() { Id = 2, Title = "Детектив" }
+                    new Genre() { Id = 1, Title = "Драма" },
+                    new Genre() { Id = 2, Title = "Детектив" }
                 );
         }
     }

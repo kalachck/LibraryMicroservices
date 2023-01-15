@@ -4,17 +4,18 @@ using LibrarySevice.BussinesLogic.Exceptions;
 using LibrarySevice.BussinesLogic.Services.Abstract;
 using LibrarySevice.DataAccess;
 using LibrarySevice.DataAccess.Entities;
-using LibrarySevice.DataAccess.Repositories;
+using LibrarySevice.DataAccess.Repositories.Abstract;
+using Microsoft.Data.SqlClient;
 
 namespace LibrarySevice.BussinesLogic.Services
 {
     public class BookService : IBookService
     {
-        private readonly BookRepository _repository;
+        private readonly IBaseRepository<Book, ApplicationContext> _repository;
         private readonly ApplicationContext _applicationContext;
         private readonly IMapper _mapper;
 
-        public BookService(BookRepository repository,
+        public BookService(IBaseRepository<Book, ApplicationContext> repository,
             ApplicationContext applicationContext,
             IMapper mapper)
         {
@@ -25,7 +26,7 @@ namespace LibrarySevice.BussinesLogic.Services
 
         public async Task<BookDTO> GetAsync(int id)
         {
-            var book = await _repository.GetAsync(id);
+            var book = _repository.GetAsync(id);
 
             if (book != null)
             {
@@ -35,58 +36,67 @@ namespace LibrarySevice.BussinesLogic.Services
             throw new NotFoundException("Record was not found");
         }
 
-        public async Task<List<BookDTO>> TakeAsync(int amount)
+        public async Task<string> AddAsync(BookDTO book)
         {
-            var books = await _repository.TakeAsync(amount);
-
-            if (books != null)
+            try
             {
-                return _mapper.Map<List<BookDTO>>(books);
-            }
-
-            throw new NotFoundException("Not a single record was found");
-        }
-
-        public async Task<BookDTO> AddAsync(BookDTO book)
-        {
-            var result = await _repository.AddAsync(_mapper.Map<BookEntity>(book));
-
-            await _applicationContext.SaveChangesAsync();
-
-            return await Task.FromResult(_mapper.Map<BookDTO>(result));
-        }
-
-        public async Task<BookDTO> UpdateAsync(int id, BookDTO book)
-        {
-            var bookEntity = await _repository.GetAsync(id);
-
-            if (bookEntity != null)
-            {
-                bookEntity = _mapper.Map<BookEntity>(book);
-
-                bookEntity.Id = id;
-
-                var result = await _repository.UpdateAsync(bookEntity);
+                _repository.AddAsync(_mapper.Map<Book>(book));
 
                 await _applicationContext.SaveChangesAsync();
 
-                return await Task.FromResult(_mapper.Map<BookDTO>(result));
+                return await Task.FromResult("The record was successfully added");
+            }
+            catch (SqlException)
+            {
+                return await Task.FromResult("The record was not added. There were technical problems");
+            }
+        }
+
+        public async Task<string> UpdateAsync(int id, BookDTO book)
+        {
+            var bookEntity = _repository.GetAsync(id);
+
+            if (bookEntity != null)
+            {
+                bookEntity = _mapper.Map<Book>(book);
+
+                bookEntity.Id = id;
+
+                try
+                {
+                    _repository.UpdateAsync(bookEntity);
+
+                    await _applicationContext.SaveChangesAsync();
+
+                    return await Task.FromResult("The record was successfully updated");
+                }
+                catch (SqlException)
+                {
+                    return await Task.FromResult("The record was not updated. There were technical problems");
+                }
             }
 
             throw new NotFoundException("Record was not found");
         }
 
-        public async Task<BookDTO> DeleteAsync(int id)
+        public async Task<string> DeleteAsync(int id)
         {
-            var book = await _repository.GetAsync(id);
+            var book = _repository.GetAsync(id);
 
             if (book != null)
             {
-                var result = await _repository.DeleteAsync(book);
+                try
+                {
+                    _repository.DeleteAsync(book);
 
-                await _applicationContext.SaveChangesAsync();
+                    await _applicationContext.SaveChangesAsync();
 
-                return await Task.FromResult(_mapper.Map<BookDTO>(result));
+                    return await Task.FromResult("The record was successfully deleted");
+                }
+                catch (Exception)
+                {
+                    return await Task.FromResult("The record was not deleted. There were technical problems");
+                }
             }
 
             throw new NotFoundException("Record was not found");

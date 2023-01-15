@@ -3,7 +3,6 @@ This project is designed to optimize the process of working with books
 
 | Method                       | Description                       |
 | ---------------------------- | ----------------------------------|
-| Take                         | Take amount of entities           |
 | Get                          | Get entity by id                  |
 | Add                          | Adds entity into the database     |
 | Update                       | Updates entity in the database    |
@@ -51,22 +50,6 @@ As for the FluentValidation tool, it will allow save time when solving problems 
 This service implements a three-layer architecture. The DAL is intended for access to the storage of entites, in particular for management library data. The BLL implements the entity validation process for successful operations with database. The API Deloged for convenient display of the menagement process in the browser
 
 # Cases
-
-**Feature**: Take entities from the database  
-**As an** admin to handle entities  
-**I want to** take entities from the database
-
-**Scenario** Entities have been found  
-**Given** an admin who want to take entities from the database  
-**Then** Entities have been successfully found   
-**And** entities was returned
-
-**Scenario** Entities have not been found  
-**Given** an admin who want to take entities from the database  
-**Then** entities have not been found  
-**And** error will be returned to an admin 
-
----
 
 **Feature**: Get entity from the database  
 **As an** admin to handle entities  

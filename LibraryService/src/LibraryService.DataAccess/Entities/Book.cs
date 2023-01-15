@@ -2,7 +2,7 @@
 
 namespace LibrarySevice.DataAccess.Entities
 {
-    public class BookEntity : BaseEntity
+    public class Book : Base
     {
         public string Title { get; set; }
 
@@ -10,14 +10,14 @@ namespace LibrarySevice.DataAccess.Entities
 
         public int? AuthorId { get; set; } = null;
 
-        public AuthorEntity Author { get; set; }
+        public Author Author { get; set; }
 
         public int? GenreId { get; set; } = null;
 
-        public GenreEntity Genre { get; set; }
+        public Genre Genre { get; set; }
 
         public int? PublisherId { get; set; } = null;
 
-        public PublisherEntity Publisher { get; set; }
+        public Publisher Publisher { get; set; }
     }
 }

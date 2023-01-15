@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LibrarySevice.DataAccess.EntityConfigurations
 {
-    public class BookEntityConfiguration : IEntityTypeConfiguration<BookEntity>
+    public class BookEntityConfiguration : IEntityTypeConfiguration<Book>
     {
-        public void Configure(EntityTypeBuilder<BookEntity> builder)
+        public void Configure(EntityTypeBuilder<Book> builder)
         {
             builder.ToTable("Book");
 
@@ -35,7 +35,6 @@ namespace LibrarySevice.DataAccess.EntityConfigurations
 
             builder.Property(x => x.Title)
                 .IsRequired()
-                .HasMaxLength(50)
                 .HasColumnType("nvarchar");
 
             builder.Property(x => x.PublicationDate)
@@ -44,7 +43,7 @@ namespace LibrarySevice.DataAccess.EntityConfigurations
 
             builder.HasData
                 (
-                    new BookEntity()
+                    new Book()
                     {
                         Id = 1,
                         Title = "Война и мир",
@@ -53,7 +52,7 @@ namespace LibrarySevice.DataAccess.EntityConfigurations
                         GenreId = 1,
                         PublisherId = 1
                     },
-                    new BookEntity()
+                    new Book()
                     {
                         Id = 2,
                         Title = "Борис Годунов",

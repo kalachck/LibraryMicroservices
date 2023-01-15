@@ -2,10 +2,12 @@
 
 namespace LibrarySevice.DataAccess.Entities
 {
-    public class GenreEntity : BaseEntity
+    public class Publisher : Base
     {
         public string Title { get; set; }
 
-        public IList<BookEntity> Books { get; set; }
+        public string Address { get; set; }
+
+        public IList<Book> Books { get; set; }
     }
 }

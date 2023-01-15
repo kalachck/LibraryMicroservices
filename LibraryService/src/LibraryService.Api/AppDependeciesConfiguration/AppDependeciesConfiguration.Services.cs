@@ -7,6 +7,8 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using LibrarySevice.BussinesLogic.Services.Abstract;
+using LibrarySevice.DataAccess.Repositories.Abstract;
+using LibrarySevice.DataAccess.Entities;
 
 namespace LibrarySevice.Api.AppDependeciesConfiguration
 {
@@ -19,10 +21,10 @@ namespace LibrarySevice.Api.AppDependeciesConfiguration
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            builder.Services.AddScoped<AuthorRepository>();
-            builder.Services.AddScoped<BookRepository>();
-            builder.Services.AddScoped<PublisherRepository>();
-            builder.Services.AddScoped<GenreRepository>();
+            builder.Services.AddScoped<IBaseRepository<Author, ApplicationContext>, BaseRepository<Author, ApplicationContext>>();
+            builder.Services.AddScoped<IBaseRepository<Book, ApplicationContext>, BaseRepository<Book, ApplicationContext>>();
+            builder.Services.AddScoped<IBaseRepository<Genre, ApplicationContext>, BaseRepository<Genre, ApplicationContext>>();
+            builder.Services.AddScoped<IBaseRepository<Publisher, ApplicationContext>, BaseRepository<Publisher, ApplicationContext>>();
 
             builder.Services.AddScoped<IAuthorService, AuthorService>();
             builder.Services.AddScoped<IBookService, BussinesLogic.Services.BookService>();
