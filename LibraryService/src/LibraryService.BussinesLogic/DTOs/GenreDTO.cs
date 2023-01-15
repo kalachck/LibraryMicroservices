@@ -2,7 +2,7 @@
 {
     public class GenreDTO
     {
-        public string Title { get; set; }
+        public string Name { get; set; }
 
         public IList<BookDTO> Books { get; set; }
     }

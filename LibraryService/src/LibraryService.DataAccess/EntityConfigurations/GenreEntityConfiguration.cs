@@ -12,14 +12,14 @@ namespace LibrarySevice.DataAccess.EntityConfigurations
 
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Title)
+            builder.Property(x => x.Name)
                 .IsRequired()
                 .HasColumnType("nvarchar");
 
             builder.HasData
                 (
-                    new Genre() { Id = 1, Title = "Драма" },
-                    new Genre() { Id = 2, Title = "Детектив" }
+                    new Genre() { Id = 1, Name = "Драма" },
+                    new Genre() { Id = 2, Name = "Детектив" }
                 );
         }
     }

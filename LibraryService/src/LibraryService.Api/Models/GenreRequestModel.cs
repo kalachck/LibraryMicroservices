@@ -2,7 +2,7 @@
 {
     public class GenreRequestModel
     {
-        public string Title { get; set; }
+        public string Name { get; set; }
 
         public IList<BookRequestModel> Books { get; set; }
     }

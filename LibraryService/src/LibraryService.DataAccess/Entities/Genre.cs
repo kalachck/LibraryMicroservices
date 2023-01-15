@@ -4,7 +4,7 @@ namespace LibrarySevice.DataAccess.Entities
 {
     public class Genre : Base
     {
-        public string Title { get; set; }
+        public string Name { get; set; }
 
         public IList<Book> Books { get; set; }
     }

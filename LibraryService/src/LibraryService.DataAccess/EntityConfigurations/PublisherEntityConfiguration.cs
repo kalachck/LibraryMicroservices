@@ -12,7 +12,7 @@ namespace LibrarySevice.DataAccess.EntityConfigurations
 
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Title)
+            builder.Property(x => x.Name)
                 .IsRequired()
                 .HasColumnType("nvarchar");
 
@@ -22,8 +22,8 @@ namespace LibrarySevice.DataAccess.EntityConfigurations
 
             builder.HasData
                 (
-                    new Publisher() { Id = 1, Title = "Артек", Address = "ул. Пушкина дом Колотушкина"},
-                    new Publisher() { Id = 2, Title = "Книга", Address = "ул. Немига 44"}
+                    new Publisher() { Id = 1, Name = "Артек", Address = "ул. Пушкина дом Колотушкина"},
+                    new Publisher() { Id = 2, Name = "Книга", Address = "ул. Немига 44"}
                 );
         }
     }
