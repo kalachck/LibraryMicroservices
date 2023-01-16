@@ -8,13 +8,13 @@ namespace BorrowService.Api.Mappings
     {
         public BorrowingProfile()
         {
-            CreateMap<BorrowingRequestModel, BorrowingEntity>()
+            CreateMap<BorrowingRequestModel, Borrowing>()
                 .ForMember(x => x.Id, opt => opt.Ignore());
 
-            CreateMap<BorrowingEntity, BorrowingRequestModel>()
+            CreateMap<Borrowing, BorrowingRequestModel>()
                 .ForSourceMember(x => x.Id, opt => opt.DoNotValidate());
 
-            CreateMap<BorrowingEntity, BorrowingEntity>()
+            CreateMap<Borrowing, Borrowing>()
                 .ForMember(x => x.Id, opt => opt.Ignore())
                 .ForSourceMember(x => x.Id, opt => opt.DoNotValidate());
         }

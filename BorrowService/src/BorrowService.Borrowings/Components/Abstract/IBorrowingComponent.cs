@@ -4,18 +4,16 @@ namespace BorrowService.Borrowings.Components.Abstract
 {
     public interface IBorrowingComponent
     {
-        Task<List<BorrowingEntity>> TakeAsync(int amount);
+        Task<Borrowing> GetAsync(int id);
 
-        Task<BorrowingEntity> GetAsync(int id);
+        Task<Borrowing> GetByBookIdAsync(int id);
 
-        Task<BorrowingEntity> GetByBookIdAsync(int id);
+        Task<Borrowing> GetByEmailAsync(string email);
 
-        Task<BorrowingEntity> GetByEmailAsync(string email);
+        Task<string> BorrowAsync(string email, int bookId, HttpClient httpClient);
 
-        Task<BorrowingEntity> AddAsync(BorrowingEntity entity);
+        Task<string> UpdateAsync(int id, Borrowing entity);
 
-        Task<BorrowingEntity> UpdateAsync(int id, BorrowingEntity entity);
-
-        Task<BorrowingEntity> DeleteAsync(int id);
+        Task<string> DeleteAsync(int id);
     }
 }

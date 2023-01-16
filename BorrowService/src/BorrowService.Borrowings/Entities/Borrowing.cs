@@ -1,6 +1,6 @@
 ﻿namespace BorrowService.Borrowings.Entities
 {
-    public class BorrowingEntity
+    public class Borrowing
     {
         public int Id { get; set; }
 

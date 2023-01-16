@@ -4,18 +4,16 @@ namespace BorrowService.Borrowings.Repositories.Abstract
 {
     public interface IBorrowingRepository
     {
-        Task<List<BorrowingEntity>> TakeAsync(int amount);
+        Task<Borrowing> GetAsync(int id);
 
-        Task<BorrowingEntity> GetAsync(int id);
+        Task<Borrowing> GetByBookIdAsync(int id);
 
-        Task<BorrowingEntity> GetByBookIdAsync(int id);
+        Task<Borrowing> GetByEmailAsync(string email);
 
-        Task<BorrowingEntity> GetByEmailAsync(string email);
+        void Add(Borrowing entity);
 
-        Task<BorrowingEntity> AddAsync(BorrowingEntity entity);
+        void Update(Borrowing entity);
 
-        Task<BorrowingEntity> UpdateAsync(BorrowingEntity entity);
-
-        Task<BorrowingEntity> DeleteAsync(BorrowingEntity entity);
+        void Delete(Borrowing entity);
     }
 }

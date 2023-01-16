@@ -6,7 +6,7 @@ namespace BorrowService.Borrowings
 {
     public class ApplicationContext : DbContext
     {
-        public DbSet<BorrowingEntity> Borrowings { get; set; }
+        public DbSet<Borrowing> Borrowings { get; set; }
 
         public ApplicationContext()
         { }

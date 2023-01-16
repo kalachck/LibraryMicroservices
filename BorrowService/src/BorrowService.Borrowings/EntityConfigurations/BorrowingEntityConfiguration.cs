@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BorrowService.Borrowings.EntityConfigurations
 {
-    public class BorrowingEntityConfiguration : IEntityTypeConfiguration<BorrowingEntity>
+    public class BorrowingEntityConfiguration : IEntityTypeConfiguration<Borrowing>
     {
-        public void Configure(EntityTypeBuilder<BorrowingEntity> builder)
+        public void Configure(EntityTypeBuilder<Borrowing> builder)
         {
             builder.ToTable("Borrowings");
 

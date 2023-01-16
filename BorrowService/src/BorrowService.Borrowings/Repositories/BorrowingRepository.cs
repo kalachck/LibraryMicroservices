@@ -13,47 +13,34 @@ namespace BorrowService.Borrowings.Repositories
             _applicationContext = applicationContext;
         }
 
-        public async Task<List<BorrowingEntity>> TakeAsync(int amount)
-        {
-            return await _applicationContext.Borrowings.AsNoTracking().Take(amount).ToListAsync();
-        }
-
-        public async Task<BorrowingEntity> GetAsync(int id)
+        public async Task<Borrowing> GetAsync(int id)
         {
             return await _applicationContext.Borrowings.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<BorrowingEntity> GetByBookIdAsync(int bookId)
+        public async Task<Borrowing> GetByBookIdAsync(int bookId)
         {
             return await _applicationContext.Borrowings.AsNoTracking().FirstOrDefaultAsync(x => x.BookId == bookId);
         }
 
-        public async Task<BorrowingEntity> GetByEmailAsync(string email)
+        public async Task<Borrowing> GetByEmailAsync(string email)
         {
             return await _applicationContext.Borrowings.AsNoTracking().FirstOrDefaultAsync(x => x.UserEmail == email);
         }
 
-        public async Task<BorrowingEntity> AddAsync(BorrowingEntity entity)
+        public void Add(Borrowing entity)
         {
             _applicationContext.Borrowings.Add(entity);
-
-            return await Task.FromResult(entity);
         }
 
-        public async Task<BorrowingEntity> UpdateAsync(BorrowingEntity entity)
+        public void Update(Borrowing entity)
         {
             _applicationContext.Borrowings.Update(entity);
-
-            return await Task.FromResult(entity);
         }
 
-        public async Task<BorrowingEntity> DeleteAsync(BorrowingEntity entity)
+        public void Delete(Borrowing entity)
         {
-            _applicationContext.Entry(entity).State = EntityState.Deleted;
-
-            await _applicationContext.SaveChangesAsync();
-
-            return await Task.FromResult(entity);
+            _applicationContext.Borrowings.Remove(entity);
         }
     }
 }
