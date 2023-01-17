@@ -15,22 +15,22 @@ namespace LibrarySevice.DataAccess.Repositories
             _dbSet = context.Set<TEntity>();
         }
 
-        public TEntity GetAsync(int id)
+        public async Task<TEntity> GetAsync(int id)
         {
-            return _dbSet.AsNoTracking().FirstOrDefault(x => x.Id == id);
+            return await _dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public void AddAsync(TEntity entity)
+        public void Add(TEntity entity)
         {
             _dbSet.Add(entity);
         }
 
-        public void UpdateAsync(TEntity entity)
+        public void Update(TEntity entity)
         {
             _dbSet.Update(entity);
         }
 
-        public void DeleteAsync(TEntity entity)
+        public void Delete(TEntity entity)
         {
             _dbSet.Remove(entity);
         }

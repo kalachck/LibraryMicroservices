@@ -2,6 +2,7 @@
 using FluentValidation;
 using LibrarySevice.Api.Models;
 using LibrarySevice.BussinesLogic.DTOs;
+using LibrarySevice.BussinesLogic.Exceptions;
 using LibrarySevice.BussinesLogic.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -35,8 +36,13 @@ namespace LibrarySevice.Api.Controllers
 
                 return Ok(author);
             }
-            catch (SqlException)
+            catch (Exception ex)
             {
+                if (ex is NotFoundException)
+                {
+                    return NotFound(ex.Message);
+                }
+
                 return Conflict("Can't get this record. There were technical problems");
             }  
         }
@@ -53,7 +59,7 @@ namespace LibrarySevice.Api.Controllers
 
                 return Ok(result);
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 return Conflict("The record was not added. There were technical problems");
             }
@@ -71,8 +77,13 @@ namespace LibrarySevice.Api.Controllers
 
                 return Ok(result);
             }
-            catch (SqlException)
+            catch (Exception ex)
             {
+                if (ex is NotFoundException)
+                {
+                    return NotFound(ex.Message);
+                }
+
                 return Conflict("The record was not updated. There were technical problems");
             }
         }
@@ -87,8 +98,13 @@ namespace LibrarySevice.Api.Controllers
 
                 return Ok(result);
             }
-            catch (SqlException)
+            catch (Exception ex)
             {
+                if (ex is NotFoundException)
+                {
+                    return NotFound(ex.Message);
+                }
+
                 return Conflict("The record was not deleted. There were technical problems");
             }
         }

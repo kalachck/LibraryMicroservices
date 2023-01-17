@@ -5,7 +5,6 @@ using LibrarySevice.BussinesLogic.Services.Abstract;
 using LibrarySevice.DataAccess;
 using LibrarySevice.DataAccess.Entities;
 using LibrarySevice.DataAccess.Repositories.Abstract;
-using Microsoft.Data.SqlClient;
 
 namespace LibrarySevice.BussinesLogic.Services
 {
@@ -28,7 +27,7 @@ namespace LibrarySevice.BussinesLogic.Services
         {
             try
             {
-                var author = _repository.GetAsync(id);
+                var author = await _repository.GetAsync(id);
 
                 if (author != null)
                 {
@@ -37,7 +36,7 @@ namespace LibrarySevice.BussinesLogic.Services
 
                 throw new NotFoundException("Record was not found");
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 throw;
             }
@@ -47,13 +46,13 @@ namespace LibrarySevice.BussinesLogic.Services
         {
             try
             {
-                _repository.AddAsync(_mapper.Map<Author>(author));
+                _repository.Add(_mapper.Map<Author>(author));
 
                 await _applicationContext.SaveChangesAsync();
 
                 return await Task.FromResult("The record was successfully added");
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 throw;
             }
@@ -63,7 +62,7 @@ namespace LibrarySevice.BussinesLogic.Services
         {
             try
             {
-                var authorEntity = _repository.GetAsync(id);
+                var authorEntity = await _repository.GetAsync(id);
 
                 if (authorEntity != null)
                 {
@@ -71,7 +70,7 @@ namespace LibrarySevice.BussinesLogic.Services
 
                     authorEntity.Id = id;
 
-                    _repository.UpdateAsync(authorEntity);
+                    _repository.Update(authorEntity);
 
                     await _applicationContext.SaveChangesAsync();
 
@@ -80,7 +79,7 @@ namespace LibrarySevice.BussinesLogic.Services
 
                 throw new NotFoundException("Record was not found");
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 throw;
             }
@@ -90,12 +89,11 @@ namespace LibrarySevice.BussinesLogic.Services
         {
             try
             {
-                var author = _repository.GetAsync(id);
+                var author = await _repository.GetAsync(id);
 
                 if (author != null)
                 {
-
-                    _repository.DeleteAsync(author);
+                    _repository.Delete(author);
 
                     await _applicationContext.SaveChangesAsync();
 
@@ -104,7 +102,7 @@ namespace LibrarySevice.BussinesLogic.Services
 
                 throw new NotFoundException("Record was not found");
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 throw;
             }

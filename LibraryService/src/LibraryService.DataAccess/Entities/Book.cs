@@ -8,6 +8,8 @@ namespace LibrarySevice.DataAccess.Entities
 
         public DateTime PublicationDate { get; set; }
 
+        public bool IsAvailable { get; set; } = true;
+
         public int? AuthorId { get; set; } = null;
 
         public Author Author { get; set; }

@@ -7,12 +7,12 @@ namespace LibrarySevice.DataAccess.Repositories.Abstract
         where TEntity : Base
         where TContext: DbContext
     {
-        TEntity GetAsync(int id);
+        Task<TEntity> GetAsync(int id);
 
-        void UpdateAsync(TEntity entity);
+        void Update(TEntity entity);
 
-        void AddAsync(TEntity entity);
+        void Add(TEntity entity);
 
-        void DeleteAsync(TEntity entity);
+        void Delete(TEntity entity);
     }
 }

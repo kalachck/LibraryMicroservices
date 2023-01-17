@@ -5,7 +5,6 @@ using LibrarySevice.BussinesLogic.Services.Abstract;
 using LibrarySevice.DataAccess;
 using LibrarySevice.DataAccess.Entities;
 using LibrarySevice.DataAccess.Repositories.Abstract;
-using Microsoft.Data.SqlClient;
 
 namespace LibrarySevice.BussinesLogic.Services
 {
@@ -28,7 +27,7 @@ namespace LibrarySevice.BussinesLogic.Services
         {
             try
             {
-                var book = _repository.GetAsync(id);
+                var book = await _repository.GetAsync(id);
 
                 if (book != null)
                 {
@@ -37,7 +36,7 @@ namespace LibrarySevice.BussinesLogic.Services
 
                 throw new NotFoundException("Record was not found");
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 throw;
             }
@@ -47,13 +46,13 @@ namespace LibrarySevice.BussinesLogic.Services
         {
             try
             {
-                _repository.AddAsync(_mapper.Map<Book>(book));
+                _repository.Add(_mapper.Map<Book>(book));
 
                 await _applicationContext.SaveChangesAsync();
 
                 return await Task.FromResult("The record was successfully added");
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 throw;
             }
@@ -63,7 +62,7 @@ namespace LibrarySevice.BussinesLogic.Services
         {
             try
             {
-                var bookEntity = _repository.GetAsync(id);
+                var bookEntity = await _repository.GetAsync(id);
 
                 if (bookEntity != null)
                 {
@@ -71,7 +70,7 @@ namespace LibrarySevice.BussinesLogic.Services
 
                     bookEntity.Id = id;
 
-                    _repository.UpdateAsync(bookEntity);
+                    _repository.Update(bookEntity);
 
                     await _applicationContext.SaveChangesAsync();
 
@@ -80,7 +79,7 @@ namespace LibrarySevice.BussinesLogic.Services
 
                 throw new NotFoundException("Record was not found");
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 throw;
             }
@@ -90,11 +89,11 @@ namespace LibrarySevice.BussinesLogic.Services
         {
             try
             {
-                var book = _repository.GetAsync(id);
+                var book = await _repository.GetAsync(id);
 
                 if (book != null)
                 {
-                    _repository.DeleteAsync(book);
+                    _repository.Delete(book);
 
                     await _applicationContext.SaveChangesAsync();
 

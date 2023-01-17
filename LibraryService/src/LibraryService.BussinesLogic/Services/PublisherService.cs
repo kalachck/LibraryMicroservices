@@ -5,7 +5,6 @@ using LibrarySevice.BussinesLogic.Services.Abstract;
 using LibrarySevice.DataAccess;
 using LibrarySevice.DataAccess.Entities;
 using LibrarySevice.DataAccess.Repositories.Abstract;
-using Microsoft.Data.SqlClient;
 
 namespace LibrarySevice.BussinesLogic.Services
 {
@@ -37,7 +36,7 @@ namespace LibrarySevice.BussinesLogic.Services
 
                 throw new NotFoundException("Record was not found");
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 throw;
             }
@@ -47,13 +46,13 @@ namespace LibrarySevice.BussinesLogic.Services
         {
             try
             {
-                _repository.AddAsync(_mapper.Map<Publisher>(publisher));
+                _repository.Add(_mapper.Map<Publisher>(publisher));
 
                 await _applicationContext.SaveChangesAsync();
 
                 return await Task.FromResult("The record was successfully added");
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 throw;
             }
@@ -63,7 +62,7 @@ namespace LibrarySevice.BussinesLogic.Services
         {
             try
             {
-                var publisherEntity = _repository.GetAsync(id);
+                var publisherEntity = await _repository.GetAsync(id);
 
                 if (publisherEntity != null)
                 {
@@ -71,7 +70,7 @@ namespace LibrarySevice.BussinesLogic.Services
 
                     publisherEntity.Id = id;
 
-                    _repository.UpdateAsync(publisherEntity);
+                    _repository.Update(publisherEntity);
 
                     await _applicationContext.SaveChangesAsync();
 
@@ -80,7 +79,7 @@ namespace LibrarySevice.BussinesLogic.Services
 
                 throw new NotFoundException("Record was not found");
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 throw;
             }
@@ -90,12 +89,12 @@ namespace LibrarySevice.BussinesLogic.Services
         {
             try
             {
-                var publisher = _repository.GetAsync(id);
+                var publisher = await _repository.GetAsync(id);
 
                 if (publisher != null)
                 {
 
-                    _repository.DeleteAsync(publisher);
+                    _repository.Delete(publisher);
 
                     await _applicationContext.SaveChangesAsync();
 

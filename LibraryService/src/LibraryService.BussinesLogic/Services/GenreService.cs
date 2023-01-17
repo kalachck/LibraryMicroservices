@@ -5,7 +5,6 @@ using LibrarySevice.BussinesLogic.Services.Abstract;
 using LibrarySevice.DataAccess;
 using LibrarySevice.DataAccess.Entities;
 using LibrarySevice.DataAccess.Repositories.Abstract;
-using Microsoft.Data.SqlClient;
 
 namespace LibrarySevice.BussinesLogic.Services
 {
@@ -37,7 +36,7 @@ namespace LibrarySevice.BussinesLogic.Services
 
                 throw new NotFoundException("Record was not found");
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 throw;
             }
@@ -47,13 +46,13 @@ namespace LibrarySevice.BussinesLogic.Services
         {
             try
             {
-                _repository.AddAsync(_mapper.Map<Genre>(genre));
+                _repository.Add(_mapper.Map<Genre>(genre));
 
                 await _applicationContext.SaveChangesAsync();
 
                 return await Task.FromResult("The record was successfully added");
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 throw;
             }
@@ -63,7 +62,7 @@ namespace LibrarySevice.BussinesLogic.Services
         {
             try
             {
-                var genreEntity = _repository.GetAsync(id);
+                var genreEntity = await _repository.GetAsync(id);
 
                 if (genreEntity != null)
                 {
@@ -71,7 +70,7 @@ namespace LibrarySevice.BussinesLogic.Services
 
                     genreEntity.Id = id;
 
-                    _repository.UpdateAsync(genreEntity);
+                    _repository.Update(genreEntity);
 
                     await _applicationContext.SaveChangesAsync();
 
@@ -80,7 +79,7 @@ namespace LibrarySevice.BussinesLogic.Services
 
                 throw new NotFoundException("Record was not found");
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 throw;
             }
@@ -90,11 +89,11 @@ namespace LibrarySevice.BussinesLogic.Services
         {
             try
             {
-                var genre = _repository.GetAsync(id);
+                var genre = await _repository.GetAsync(id);
 
                 if (genre != null)
                 {
-                    _repository.DeleteAsync(genre);
+                    _repository.Delete(genre);
 
                     await _applicationContext.SaveChangesAsync();
 
@@ -103,7 +102,7 @@ namespace LibrarySevice.BussinesLogic.Services
 
                 throw new NotFoundException("Record was not found");
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 throw;
             }

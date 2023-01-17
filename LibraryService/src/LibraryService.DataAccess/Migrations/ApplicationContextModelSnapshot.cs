@@ -22,7 +22,7 @@ namespace LibrarySevice.DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("LibrarySevice.DataAccess.Entities.AuthorEntity", b =>
+            modelBuilder.Entity("LibrarySevice.DataAccess.Entities.Author", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -52,7 +52,7 @@ namespace LibrarySevice.DataAccess.Migrations
                         });
                 });
 
-            modelBuilder.Entity("LibrarySevice.DataAccess.Entities.BookEntity", b =>
+            modelBuilder.Entity("LibrarySevice.DataAccess.Entities.Book", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -65,6 +65,9 @@ namespace LibrarySevice.DataAccess.Migrations
 
                     b.Property<int?>("GenreId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("PublicationDate")
                         .HasColumnType("date");
@@ -93,7 +96,8 @@ namespace LibrarySevice.DataAccess.Migrations
                             Id = 1,
                             AuthorId = 1,
                             GenreId = 1,
-                            PublicationDate = new DateTime(2023, 1, 14, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsAvailable = true,
+                            PublicationDate = new DateTime(2023, 1, 17, 0, 0, 0, 0, DateTimeKind.Utc),
                             PublisherId = 1,
                             Title = "Война и мир"
                         },
@@ -102,13 +106,14 @@ namespace LibrarySevice.DataAccess.Migrations
                             Id = 2,
                             AuthorId = 2,
                             GenreId = 2,
-                            PublicationDate = new DateTime(2023, 1, 14, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsAvailable = true,
+                            PublicationDate = new DateTime(2023, 1, 17, 0, 0, 0, 0, DateTimeKind.Utc),
                             PublisherId = 2,
                             Title = "Борис Годунов"
                         });
                 });
 
-            modelBuilder.Entity("LibrarySevice.DataAccess.Entities.GenreEntity", b =>
+            modelBuilder.Entity("LibrarySevice.DataAccess.Entities.Genre", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -116,7 +121,7 @@ namespace LibrarySevice.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Title")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
@@ -129,16 +134,16 @@ namespace LibrarySevice.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            Title = "Драма"
+                            Name = "Драма"
                         },
                         new
                         {
                             Id = 2,
-                            Title = "Детектив"
+                            Name = "Детектив"
                         });
                 });
 
-            modelBuilder.Entity("LibrarySevice.DataAccess.Entities.PublisherEntity", b =>
+            modelBuilder.Entity("LibrarySevice.DataAccess.Entities.Publisher", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -151,7 +156,7 @@ namespace LibrarySevice.DataAccess.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -165,27 +170,27 @@ namespace LibrarySevice.DataAccess.Migrations
                         {
                             Id = 1,
                             Address = "ул. Пушкина дом Колотушкина",
-                            Title = "Артек"
+                            Name = "Артек"
                         },
                         new
                         {
                             Id = 2,
                             Address = "ул. Немига 44",
-                            Title = "Книга"
+                            Name = "Книга"
                         });
                 });
 
-            modelBuilder.Entity("LibrarySevice.DataAccess.Entities.BookEntity", b =>
+            modelBuilder.Entity("LibrarySevice.DataAccess.Entities.Book", b =>
                 {
-                    b.HasOne("LibrarySevice.DataAccess.Entities.AuthorEntity", "Author")
+                    b.HasOne("LibrarySevice.DataAccess.Entities.Author", "Author")
                         .WithMany("Books")
                         .HasForeignKey("AuthorId");
 
-                    b.HasOne("LibrarySevice.DataAccess.Entities.GenreEntity", "Genre")
+                    b.HasOne("LibrarySevice.DataAccess.Entities.Genre", "Genre")
                         .WithMany("Books")
                         .HasForeignKey("GenreId");
 
-                    b.HasOne("LibrarySevice.DataAccess.Entities.PublisherEntity", "Publisher")
+                    b.HasOne("LibrarySevice.DataAccess.Entities.Publisher", "Publisher")
                         .WithMany("Books")
                         .HasForeignKey("PublisherId");
 
@@ -196,17 +201,17 @@ namespace LibrarySevice.DataAccess.Migrations
                     b.Navigation("Publisher");
                 });
 
-            modelBuilder.Entity("LibrarySevice.DataAccess.Entities.AuthorEntity", b =>
+            modelBuilder.Entity("LibrarySevice.DataAccess.Entities.Author", b =>
                 {
                     b.Navigation("Books");
                 });
 
-            modelBuilder.Entity("LibrarySevice.DataAccess.Entities.GenreEntity", b =>
+            modelBuilder.Entity("LibrarySevice.DataAccess.Entities.Genre", b =>
                 {
                     b.Navigation("Books");
                 });
 
-            modelBuilder.Entity("LibrarySevice.DataAccess.Entities.PublisherEntity", b =>
+            modelBuilder.Entity("LibrarySevice.DataAccess.Entities.Publisher", b =>
                 {
                     b.Navigation("Books");
                 });
