@@ -15,7 +15,7 @@ namespace LibrarySevice.DataAccess
                 .AddJsonFile("MigrationConfiguration.json")
                 .Build();
 
-            optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            optionsBuilder.UseSqlServer(configuration.GetConnectionString("LibraryConnection"));
 
             return new ApplicationContext(optionsBuilder.Options);
         }
