@@ -59,7 +59,7 @@ namespace LibrarySevice.Api.Controllers
 
                 return Ok(result);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Conflict("The record was not added. There were technical problems");
             }

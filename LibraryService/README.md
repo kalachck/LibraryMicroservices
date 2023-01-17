@@ -18,7 +18,6 @@ AutoMapper is a simple little library built to solve a deceptively complex probl
 
 As for the FluentValidation tool, it will allow save time when solving problems related to data validation, bring disparate self-made checks to a single view
 
-
 ##### Database structure:
 
 | Book               |
@@ -38,13 +37,13 @@ As for the FluentValidation tool, it will allow save time when solving problems 
 | Publisher          |
 | -------------------|
 | Id                 |
-| Title              |
+| Name               |
 | Address            |
 
 | Genre              |
 | -------------------|
 | Id                 |
-| Title              |
+| Name               |
 
 ##### Logic:
 This service implements a three-layer architecture. The DAL is intended for access to the storage of entites, in particular for management library data. The BLL implements the entity validation process for successful operations with database. The API Deloged for convenient display of the menagement process in the browser
