@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  identity-server:
+      image: "mcr.microsoft.com/mssql/server:2019-latest"
+      container_name: sql_server2019_identity
+      environment:
+        ACCEPT_EULA: "Y"
+        SA_PASSWORD: "SAIdentity2023"
+        MSSQL_PID: Express
+      ports:
+        - "1434:1433"
+
+  identity:
+    image: identity_image
+    container_name: identity_service_container
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - "5000:80"
+      
