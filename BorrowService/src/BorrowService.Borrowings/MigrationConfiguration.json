@@ -1,0 +1,5 @@
+{
+	"ConnectionStrings": {
+		"BorrowConnection": "Host=localhost;Port=5432;Database=borrowingdatabase;Username=postgres;Password=secret"
+	}
+}
