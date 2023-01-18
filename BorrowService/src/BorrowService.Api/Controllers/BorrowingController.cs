@@ -98,6 +98,11 @@ namespace BorrowService.Api.Controllers
                     return NotFound(ex.Message);
                 }
 
+                if (ex is NotAvailableException)
+                {
+                    return NotFound(ex.Message);
+                }
+
                 return Conflict("The record was not borrowed. There were technical problems");
             }
         }

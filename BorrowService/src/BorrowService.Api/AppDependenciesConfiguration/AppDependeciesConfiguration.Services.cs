@@ -40,11 +40,16 @@ namespace BorrowService.Api.AppDependenciesConfiguration
 
             builder.Services.AddScoped<IHangfireService, HangfireService>();
 
+            builder.Services.AddScoped<IRabbitService, RabbitService>();
+
             builder.Services.Configure<CommunicationOptions>(
                 builder.Configuration.GetSection(CommunicationOptions.CommunicationUrls));
 
             builder.Services.Configure<MailOptions>(
                 builder.Configuration.GetSection(MailOptions.MailData));
+
+            builder.Services.Configure<RabbitOptions>(
+                builder.Configuration.GetSection(RabbitOptions.RabbitData));
 
             return builder;
         }

@@ -4,7 +4,6 @@ using BorrowService.Borrowings.Exceptions;
 using BorrowService.Borrowings.Options;
 using BorrowService.Borrowings.Repositories.Abstract;
 using BorrowService.Borrowings.Services.Abstract;
-using Hangfire;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -15,16 +14,19 @@ namespace BorrowService.Borrowings.Components
         private readonly IBorrowingRepository _repository;
         private readonly ApplicationContext _applicationContext;
         private readonly IHangfireService _hangfireService;
+        private readonly IRabbitService _rabbitService;
         private readonly CommunicationOptions _options;
 
         public BorrowingComponent(IBorrowingRepository repository,
             ApplicationContext applicationContext,
             IOptions<CommunicationOptions> options,
-            IHangfireService hangfireService)
+            IHangfireService hangfireService,
+            IRabbitService rabbitService)
         {
             _repository = repository;
             _applicationContext = applicationContext;
             _hangfireService = hangfireService;
+            _rabbitService = rabbitService;
             _options = options.Value;
         }
 
@@ -117,24 +119,31 @@ namespace BorrowService.Borrowings.Components
                     {
                         var book = JsonConvert.DeserializeObject<Dictionary<string, string>>(await libraryResult.Content.ReadAsStringAsync());
 
-                        var identity = await identityResult.Content.ReadAsStringAsync();
-
-                        var borrowing = new Borrowing()
+                        if (book["isAvailable"] == "true")
                         {
-                            UserEmail = email,
-                            BookId = bookId,
-                            BookTitle = book["title"],
-                            AddingDate = DateTime.Now.Date,
-                            ExpirationDate = DateTime.Now.Date.AddDays(30),
-                        };
+                            var identity = await identityResult.Content.ReadAsStringAsync();
 
-                        _repository.Add(borrowing);
+                            var borrowing = new Borrowing()
+                            {
+                                UserEmail = email,
+                                BookId = bookId,
+                                BookTitle = book["title"],
+                                AddingDate = DateTime.Now.Date,
+                                ExpirationDate = DateTime.Now.Date.AddDays(30),
+                            };
 
-                        await _applicationContext.SaveChangesAsync();
+                            _repository.Add(borrowing);
 
-                        _hangfireService.Run();
+                            await _applicationContext.SaveChangesAsync();
 
-                        return await Task.FromResult($"Book was borrowed successfully by user: {email}");
+                            _hangfireService.Run();
+
+                            _rabbitService.SendMessage(bookId.ToString());
+
+                            return await Task.FromResult($"Book was borrowed successfully by user: {email}");
+                        }
+
+                        throw new NotAvailableException("Book is not available now");
                     }
 
                     throw new NotFoundException("Book was not found");
