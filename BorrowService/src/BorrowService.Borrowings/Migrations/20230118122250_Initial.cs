@@ -18,6 +18,7 @@ namespace BorrowService.Borrowings.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserEmail = table.Column<string>(type: "text", nullable: false),
                     BookId = table.Column<int>(type: "int", nullable: false),
+                    BookTitle = table.Column<string>(type: "text", nullable: false),
                     AddingDate = table.Column<DateTime>(type: "date", nullable: false),
                     ExpirationDate = table.Column<DateTime>(type: "date", nullable: false)
                 },

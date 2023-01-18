@@ -8,13 +8,8 @@ namespace BorrowService.Borrowings
     {
         public DbSet<Borrowing> Borrowings { get; set; }
 
-        public ApplicationContext()
+        public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         { }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=borrowingdatabase;Username=postgres;Password=secret");
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,4 +1,5 @@
 using BorrowService.Api.AppDependenciesConfiguration;
+using Hangfire;
 
 namespace BorrowService.Api
 {
@@ -26,6 +27,7 @@ namespace BorrowService.Api
 
             app.UseAuthorization();
 
+            app.UseHangfireDashboard("/dashboard");
 
             app.MapControllers();
 

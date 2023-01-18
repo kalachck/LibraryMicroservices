@@ -28,6 +28,11 @@ namespace BorrowService.Borrowings.Repositories
             return await _applicationContext.Borrowings.AsNoTracking().FirstOrDefaultAsync(x => x.UserEmail == email);
         }
 
+        public async Task<Borrowing> GetByEmailAndBookIdAsync(string email, int bookId)
+        {
+            return await _applicationContext.Borrowings.AsNoTracking().FirstOrDefaultAsync(x => x.UserEmail == email && x.BookId == bookId);
+        }
+
         public void Add(Borrowing entity)
         {
             _applicationContext.Borrowings.Add(entity);

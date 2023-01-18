@@ -22,7 +22,7 @@ namespace BorrowService.Borrowings.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("BorrowService.Borrowings.Entities.BorrowingEntity", b =>
+            modelBuilder.Entity("BorrowService.Borrowings.Entities.Borrowing", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -35,6 +35,10 @@ namespace BorrowService.Borrowings.Migrations
 
                     b.Property<int>("BookId")
                         .HasColumnType("int");
+
+                    b.Property<string>("BookTitle")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("date");

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BorrowService.Borrowings.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20230109151333_Initial")]
+    [Migration("20230118122250_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,7 +24,7 @@ namespace BorrowService.Borrowings.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("BorrowService.Borrowings.Entities.BorrowingEntity", b =>
+            modelBuilder.Entity("BorrowService.Borrowings.Entities.Borrowing", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -37,6 +37,10 @@ namespace BorrowService.Borrowings.Migrations
 
                     b.Property<int>("BookId")
                         .HasColumnType("int");
+
+                    b.Property<string>("BookTitle")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("date");

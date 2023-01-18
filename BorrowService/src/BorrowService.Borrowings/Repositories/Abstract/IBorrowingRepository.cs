@@ -10,6 +10,8 @@ namespace BorrowService.Borrowings.Repositories.Abstract
 
         Task<Borrowing> GetByEmailAsync(string email);
 
+        Task<Borrowing> GetByEmailAndBookIdAsync(string email, int id);
+
         void Add(Borrowing entity);
 
         void Update(Borrowing entity);

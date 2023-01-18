@@ -1,11 +1,12 @@
-﻿using AutoMapper;
-using BorrowService.Borrowings.Components.Abstract;
+﻿using BorrowService.Borrowings.Components.Abstract;
 using BorrowService.Borrowings.Entities;
 using BorrowService.Borrowings.Exceptions;
 using BorrowService.Borrowings.Options;
 using BorrowService.Borrowings.Repositories.Abstract;
+using BorrowService.Borrowings.Services.Abstract;
+using Hangfire;
 using Microsoft.Extensions.Options;
-using System.Data.SqlClient;
+using Newtonsoft.Json;
 
 namespace BorrowService.Borrowings.Components
 {
@@ -13,17 +14,17 @@ namespace BorrowService.Borrowings.Components
     {
         private readonly IBorrowingRepository _repository;
         private readonly ApplicationContext _applicationContext;
-        private readonly IMapper _mapper;
+        private readonly IHangfireService _hangfireService;
         private readonly CommunicationOptions _options;
 
         public BorrowingComponent(IBorrowingRepository repository,
             ApplicationContext applicationContext,
-            IMapper mapper,
-            IOptions<CommunicationOptions> options)
+            IOptions<CommunicationOptions> options,
+            IHangfireService hangfireService)
         {
             _repository = repository;
             _applicationContext = applicationContext;
-            _mapper = mapper;
+            _hangfireService = hangfireService;
             _options = options.Value;
         }
 
@@ -40,7 +41,7 @@ namespace BorrowService.Borrowings.Components
 
                 throw new NotFoundException("Record was not found");
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 throw;
             }
@@ -59,7 +60,7 @@ namespace BorrowService.Borrowings.Components
 
                 throw new NotFoundException("Record was not found");
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 throw;
             }
@@ -78,7 +79,26 @@ namespace BorrowService.Borrowings.Components
 
                 throw new NotFoundException("Record was not found");
             }
-            catch (SqlException)
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<Borrowing> GetByEmailAndBookIdAsync(string email, int bookId)
+        {
+            try
+            {
+                var borrowing = await _repository.GetByEmailAndBookIdAsync(email, bookId);
+
+                if (borrowing != null)
+                {
+                    return await Task.FromResult(borrowing);
+                }
+
+                throw new NotFoundException("Record was not found");
+            }
+            catch (Exception)
             {
                 throw;
             }
@@ -95,17 +115,24 @@ namespace BorrowService.Borrowings.Components
                 {
                     if (libraryResult.StatusCode == System.Net.HttpStatusCode.OK && libraryResult.Content != null)
                     {
+                        var book = JsonConvert.DeserializeObject<Dictionary<string, string>>(await libraryResult.Content.ReadAsStringAsync());
+
+                        var identity = await identityResult.Content.ReadAsStringAsync();
+
                         var borrowing = new Borrowing()
                         {
                             UserEmail = email,
                             BookId = bookId,
-                            AddingDate = DateTime.UtcNow.Date,
-                            ExpirationDate = DateTime.UtcNow.Date + TimeSpan.FromDays(30),
+                            BookTitle = book["title"],
+                            AddingDate = DateTime.Now.Date,
+                            ExpirationDate = DateTime.Now.Date.AddDays(30),
                         };
 
                         _repository.Add(borrowing);
 
                         await _applicationContext.SaveChangesAsync();
+
+                        _hangfireService.Run();
 
                         return await Task.FromResult($"Book was borrowed successfully by user: {email}");
                     }
@@ -115,29 +142,52 @@ namespace BorrowService.Borrowings.Components
 
                 throw new NotFoundException("User was not found");
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 throw;
             }
         }
 
-        public async Task<string> UpdateAsync(int id, Borrowing borrowing)
+        public async Task<string> ExtendAsync(string email, int bookId)
         {
             try
             {
-                var borrowingEntity = await _repository.GetAsync(id);
+                var borrowing = await _repository.GetByEmailAndBookIdAsync(email, bookId);
 
-                if (borrowingEntity != null)
+                if (borrowing != null)
                 {
-                    borrowingEntity = _mapper.Map<Borrowing>(borrowing);
+                    borrowing.AddingDate = DateTime.Now.Date;
 
-                    borrowingEntity.Id = id;
+                    borrowing.ExpirationDate = DateTime.Now.AddDays(30);
 
-                    _repository.Update(borrowingEntity);
+                    _repository.Update(borrowing);
 
                     await _applicationContext.SaveChangesAsync();
 
                     return await Task.FromResult("The record was successfully updated");
+                }
+
+                throw new NotFoundException("Record was not found");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<string> DeleteByEmailAndBookIdAsync(string email, int bookId)
+        {
+            try
+            {
+                var borrowing = await _repository.GetByEmailAndBookIdAsync(email, bookId);
+
+                if (borrowing != null)
+                {
+                    _repository.Delete(borrowing);
+
+                    await _applicationContext.SaveChangesAsync();
+
+                    return await Task.FromResult("The record was successfully deleted");
                 }
 
                 throw new NotFoundException("Record was not found");
@@ -158,12 +208,14 @@ namespace BorrowService.Borrowings.Components
                 {
                     _repository.Delete(borrowing);
 
+                    await _applicationContext.SaveChangesAsync();
+
                     return await Task.FromResult("The record was successfully deleted");
                 }
 
                 throw new NotFoundException("Record was not found");
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 throw;
             }

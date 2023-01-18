@@ -1,14 +1,6 @@
-﻿using AutoMapper;
-using BorrowService.Api.RequestModels;
-using BorrowService.Borrowings.Components.Abstract;
-using BorrowService.Borrowings.Entities;
-using BorrowService.Borrowings.Options;
-using FluentValidation;
-using Microsoft.AspNetCore.Identity;
+﻿using BorrowService.Borrowings.Components.Abstract;
+using BorrowService.Borrowings.Exceptions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using System.Data.SqlClient;
 
 namespace BorrowService.Api.Controllers
 {
@@ -17,17 +9,12 @@ namespace BorrowService.Api.Controllers
     public class BorrowingController : ControllerBase
     {
         private readonly IBorrowingComponent _component;
-        private readonly IMapper _mapper;
-        private readonly IValidator<BorrowingRequestModel> _validator;
         private readonly HttpClient _client;
 
         public BorrowingController(IBorrowingComponent component,
-            IMapper mapper, IValidator<BorrowingRequestModel> validator,
             IHttpClientFactory httpClientFactory)
         {
             _component = component;
-            _mapper = mapper;
-            _validator = validator;
             _client = httpClientFactory.CreateClient();
         }
 
@@ -41,8 +28,13 @@ namespace BorrowService.Api.Controllers
 
                 return Ok(borrowing);
             }
-            catch (SqlException)
+            catch (Exception ex)
             {
+                if (ex is NotFoundException)
+                {
+                    return NotFound(ex.Message);
+                }
+
                 return Conflict("Can't get this record. There were technical problems");
             }
         }
@@ -57,8 +49,13 @@ namespace BorrowService.Api.Controllers
 
                 return Ok(borrowing);
             }
-            catch (SqlException)
+            catch (Exception ex)
             {
+                if (ex is NotFoundException)
+                {
+                    return NotFound(ex.Message);
+                }
+
                 return Conflict("Can't get this record. There were technical problems");
             }
         }
@@ -73,8 +70,13 @@ namespace BorrowService.Api.Controllers
 
                 return Ok(borrowing);
             }
-            catch (SqlException)
+            catch (Exception ex)
             {
+                if (ex is NotFoundException)
+                {
+                    return NotFound(ex.Message);
+                }
+
                 return Conflict("Can't get this record. There were technical problems");
             }
         }
@@ -89,28 +91,34 @@ namespace BorrowService.Api.Controllers
 
                 return Ok(result);
             }
-            catch (SqlException)
+            catch (Exception ex)
             {
+                if (ex is NotFoundException)
+                {
+                    return NotFound(ex.Message);
+                }
+
                 return Conflict("The record was not borrowed. There were technical problems");
             }
         }
 
         [HttpPut]
-        [Route("Update")]
-        public async Task<IActionResult> Update(int id, [FromQuery] BorrowingRequestModel model)
+        [Route("Extend")]
+        public async Task<IActionResult> Extend(string email, int bookId)
         {
             try
             {
-                await _validator.ValidateAsync(model);
-
-                var borrowing = _mapper.Map<Borrowing>(model);
-
-                var result = await _component.UpdateAsync(id, borrowing);
+                var result = await _component.ExtendAsync(email, bookId);
 
                 return Ok(result);
             }
-            catch (SqlException)
+            catch (Exception ex)
             {
+                if (ex is NotFoundException)
+                {
+                    return NotFound(ex.Message);
+                }
+
                 return Conflict("The record was not updated. There were technical problems");
             }
         }
@@ -125,8 +133,13 @@ namespace BorrowService.Api.Controllers
 
                 return Ok(result);
             }
-            catch (SqlException)
+            catch (Exception ex)
             {
+                if (ex is NotFoundException)
+                {
+                    return NotFound(ex.Message);
+                }
+
                 return Conflict("The record was not added. There were technical problems");
             }
         }

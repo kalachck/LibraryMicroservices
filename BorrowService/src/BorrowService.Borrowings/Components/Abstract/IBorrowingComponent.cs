@@ -6,13 +6,17 @@ namespace BorrowService.Borrowings.Components.Abstract
     {
         Task<Borrowing> GetAsync(int id);
 
-        Task<Borrowing> GetByBookIdAsync(int id);
+        Task<Borrowing> GetByBookIdAsync(int bookId);
 
         Task<Borrowing> GetByEmailAsync(string email);
 
+        Task<Borrowing> GetByEmailAndBookIdAsync(string email, int bookId);
+
         Task<string> BorrowAsync(string email, int bookId, HttpClient httpClient);
 
-        Task<string> UpdateAsync(int id, Borrowing entity);
+        Task<string> ExtendAsync(string email, int bookId);
+
+        Task<string> DeleteByEmailAndBookIdAsync(string email, int bookId);
 
         Task<string> DeleteAsync(int id);
     }
