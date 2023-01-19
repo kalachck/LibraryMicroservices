@@ -107,5 +107,16 @@ namespace LibrarySevice.BussinesLogic.Services
                 throw;
             }
         }
+
+        public async void ChangeStatus(string message)
+        {
+            var book = await _repository.GetAsync(int.Parse(message));
+
+            book.IsAvailable = false;
+
+            _repository.Update(book);
+
+            await _applicationContext.SaveChangesAsync();
+        }
     }
 }

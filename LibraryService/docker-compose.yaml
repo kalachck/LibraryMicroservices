@@ -1,14 +1,24 @@
 version: "3.8"
 services:
   library-server:
-      image: "mcr.microsoft.com/mssql/server:2019-latest"
-      container_name: sql_server2019_library
-      environment:
-        ACCEPT_EULA: "Y"
-        SA_PASSWORD: "SALibrary2023"
-        MSSQL_PID: Express
-      ports:
-        - "1433:1433"
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
+    container_name: sql_server2019_library
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "SALibrary2023"
+      MSSQL_PID: Express
+    ports:
+      - "1433:1433"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=BorrowLibrary 
+      - RABBITMQ_DEFAULT_PASS=BorrowLibraryPassword
+    ports:
+      - 5672:5672
+      - 15672:15672
 
   library:
     image: library_image
@@ -17,3 +27,4 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
     ports:
       - "5001:80"
+    restart: always

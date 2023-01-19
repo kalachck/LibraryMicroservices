@@ -6,6 +6,8 @@
 
         public DateTime PublicationDate { get; set; }
 
+        public bool IsAvailable { get; set; } = true;
+
         public int? AuthorId { get; set; } = null;
 
         public AuthorDTO Author { get; set; }

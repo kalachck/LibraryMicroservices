@@ -9,6 +9,7 @@ using System.Reflection;
 using LibrarySevice.BussinesLogic.Services.Abstract;
 using LibrarySevice.DataAccess.Repositories.Abstract;
 using LibrarySevice.DataAccess.Entities;
+using LibrarySevice.BussinesLogic.Options;
 
 namespace LibrarySevice.Api.AppDependeciesConfiguration
 {
@@ -37,6 +38,11 @@ namespace LibrarySevice.Api.AppDependeciesConfiguration
             builder.Services.AddScoped<IValidator<AuthorRequestModel>, AuthorValidator>();
             builder.Services.AddScoped<IValidator<PublisherRequestModel>, PublisherValidator>();
             builder.Services.AddScoped<IValidator<GenreRequestModel>, GenreValidator>();
+
+            builder.Services.Configure<RabbitOptions>(
+                builder.Configuration.GetSection(RabbitOptions.RabbitData));
+
+            builder.Services.AddHostedService<RabbitService>();
 
             return builder;
         }

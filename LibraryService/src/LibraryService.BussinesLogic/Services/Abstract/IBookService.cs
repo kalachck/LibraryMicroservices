@@ -11,5 +11,7 @@ namespace LibrarySevice.BussinesLogic.Services.Abstract
         Task<string> UpdateAsync(int id, BookDTO book);
 
         Task<string> DeleteAsync(int id);
+
+        void ChangeStatus(string message);
     }
 }
