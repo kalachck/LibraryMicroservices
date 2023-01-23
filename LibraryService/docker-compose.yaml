@@ -9,6 +9,8 @@ services:
       MSSQL_PID: Express
     ports:
       - "1433:1433"
+    networks:
+      - microservices
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -19,6 +21,8 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+    networks:
+      - microservices
 
   library:
     image: library_image
@@ -27,4 +31,10 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
     ports:
       - "5001:80"
+    networks:
+      - microservices
     restart: always
+
+networks:
+  microservices:
+    external: true
