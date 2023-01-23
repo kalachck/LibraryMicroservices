@@ -9,6 +9,8 @@ services:
         MSSQL_PID: Express
       ports:
         - "1434:1433"
+      networks:
+        - microservices
 
   identity:
     image: identity_image
@@ -17,4 +19,9 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
     ports:
       - "5000:80"
-      
+    networks:
+      - microservices
+
+networks:
+  microservices:
+    external: true   
