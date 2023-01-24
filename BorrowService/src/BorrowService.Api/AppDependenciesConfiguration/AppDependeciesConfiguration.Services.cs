@@ -16,18 +16,17 @@ namespace BorrowService.Api.AppDependenciesConfiguration
     {
         public static WebApplicationBuilder AddServices(this WebApplicationBuilder builder)
         {
-            var connectionString = builder.Configuration.GetConnectionString("BorrowConnection");
 
             builder.Services.AddHttpClient();
 
             builder.Services.AddDbContext<ApplicationContext>(options =>
             {
-                options.UseNpgsql(connectionString);
+                options.UseNpgsql(builder.Configuration.GetConnectionString("BorrowConnection"));
             });
 
             builder.Services.AddHangfire(options =>
             {
-                options.UsePostgreSqlStorage(connectionString);
+                options.UsePostgreSqlStorage(builder.Configuration.GetConnectionString("BorrowConnection"));
             });
 
             builder.Services.AddHangfireServer();

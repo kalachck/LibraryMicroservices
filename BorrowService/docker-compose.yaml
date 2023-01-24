@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  borrow:
+    image: borrow_image
+    container_name: borrow_service_container
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - "5003:80"
+    networks:
+      - microservices
+
+  borrow-sql:
+    image: postgres:latest
+    container_name: postgers_borrow
+    environment:
+      - POSTGRES_USER=borrowing
+      - POSTGRES_PASSWORD=BorrowingPassword
+      - POSTGRES_DB=borrowingdatabase
+    ports:
+      - "5433:5432"
+    networks:
+      - microservices
+
+networks:
+  microservices:
+    external: true
