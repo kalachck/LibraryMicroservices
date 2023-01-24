@@ -1,5 +1,6 @@
 using BorrowService.Api.AppDependenciesConfiguration;
 using Hangfire;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace BorrowService.Api
 {
@@ -15,6 +16,11 @@ namespace BorrowService.Api
 
             builder.ConfigureDependencies();
 
+            var options = new DashboardOptions()
+            {
+                Authorization = new[] { new AuthorizationFilter() }
+            };
+
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
@@ -27,7 +33,7 @@ namespace BorrowService.Api
 
             app.UseAuthorization();
 
-            app.UseHangfireDashboard("/dashboard");
+            app.UseHangfireDashboard("/dashboard", options);
 
             app.MapControllers();
 

@@ -18,7 +18,7 @@ namespace BorrowService.Borrowings.Services
 
         public void Run()
         {
-            RecurringJob.AddOrUpdate("mailJob", () => SetJobs(), Cron.Minutely);
+            RecurringJob.AddOrUpdate("mailJob", () => SetJobs(), Cron.Daily);
         }
 
         public void SetJobs()
