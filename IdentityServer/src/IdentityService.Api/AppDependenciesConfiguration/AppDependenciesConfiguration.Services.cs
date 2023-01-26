@@ -2,6 +2,8 @@
 using IdentityService.BusinessLogic.Services;
 using IdentityService.BusinessLogic.Services.Abstarct;
 using IdentityService.DataAccess;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -51,6 +53,18 @@ namespace IdentityService.Api.AppDependenciesConfiguration
                     .EnableAuthorizationEndpointPassthrough()
                     .EnableLogoutEndpointPassthrough();
                 });
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+            })
+            .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+            {
+                options.ClientId = builder.Configuration.GetValue<string>("GoogleAuth:ClientId");
+                options.ClientSecret = builder.Configuration.GetValue<string>("GoogleAuth:ClientSecret");
+                options.SignInScheme = IdentityConstants.ExternalScheme;
+            });
 
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
