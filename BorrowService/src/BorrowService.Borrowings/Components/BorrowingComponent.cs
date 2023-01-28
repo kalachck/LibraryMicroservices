@@ -1,5 +1,6 @@
 ﻿using BorrowService.Borrowings.Components.Abstract;
 using BorrowService.Borrowings.Entities;
+using BorrowService.Borrowings.Enums;
 using BorrowService.Borrowings.Exceptions;
 using BorrowService.Borrowings.Options;
 using BorrowService.Borrowings.Repositories.Abstract;
@@ -138,7 +139,13 @@ namespace BorrowService.Borrowings.Components
 
                             _hangfireService.Run();
 
-                            _rabbitService.SendMessage(bookId.ToString());
+                            var message = new RabbitMessage()
+                            {
+                                Topic = Topic.Borrow,
+                                BookId = bookId,
+                            };
+
+                            _rabbitService.SendMessage(JsonConvert.SerializeObject(message));
 
                             return await Task.FromResult($"Book was borrowed successfully by user: {email}");
                         }
@@ -218,6 +225,14 @@ namespace BorrowService.Borrowings.Components
                     _repository.Delete(borrowing);
 
                     await _applicationContext.SaveChangesAsync();
+
+                    var message = new RabbitMessage()
+                    {
+                        Topic = Topic.Delete,
+                        BookId = borrowing.BookId,
+                    };
+
+                    _rabbitService.SendMessage(JsonConvert.SerializeObject(message));
 
                     return await Task.FromResult("The record was successfully deleted");
                 }
