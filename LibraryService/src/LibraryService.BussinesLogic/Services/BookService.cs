@@ -5,6 +5,7 @@ using LibrarySevice.BussinesLogic.Services.Abstract;
 using LibrarySevice.DataAccess;
 using LibrarySevice.DataAccess.Entities;
 using LibrarySevice.DataAccess.Repositories.Abstract;
+using Newtonsoft.Json;
 
 namespace LibrarySevice.BussinesLogic.Services
 {
@@ -110,9 +111,18 @@ namespace LibrarySevice.BussinesLogic.Services
 
         public async void ChangeStatus(string message)
         {
-            var book = await _repository.GetAsync(int.Parse(message));
+            var rabbitMessage = JsonConvert.DeserializeObject<RabbitMessage>(message);
 
-            book.IsAvailable = false;
+            var book = await _repository.GetAsync(int.Parse(rabbitMessage.Message));
+
+            if (rabbitMessage.Topic == Enums.Topic.Borrow)
+            {
+                book.IsAvailable = false;
+            }
+            if (rabbitMessage.Topic == Enums.Topic.Delete)
+            {
+                book.IsAvailable = true;
+            }
 
             _repository.Update(book);
 
