@@ -1,4 +1,4 @@
-﻿using IdentityService.BusinessLogic.Exceptions;
+using IdentityService.BusinessLogic.Exceptions;
 using IdentityService.BusinessLogic.Services.Abstarct;
 using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
@@ -24,9 +24,18 @@ namespace IdentityService.BusinessLogic.Services
 
             if (user != null)
             {
-                var claimPrincipal = await SetClaimsAsync(user, request);
+                var hashPassword = _userManager.PasswordHasher.HashPassword(identityUser, identityUser.PasswordHash);
 
-                return await Task.FromResult(claimPrincipal);
+                if (hashPassword == user.PasswordHash)
+                {
+                    var claimPrincipal = await SetClaimsAsync(user, request);
+                
+                    claimPrincipal.SetScopes(request.GetScopes());
+
+                    return await Task.FromResult(claimPrincipal);
+                }
+
+                throw new InvalidPasswordException("Invalid password");
             }
 
             throw new NotFoundException("User not found");

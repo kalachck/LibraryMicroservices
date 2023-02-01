@@ -1,0 +1,14 @@
+﻿using LibrarySevice.Api.Models;
+using FluentValidation;
+
+namespace LibrarySevice.Api.Validators
+{
+    public class PublisherValidator : AbstractValidator<PublisherRequestModel>
+    {
+        public PublisherValidator()
+        {
+            RuleFor(x => x.Name).NotNull().NotEmpty().MaximumLength(50);
+            RuleFor(x => x.Address).NotNull().NotEmpty().MaximumLength(50);
+        }
+    }
+}

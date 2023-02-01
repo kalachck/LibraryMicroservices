@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  library-server:
+      image: "mcr.microsoft.com/mssql/server:2019-latest"
+      container_name: sql_server2019_library
+      environment:
+        ACCEPT_EULA: "Y"
+        SA_PASSWORD: "SALibrary2023"
+        MSSQL_PID: Express
+      ports:
+        - "1433:1433"
+
+  library:
+    image: library_image
+    container_name: library_service_container
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - "5001:80"
