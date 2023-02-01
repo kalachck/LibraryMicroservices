@@ -22,65 +22,93 @@ namespace IdentityService.BusinessLogic.Services
 
         public async Task<IdentityUser> GetAsync(string email)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-
-            if (user != null)
+            try
             {
-                return await Task.FromResult(user);
-            }
+                var user = await _userManager.FindByEmailAsync(email);
 
-            throw new NotFoundException("User not found");
+                if (user != null)
+                {
+                    return await Task.FromResult(user);
+                }
+
+                throw new NotFoundException("User not found");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public async Task<IdentityUser> AddAsync(IdentityUser identityUser)
+        public async Task<string> AddAsync(IdentityUser identityUser)
         {
-            if (await _userManager.FindByEmailAsync(identityUser.Email) == null)
+            try
             {
-                identityUser.PasswordHash = _userManager.PasswordHasher.HashPassword(identityUser, identityUser.PasswordHash);
+                if (await _userManager.FindByEmailAsync(identityUser.Email) == null)
+                {
+                    identityUser.PasswordHash = _userManager.PasswordHasher.HashPassword(identityUser, identityUser.PasswordHash);
 
-                await _userManager.CreateAsync(identityUser);
+                    await _userManager.CreateAsync(identityUser);
 
-                return await Task.FromResult(identityUser);
+                    return await Task.FromResult("The record was successfully added");
+                }
+
+                throw new AlreadyExistsException("This user already exists");
             }
-
-            throw new AlreadyExistsException("This user already exists");
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public async Task<IdentityUser> UpdateAsync(string email, IdentityUser identityUser)
+        public async Task<string> UpdateAsync(string email, IdentityUser identityUser)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-
-            if (user != null)
+            try
             {
-                var id = user.Id;
+                var user = await _userManager.FindByEmailAsync(email);
 
-                user = _mapper.Map(identityUser, user);
+                if (user != null)
+                {
+                    var id = user.Id;
 
-                user.Id = id;
+                    user = _mapper.Map(identityUser, user);
 
-                await _userManager.UpdateAsync(user);
+                    user.Id = id;
 
-                return await Task.FromResult(user);
+                    await _userManager.UpdateAsync(user);
+
+                    return await Task.FromResult("The record was successfully updated");
+                }
+
+                throw new NotFoundException("User not found");
             }
-
-            throw new NotFoundException("User not found");
+            catch (Exception)
+            {
+                throw;
+            }       
         }
 
-        public async Task<IdentityUser> DeleteAsync(string email)
+        public async Task<string> DeleteAsync(string email)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-
-            if (user != null)
+            try
             {
-                await _userManager.DeleteAsync(user);
+                var user = await _userManager.FindByEmailAsync(email);
 
-                return await Task.FromResult(user);
+                if (user != null)
+                {
+                    await _userManager.DeleteAsync(user);
+
+                    return await Task.FromResult("The record was successfully deleted");
+                }
+
+                throw new NotFoundException("User not found");
             }
-
-            throw new NotFoundException("User not found");
+            catch (Exception)
+            {
+                throw;
+            }     
         }
 
-        public async Task<IdentityUser> UpdatePasswordAsync(string email, string currentPassword, string newPassword)
+        public async Task<string> UpdatePasswordAsync(string email, string currentPassword, string newPassword)
         {
             var user = await _userManager.FindByEmailAsync(email);
 
@@ -96,7 +124,7 @@ namespace IdentityService.BusinessLogic.Services
 
                     await _userManager.UpdateAsync(user);
 
-                    return await Task.FromResult(user);
+                    return await Task.FromResult("Password was successfully updated");
                 }
 
                 throw new InvalidPasswordException("Current password doesn't match with the typed one");

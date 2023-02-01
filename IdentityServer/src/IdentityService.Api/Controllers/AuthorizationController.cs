@@ -53,7 +53,6 @@ namespace IdentityService.Api.Controllers
 
         [HttpPost]
         [Route("LogOut")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOut()
         {
             await _signInManager.SignOutAsync();
