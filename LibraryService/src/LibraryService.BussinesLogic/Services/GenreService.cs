@@ -27,7 +27,7 @@ namespace LibrarySevice.BussinesLogic.Services
         {
             try
             {
-                var genre = _repository.GetAsync(id);
+                var genre = await _repository.GetAsync(id);
 
                 if (genre != null)
                 {
