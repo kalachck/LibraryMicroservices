@@ -6,6 +6,8 @@ namespace IdentityService.BusinessLogic.Services.Abstarct
 {
     public interface IAuthorizationService
     {
-        Task<ClaimsPrincipal> LogInAsync(IdentityUser user, OpenIddictRequest request);
+        Task<ClaimsPrincipal> LogInAsync(IdentityUser identityUser, OpenIddictRequest request);
+
+        Task<ClaimsPrincipal> SetClaimsAsync(IdentityUser identityUser, OpenIddictRequest request);
     }
 }

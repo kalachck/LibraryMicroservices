@@ -27,7 +27,7 @@ namespace LibrarySevice.BussinesLogic.Services
         {
             try
             {
-                var publisher = _repository.GetAsync(id);
+                var publisher = await _repository.GetAsync(id);
 
                 if (publisher != null)
                 {
