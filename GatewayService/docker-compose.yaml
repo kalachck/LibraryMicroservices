@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  gateway:
+    image: "gateway_image"
+    container_name: gateway_container
+    ports:
+      - "5002:80"
+    networks:
+      - microservices
+
+networks:
+  microservices:
+    external: true 

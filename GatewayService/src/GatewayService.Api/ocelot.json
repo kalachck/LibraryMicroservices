@@ -1,0 +1,397 @@
+{
+	"Routes": [
+		//LibraryService Author
+		{
+			"UpstreamPathTemplate": "/api/Author/Get",
+			"UpstreamHttpMethod": [ "Get" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "library_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Author/Get"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Author/Add",
+			"UpstreamHttpMethod": [ "Post" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "library_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Author/Add"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Author/Update",
+			"UpstreamHttpMethod": [ "Put" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "library_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Author/Update"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Author/Delete",
+			"UpstreamHttpMethod": [ "Delete" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "library_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Author/Delete"
+		},
+		//LibraryService Book
+		{
+			"UpstreamPathTemplate": "/api/Book/Get",
+			"UpstreamHttpMethod": [ "Get" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "library_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Book/Get"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Book/Add",
+			"UpstreamHttpMethod": [ "Post" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "library_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Book/Add"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Book/Update",
+			"UpstreamHttpMethod": [ "Put" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "library_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Book/UpdateBook"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Book/Delete",
+			"UpstreamHttpMethod": [ "Delete" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "library_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Book/Delete"
+		},
+		//LibraryService Genre
+		{
+			"UpstreamPathTemplate": "/api/Genre/Get",
+			"UpstreamHttpMethod": [ "Get" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "library_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Genre/Get"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Genre/Add",
+			"UpstreamHttpMethod": [ "Post" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "library_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Genre/Add"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Genre/Update",
+			"UpstreamHttpMethod": [ "Put" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "library_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Genre/Update"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Genre/Delete",
+			"UpstreamHttpMethod": [ "Delete" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "library_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Genre/Delete"
+		},
+		//LibraryService Publisher
+		{
+			"UpstreamPathTemplate": "/api/Publisher/Get",
+			"UpstreamHttpMethod": [ "Get" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "library_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Publisher/Get"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Publisher/Add",
+			"UpstreamHttpMethod": [ "Post" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "library_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Publisher/Add"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Publisher/Update",
+			"UpstreamHttpMethod": [ "Put" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "library_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Publisher/Update"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Publisher/Delete",
+			"UpstreamHttpMethod": [ "Delete" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "library_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Publisher/Delete"
+		},
+		//BorrowService
+		{
+			"UpstreamPathTemplate": "/api/Borrowing/Get",
+			"UpstreamHttpMethod": [ "Get" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "borrow_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Borrowing/Get"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Borrowing/GetByBookId",
+			"UpstreamHttpMethod": [ "Get" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "borrow_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Borrowing/GetByBookId"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Borrowing/GetByEmail",
+			"UpstreamHttpMethod": [ "Get" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "borrow_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Borrowing/GetByEmail"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Borrowing/Borrow",
+			"UpstreamHttpMethod": [ "Post" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "borrow_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Borrowing/Borrow"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Borrowing/Extend",
+			"UpstreamHttpMethod": [ "Put" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "borrow_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Borrowing/Extend"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Borrowing/Delete",
+			"UpstreamHttpMethod": [ "Delete" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "borrow_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Borrowing/Delete"
+		},
+		//IdentityServer
+		{
+			"UpstreamPathTemplate": "/api/User/Get/Email",
+			"UpstreamHttpMethod": [ "Get" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "identity_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/User/Get/Email"
+		},
+		{
+			"UpstreamPathTemplate": "/api/User/Add",
+			"UpstreamHttpMethod": [ "Post" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "identity_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/User/Add"
+		},
+		{
+			"UpstreamPathTemplate": "/api/User/Update",
+			"UpstreamHttpMethod": [ "Put" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "identity_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/User/Update"
+		},
+		{
+			"UpstreamPathTemplate": "/api/User/Delete",
+			"UpstreamHttpMethod": [ "Delete" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "identity_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/User/Delete"
+		},
+		{
+			"UpstreamPathTemplate": "/api/User/UpdatePassword",
+			"UpstreamHttpMethod": [ "Put" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "identity_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/User/UpdatePassword"
+		},
+		{
+			"UpstreamPathTemplate": "/api/User/ResetPassword",
+			"UpstreamHttpMethod": [ "Post" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "identity_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/User/ResetPassword"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Authorization/LogIn",
+			"UpstreamHttpMethod": [ "Get" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "identity_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Authorization/LogIn"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Authorization/LogIn",
+			"UpstreamHttpMethod": [ "Post" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "identity_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Authorization/LogIn"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Authorization/LogOut",
+			"UpstreamHttpMethod": [ "Post" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "identity_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Authorization/LogOut"
+		},
+		{
+			"UpstreamPathTemplate": "/api/Authorization/Token",
+			"UpstreamHttpMethod": [ "Post" ],
+			"DownstreamScheme": "http",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "identity_service_container",
+					"Port": 80
+				}
+			],
+			"DownstreamPathTemplate": "/api/Authorization/Token"
+		}
+	],
+	"GlobalConfiguration": {
+		"BaseUrl": "http://localhost:500"
+	}
+}
