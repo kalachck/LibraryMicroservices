@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using LibrarySevice.BussinesLogic.DTOs;
 using LibrarySevice.BussinesLogic.Exceptions;
+using LibrarySevice.BussinesLogic.Hubs;
 using LibrarySevice.BussinesLogic.Services.Abstract;
 using LibrarySevice.DataAccess;
 using LibrarySevice.DataAccess.Entities;
 using LibrarySevice.DataAccess.Repositories.Abstract;
+using Microsoft.AspNetCore.SignalR;
 
 namespace LibrarySevice.BussinesLogic.Services
 {
@@ -13,14 +15,17 @@ namespace LibrarySevice.BussinesLogic.Services
         private readonly IBaseRepository<Book, ApplicationContext> _repository;
         private readonly ApplicationContext _applicationContext;
         private readonly IMapper _mapper;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
         public BookService(IBaseRepository<Book, ApplicationContext> repository,
             ApplicationContext applicationContext,
-            IMapper mapper)
+            IMapper mapper,
+            IHubContext<NotificationHub> hubContext)
         {
             _repository = repository;
             _applicationContext = applicationContext;
             _mapper = mapper;
+            _hubContext = hubContext;
         }
 
         public async Task<BookDTO> GetAsync(int id)
@@ -49,6 +54,8 @@ namespace LibrarySevice.BussinesLogic.Services
                 _repository.Add(_mapper.Map<Book>(book));
 
                 await _applicationContext.SaveChangesAsync();
+
+                await _hubContext.Clients.All.SendAsync("ReceiveMessage", $"The book with the title {book.Title} has just been added");
 
                 return await Task.FromResult("The record was successfully added");
             }
