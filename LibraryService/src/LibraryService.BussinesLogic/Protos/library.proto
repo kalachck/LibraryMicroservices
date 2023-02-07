@@ -1,0 +1,17 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "LibrarySevice.BussinesLogic";
+
+package library;
+
+service CheckBook{
+	rpc Check (RequestId) returns (ResponseMessage);
+}
+
+message RequestId{
+	int32 Id = 1;
+}
+
+message ResponseMessage{
+	bool IsAvailable = 1;
+}

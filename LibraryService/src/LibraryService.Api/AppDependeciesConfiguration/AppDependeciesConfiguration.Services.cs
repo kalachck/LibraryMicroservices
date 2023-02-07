@@ -44,6 +44,8 @@ namespace LibrarySevice.Api.AppDependeciesConfiguration
 
             builder.Services.AddHostedService<RabbitService>();
 
+            builder.Services.AddGrpc();
+
             return builder;
         }
     }
