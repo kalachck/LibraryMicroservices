@@ -1,0 +1,17 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "IdentityService.BusinessLogic";
+
+package identity;
+
+service GetUser{
+	rpc Get (RequestEmail) returns (ResponseMessage);
+}
+
+message RequestEmail{
+	string Email = 1;
+}
+
+message ResponseMessage{
+	bool IsExists = 1;
+}
