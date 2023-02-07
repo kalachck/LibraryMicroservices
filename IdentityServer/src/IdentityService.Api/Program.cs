@@ -1,4 +1,5 @@
 using IdentityService.Api.AppDependenciesConfiguration;
+using IdentityService.BusinessLogic.Services;
 
 namespace IdentityService.Api
 {
@@ -27,7 +28,9 @@ namespace IdentityService.Api
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection(); 
+            app.UseHttpsRedirection();
+
+            app.MapGrpcService<GetUserService>();
 
             app.MapControllers();
 
