@@ -4,8 +4,8 @@ option csharp_namespace = "IdentityService.BusinessLogic";
 
 package identity;
 
-service GetUser{
-	rpc Get (RequestEmail) returns (ResponseMessage);
+service CheckUser{
+	rpc Check (RequestEmail) returns (ResponseMessage);
 }
 
 message RequestEmail{

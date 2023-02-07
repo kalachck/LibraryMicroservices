@@ -4,16 +4,16 @@ using IdentityService.BusinessLogic.Services.Abstarct;
 
 namespace IdentityService.BusinessLogic.Services
 {
-    public class GetUserService : GetUser.GetUserBase
+    public class CheckUserService : CheckUser.CheckUserBase
     {
         private readonly IUserService _userService;
 
-        public GetUserService(IUserService userService)
+        public CheckUserService(IUserService userService)
         {
             _userService = userService;
         }
 
-        public override async Task<ResponseMessage> Get(RequestEmail request, ServerCallContext context)
+        public override async Task<ResponseMessage> Check(RequestEmail request, ServerCallContext context)
         {
             try
             {

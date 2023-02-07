@@ -30,7 +30,7 @@ namespace IdentityService.Api
 
             app.UseHttpsRedirection();
 
-            app.MapGrpcService<GetUserService>();
+            app.MapGrpcService<CheckUserService>();
 
             app.MapControllers();
 
