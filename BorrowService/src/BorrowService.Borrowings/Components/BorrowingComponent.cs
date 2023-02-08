@@ -16,18 +16,21 @@ namespace BorrowService.Borrowings.Components
         private readonly ApplicationContext _applicationContext;
         private readonly IHangfireService _hangfireService;
         private readonly IRabbitService _rabbitService;
+        private readonly IGrpcService _grpcService;
         private readonly CommunicationOptions _options;
 
         public BorrowingComponent(IBorrowingRepository repository,
             ApplicationContext applicationContext,
             IOptions<CommunicationOptions> options,
             IHangfireService hangfireService,
-            IRabbitService rabbitService)
+            IRabbitService rabbitService,
+            IGrpcService grpcService)
         {
             _repository = repository;
             _applicationContext = applicationContext;
             _hangfireService = hangfireService;
             _rabbitService = rabbitService;
+            _grpcService = grpcService;
             _options = options.Value;
         }
 
@@ -107,53 +110,44 @@ namespace BorrowService.Borrowings.Components
             }
         }
 
-        public async Task<string> BorrowAsync(string email, int bookId, HttpClient client)
+        public async Task<string> BorrowAsync(string email, int bookId)
         {
             try
             {
-                var identityResult = await client.GetAsync($"{_options.Identity}{email}");
-                var libraryResult = await client.GetAsync($"{_options.Library}{bookId}");
+                var identityResult = await _grpcService.CheckUser(email);
+                var libraryResult = await _grpcService.CheckBook(bookId);
 
-                if (identityResult.StatusCode == System.Net.HttpStatusCode.OK && identityResult.Content != null)
+                if(identityResult == true)
                 {
-                    if (libraryResult.StatusCode == System.Net.HttpStatusCode.OK && libraryResult.Content != null)
+                    if (libraryResult.IsAvailable == true)
                     {
-                        var book = JsonConvert.DeserializeObject<Dictionary<string, string>>(await libraryResult.Content.ReadAsStringAsync());
-
-                        if (book["isAvailable"] == "true")
+                        var borrowing = new Borrowing()
                         {
-                            var identity = await identityResult.Content.ReadAsStringAsync();
+                            UserEmail = email,
+                            BookId = bookId,
+                            BookTitle = libraryResult.BookTitle,
+                            AddingDate = DateTime.Now.Date,
+                            ExpirationDate = DateTime.Now.Date.AddDays(30),
+                        };
 
-                            var borrowing = new Borrowing()
-                            {
-                                UserEmail = email,
-                                BookId = bookId,
-                                BookTitle = book["title"],
-                                AddingDate = DateTime.Now.Date,
-                                ExpirationDate = DateTime.Now.Date.AddDays(30),
-                            };
+                        _repository.Add(borrowing);
 
-                            _repository.Add(borrowing);
+                        await _applicationContext.SaveChangesAsync();
 
-                            await _applicationContext.SaveChangesAsync();
+                        _hangfireService.Run();
 
-                            _hangfireService.Run();
+                        var message = new RabbitMessage()
+                        {
+                            Topic = Topic.Borrow,
+                            BookId = bookId,
+                        };
 
-                            var message = new RabbitMessage()
-                            {
-                                Topic = Topic.Borrow,
-                                BookId = bookId,
-                            };
+                        _rabbitService.SendMessage(JsonConvert.SerializeObject(message));
 
-                            _rabbitService.SendMessage(JsonConvert.SerializeObject(message));
-
-                            return await Task.FromResult($"Book was borrowed successfully by user: {email}");
-                        }
-
-                        throw new NotAvailableException("Book is not available now");
+                        return await Task.FromResult($"Book was borrowed successfully by user: {email}");
                     }
 
-                    throw new NotFoundException("Book was not found");
+                    throw new NotAvailableException("Book is not available now");
                 }
 
                 throw new NotFoundException("User was not found");

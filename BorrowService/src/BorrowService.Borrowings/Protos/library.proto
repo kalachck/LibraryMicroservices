@@ -1,0 +1,18 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "BorrwoService.Borrowing";
+
+package borrow.library;
+
+service CheckBook{
+	rpc Check (RequestId) returns (BookResponse);
+}
+
+message RequestId{
+	int32 Id = 1;
+}
+
+message BookResponse{
+	bool IsAvailable = 1;
+	string BookTitle = 2;
+}

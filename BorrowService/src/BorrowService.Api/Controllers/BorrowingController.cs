@@ -87,7 +87,7 @@ namespace BorrowService.Api.Controllers
         {
             try
             {
-                var result = await _component.BorrowAsync(email, bookId, _client);
+                var result = await _component.BorrowAsync(email, bookId);
 
                 return Ok(result);
             }

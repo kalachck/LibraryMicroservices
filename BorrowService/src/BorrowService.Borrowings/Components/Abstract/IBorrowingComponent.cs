@@ -12,7 +12,7 @@ namespace BorrowService.Borrowings.Components.Abstract
 
         Task<Borrowing> GetByEmailAndBookIdAsync(string email, int bookId);
 
-        Task<string> BorrowAsync(string email, int bookId, HttpClient httpClient);
+        Task<string> BorrowAsync(string email, int bookId);
 
         Task<string> ExtendAsync(string email, int bookId);
 

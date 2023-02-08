@@ -41,6 +41,8 @@ namespace BorrowService.Api.AppDependenciesConfiguration
 
             builder.Services.AddScoped<IRabbitService, RabbitService>();
 
+            builder.Services.AddScoped<IGrpcService, GrpcService>();
+
             builder.Services.Configure<CommunicationOptions>(
                 builder.Configuration.GetSection(CommunicationOptions.CommunicationUrls));
 
