@@ -13,13 +13,13 @@ namespace IdentityService.BusinessLogic.Services
             _userService = userService;
         }
 
-        public override async Task<ResponseMessage> Check(RequestEmail request, ServerCallContext context)
+        public override async Task<UserResponse> Check(RequestEmail request, ServerCallContext context)
         {
             try
             {
                 var user = await _userService.GetAsync(request.Email);
 
-                return await Task.FromResult(new ResponseMessage()
+                return await Task.FromResult(new UserResponse()
                 {
                     IsExists = true,
                 });
@@ -28,7 +28,7 @@ namespace IdentityService.BusinessLogic.Services
             {
                 if (ex is NotFoundException)
                 {
-                    return await Task.FromResult(new ResponseMessage()
+                    return await Task.FromResult(new UserResponse()
                     {
                         IsExists = false,
                     });
