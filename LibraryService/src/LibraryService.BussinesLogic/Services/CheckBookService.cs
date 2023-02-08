@@ -12,13 +12,13 @@ namespace LibrarySevice.BussinesLogic.Services
             _bookService = bookService;
         }
 
-        public override async Task<ResponseMessage> Check(RequestId request, ServerCallContext context)
+        public override async Task<BookResponse> Check(RequestId request, ServerCallContext context)
         {
             try
             {
                 var book = await _bookService.GetAsync(request.Id);
 
-                return await Task.FromResult(new ResponseMessage()
+                return await Task.FromResult(new BookResponse()
                 {
                     IsAvailable = book.IsAvailable,
                 });

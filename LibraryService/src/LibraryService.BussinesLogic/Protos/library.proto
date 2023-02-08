@@ -5,13 +5,14 @@ option csharp_namespace = "LibrarySevice.BussinesLogic";
 package library;
 
 service CheckBook{
-	rpc Check (RequestId) returns (ResponseMessage);
+	rpc Check (RequestId) returns (BookResponse);
 }
 
 message RequestId{
 	int32 Id = 1;
 }
 
-message ResponseMessage{
+message BookResponse{
 	bool IsAvailable = 1;
+	string BookTitle = 2;
 }
