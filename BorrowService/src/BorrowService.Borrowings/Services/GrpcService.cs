@@ -17,7 +17,14 @@ namespace BorrowService.Borrowings.Services
 
         public async Task<BookResponse> CheckBook(int bookId)
         {
-            var channel = GrpcChannel.ForAddress(_options.Library);
+            var httpHandler = new HttpClientHandler();
+
+            httpHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+
+            var channel = GrpcChannel.ForAddress(_options.Library, new GrpcChannelOptions()
+            {
+                HttpHandler = httpHandler
+            });
 
             var client = new CheckBook.CheckBookClient(channel);
 
@@ -28,7 +35,14 @@ namespace BorrowService.Borrowings.Services
 
         public async Task<bool> CheckUser(string email)
         {
-            var channel = GrpcChannel.ForAddress(_options.Identity);
+            var httpHandler = new HttpClientHandler();
+
+            httpHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+
+            var channel = GrpcChannel.ForAddress(_options.Identity, new GrpcChannelOptions()
+            {
+                HttpHandler = httpHandler
+            });
 
             var client = new CheckUser.CheckUserClient(channel);
 

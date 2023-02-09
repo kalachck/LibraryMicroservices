@@ -2,7 +2,7 @@
 
 option csharp_namespace = "BorrowService.Borrowings";
 
-package borrow.identity;
+package identity;
 
 service CheckUser{
 	rpc Check (RequestEmail) returns (UserResponse);

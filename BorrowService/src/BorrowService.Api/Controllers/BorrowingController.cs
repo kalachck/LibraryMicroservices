@@ -103,7 +103,7 @@ namespace BorrowService.Api.Controllers
                     return NotFound(ex.Message);
                 }
 
-                return Conflict("The record was not borrowed. There were technical problems");
+                return Conflict("The record was not updated. There were technical problems");
             }
         }
 
@@ -124,7 +124,7 @@ namespace BorrowService.Api.Controllers
                     return NotFound(ex.Message);
                 }
 
-                return Conflict("The record was not updated. There were technical problems");
+                return Conflict("The record was not borrowed. There were technical problems");
             }
         }
 

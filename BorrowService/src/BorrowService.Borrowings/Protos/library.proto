@@ -2,7 +2,7 @@
 
 option csharp_namespace = "BorrwoService.Borrowing";
 
-package borrow.library;
+package library;
 
 service CheckBook{
 	rpc Check (RequestId) returns (BookResponse);
