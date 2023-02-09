@@ -113,7 +113,7 @@ namespace LibrarySevice.BussinesLogic.Services
         {
             var rabbitMessage = JsonConvert.DeserializeObject<RabbitMessage>(message);
 
-            var book = await _repository.GetAsync(int.Parse(rabbitMessage.Message));
+            var book = await _repository.GetAsync(rabbitMessage.BookId);
 
             if (rabbitMessage.Topic == Enums.Topic.Borrow)
             {
@@ -127,6 +127,8 @@ namespace LibrarySevice.BussinesLogic.Services
             _repository.Update(book);
 
             await _applicationContext.SaveChangesAsync();
+
+            _applicationContext.Entry(book).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
         }
     }
 }

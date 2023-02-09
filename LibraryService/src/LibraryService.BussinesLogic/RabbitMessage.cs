@@ -6,6 +6,6 @@ namespace LibrarySevice.BussinesLogic
     {
         public Topic Topic { get; set; }
 
-        public string Message { get; set; }
+        public int BookId { get; set; }
     }
 }

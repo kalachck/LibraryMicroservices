@@ -54,7 +54,7 @@ namespace LibrarySevice.BussinesLogic.Services
                 _bookService.ChangeStatus(message);
             };
 
-            _channel.BasicConsume(_options.Queue, false, consumer);
+            _channel.BasicConsume(_options.Queue, true, consumer);
 
             return Task.CompletedTask;
         }
