@@ -127,8 +127,6 @@ namespace LibrarySevice.BussinesLogic.Services
             _repository.Update(book);
 
             await _applicationContext.SaveChangesAsync();
-
-            _applicationContext.Entry(book).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
         }
     }
 }
