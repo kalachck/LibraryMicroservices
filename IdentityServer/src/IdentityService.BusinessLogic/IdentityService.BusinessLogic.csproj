@@ -25,5 +25,8 @@
   <ItemGroup>
     <Protobuf Include="Protos\identity.proto" GrpcServices="Server" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IdentityService.DataAccess\IdentityService.DataAccess.csproj" />
+  </ItemGroup>
 
 </Project>
