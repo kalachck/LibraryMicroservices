@@ -52,9 +52,10 @@ namespace IdentityService.Api.AppDependenciesConfiguration
                     options.RegisterScopes("api");
 
                     options.UseAspNetCore()
+                    .DisableTransportSecurityRequirement()
                     .EnableTokenEndpointPassthrough()
                     .EnableAuthorizationEndpointPassthrough()
-                    .EnableLogoutEndpointPassthrough();
+                    .EnableUserinfoEndpointPassthrough();
                 });
 
             builder.Services.AddScoped<IUserService, UserService>();
