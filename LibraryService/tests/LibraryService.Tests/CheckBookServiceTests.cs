@@ -79,7 +79,7 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            checkBookService.Invoking(async x => x.Check(new RequestId() { Id = id }, callContext))
+            checkBookService.Invoking(x => x.Check(new RequestId() { Id = id }, callContext))
                 .Should().ThrowAsync<Exception>();
         }
     }

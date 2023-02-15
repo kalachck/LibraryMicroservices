@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AutoFixture;
+using AutoMapper;
 using FluentAssertions;
 using LibrarySevice.Api.Mappings;
 using LibrarySevice.BussinesLogic;
@@ -18,6 +19,7 @@ namespace LibraryService.UnitTests
         private readonly IMapper _mapper;
         private readonly Mock<ApplicationContext> _context;
         private readonly Mock<IBaseRepository<Book, ApplicationContext>> _bookRepository;
+        private readonly Fixture _fixture;
 
         public BookServiceTests()
         {
@@ -29,6 +31,7 @@ namespace LibraryService.UnitTests
             _mapper = new Mapper(configuration);
             _context = new Mock<ApplicationContext>();
             _bookRepository = new Mock<IBaseRepository<Book, ApplicationContext>>();
+            _fixture = new Fixture();
 
             _context.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult(1));
         }
@@ -38,12 +41,7 @@ namespace LibraryService.UnitTests
         public async Task GetAsync_ShouldReturnAuthorDTO(int id)
         {
             //Arrange
-            _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(new Book()
-            {
-                Id = id,
-                Title = "testTitle",
-                PublicationDate = DateTime.Now,
-            });
+            _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Book>());
 
             var bookService = new BookService(_bookRepository.Object, _context.Object, _mapper);
 
@@ -66,7 +64,7 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            bookService.Invoking(async x => x.GetAsync(id)).Should().ThrowAsync<NotFoundException>();
+            bookService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<NotFoundException>();
         }
 
         [Theory]
@@ -80,7 +78,7 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            bookService.Invoking(async x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
+            bookService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
         }
 
         [Fact]
@@ -92,11 +90,7 @@ namespace LibraryService.UnitTests
             var bookService = new BookService(_bookRepository.Object, _context.Object, _mapper);
 
             //Act
-            var actualResult = await bookService.AddAsync(new BookDTO()
-            {
-                Title = "testTitle",
-                PublicationDate = DateTime.Now,
-            });
+            var actualResult = await bookService.AddAsync(_fixture.Create<BookDTO>());
 
             //Assert
             actualResult.Should().BeOfType<string>("The record was successfully added");
@@ -112,11 +106,8 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            bookService.Invoking(async x => x.AddAsync(new BookDTO()
-            {
-                Title = "testTitle",
-                PublicationDate = DateTime.Now,
-            })).Should().ThrowAsync<Exception>();
+            bookService.Invoking(x => x.AddAsync(_fixture.Create<BookDTO>()))
+                .Should().ThrowAsync<Exception>();
         }
 
         [Theory]
@@ -124,24 +115,13 @@ namespace LibraryService.UnitTests
         public async Task UpdateAsync_ShouldReturnSuccessfullMessage(int id)
         {
             //Arrange
-            _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(new Book()
-            {
-                Id = id,
-                Title = "testTitle",
-                PublicationDate = DateTime.Now,
-                IsAvailable = true,
-            });
+            _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Book>());
             _bookRepository.Setup(x => x.Update(It.IsAny<Book>()));
 
             var bookService = new BookService(_bookRepository.Object, _context.Object, _mapper);
 
             //Act
-            var actualResult = await bookService.UpdateAsync(id, new BookDTO()
-            {
-                Title = "testTitle",
-                PublicationDate = DateTime.Now,
-                IsAvailable = true,
-            });
+            var actualResult = await bookService.UpdateAsync(id, _fixture.Create<BookDTO>());
 
             //Assert
             actualResult.Should().BeOfType<string>("The record was successfully updated");
@@ -159,11 +139,8 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            bookService.Invoking(async x => x.UpdateAsync(id, new BookDTO()
-            {
-                Title = "testTitle",
-                PublicationDate = DateTime.Now,
-            })).Should().ThrowAsync<NotFoundException>();
+            bookService.Invoking(x => x.UpdateAsync(id, _fixture.Create<BookDTO>()))
+                .Should().ThrowAsync<NotFoundException>();
         }
 
         [Theory]
@@ -178,11 +155,8 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            bookService.Invoking(x => x.UpdateAsync(id, new BookDTO()
-            {
-                Title = "testTitle",
-                PublicationDate = DateTime.Now,
-            })).Should().ThrowAsync<Exception>();
+            bookService.Invoking(x => x.UpdateAsync(id, _fixture.Create<BookDTO>()))
+                .Should().ThrowAsync<Exception>();
         }
 
         [Theory]
@@ -190,13 +164,7 @@ namespace LibraryService.UnitTests
         public async Task DeleteAsync_ShouldReturnSuccessfullMessage(int id)
         {
             //Arrange
-            _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(new Book()
-            {
-                Id = id,
-                Title = "testTitle",
-                PublicationDate = DateTime.Now,
-                IsAvailable = true,
-            });
+            _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Book>());
             _bookRepository.Setup(x => x.Delete(It.IsAny<Book>()));
 
             var bookService = new BookService(_bookRepository.Object, _context.Object, _mapper);
@@ -220,7 +188,7 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            bookService.Invoking(async x => x.DeleteAsync(id)).Should().ThrowAsync<NotFoundException>();
+            bookService.Invoking(x => x.DeleteAsync(id)).Should().ThrowAsync<NotFoundException>();
         }
 
         [Theory]
@@ -235,7 +203,7 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            bookService.Invoking(async x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
+            bookService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
         }
 
 
@@ -250,12 +218,7 @@ namespace LibraryService.UnitTests
                 BookId = id,
             });
 
-            _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(new Book()
-            {
-                Id = id,
-                Title = "testTitle",
-                PublicationDate = DateTime.Now,
-            });
+            _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Book>());
             _bookRepository.Setup(x => x.Update(It.IsAny<Book>()));
 
             var bookService = new BookService(_bookRepository.Object, _context.Object, _mapper);

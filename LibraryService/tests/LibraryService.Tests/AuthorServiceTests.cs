@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AutoFixture;
+using AutoMapper;
 using FluentAssertions;
 using LibrarySevice.Api.Mappings;
 using LibrarySevice.BussinesLogic;
@@ -17,6 +18,7 @@ namespace LibraryService.UnitTests
         private readonly IMapper _mapper;
         private readonly Mock<ApplicationContext> _context;
         private readonly Mock<IBaseRepository<Author, ApplicationContext>> _authorRepository;
+        private readonly Fixture _fixture;
 
         public AuthorServiceTests()
         {
@@ -28,6 +30,7 @@ namespace LibraryService.UnitTests
             _mapper = new Mapper(configuration);
             _context = new Mock<ApplicationContext>();
             _authorRepository = new Mock<IBaseRepository<Author, ApplicationContext>>();
+            _fixture = new Fixture();
 
             _context.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult(1));
         }
@@ -37,12 +40,7 @@ namespace LibraryService.UnitTests
         public async Task GetAsync_ShouldReturnAuthorDTO(int id)
         {
             //Arrange
-            _authorRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(new Author()
-            {
-                Id = id,
-                Name = "testName",
-                Books = null,
-            });
+            _authorRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Author>());
 
             var authorService = new AuthorService(_authorRepository.Object, _context.Object, _mapper);
 
@@ -65,7 +63,7 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            authorService.Invoking(async x => x.GetAsync(id)).Should().ThrowAsync<NotFoundException>();
+            authorService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<NotFoundException>();
         }
 
         [Theory]
@@ -79,7 +77,7 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            authorService.Invoking(async x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
+            authorService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
         }
 
         [Fact]
@@ -91,11 +89,7 @@ namespace LibraryService.UnitTests
             var authorService = new AuthorService(_authorRepository.Object, _context.Object, _mapper);
 
             //Act
-            var actualResult = await authorService.AddAsync(new AuthorDTO()
-            {
-                Name = "testName",
-                Books = null,
-            });
+            var actualResult = await authorService.AddAsync(_fixture.Create<AuthorDTO>());
 
             //Assert
             actualResult.Should().BeOfType<string>("The record was successfully added");
@@ -111,11 +105,8 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            authorService.Invoking(async x => x.AddAsync(new AuthorDTO()
-            {
-                Name = "testName",
-                Books = null,
-            })).Should().ThrowAsync<Exception>();
+            authorService.Invoking(x => x.AddAsync(_fixture.Create<AuthorDTO>()))
+                .Should().ThrowAsync<Exception>();
         }
 
         [Theory]
@@ -123,22 +114,13 @@ namespace LibraryService.UnitTests
         public async Task UpdateAsync_ShouldReturnSuccessfullMessage(int id)
         {
             //Arrange
-            _authorRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(new Author()
-            {
-                Id = id,
-                Name = "testName",
-                Books = null,
-            });
+            _authorRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Author>());
             _authorRepository.Setup(x => x.Update(It.IsAny<Author>()));
 
             var authorService = new AuthorService(_authorRepository.Object, _context.Object, _mapper);
 
             //Act
-            var actualResult = await authorService.UpdateAsync(id, new AuthorDTO()
-            {
-                Name = "testName2",
-                Books = null,
-            });
+            var actualResult = await authorService.UpdateAsync(id, _fixture.Create<AuthorDTO>());
 
             //Assert
             actualResult.Should().BeOfType<string>("The record was successfully updated");
@@ -156,11 +138,8 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            authorService.Invoking(async x => x.UpdateAsync(id, new AuthorDTO()
-            {
-                Name = "testName2",
-                Books = null,
-            })).Should().ThrowAsync<NotFoundException>();
+            authorService.Invoking(x => x.UpdateAsync(id, _fixture.Create<AuthorDTO>()))
+                .Should().ThrowAsync<NotFoundException>();
         }
 
         [Theory]
@@ -175,11 +154,8 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            authorService.Invoking(x => x.UpdateAsync(id, new AuthorDTO()
-            {
-                Name = "testName",
-                Books = null,
-            })).Should().ThrowAsync<Exception>();
+            authorService.Invoking(x => x.UpdateAsync(id, _fixture.Create<AuthorDTO>()))
+                .Should().ThrowAsync<Exception>();
         }
 
         [Theory]
@@ -187,12 +163,7 @@ namespace LibraryService.UnitTests
         public async Task DeleteAsync_ShouldReturnSuccessfullMessage(int id)
         {
             //Arrange
-            _authorRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(new Author()
-            {
-                Id = id,
-                Name = "testName",
-                Books = null,
-            });
+            _authorRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Author>());
             _authorRepository.Setup(x => x.Delete(It.IsAny<Author>()));
 
             var authorService = new AuthorService(_authorRepository.Object, _context.Object, _mapper);
@@ -216,7 +187,7 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            authorService.Invoking(async x => x.DeleteAsync(id)).Should().ThrowAsync<NotFoundException>();
+            authorService.Invoking(x => x.DeleteAsync(id)).Should().ThrowAsync<NotFoundException>();
         }
 
         [Theory]
@@ -231,7 +202,7 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            authorService.Invoking(async x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
+            authorService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
         }
     }
 }

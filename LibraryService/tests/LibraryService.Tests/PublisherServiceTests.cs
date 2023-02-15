@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AutoFixture;
+using AutoMapper;
 using FluentAssertions;
 using LibrarySevice.Api.Mappings;
 using LibrarySevice.BussinesLogic.DTOs;
@@ -16,6 +17,7 @@ namespace LibraryService.UnitTests
         private readonly IMapper _mapper;
         private readonly Mock<ApplicationContext> _context;
         private readonly Mock<IBaseRepository<Publisher, ApplicationContext>> _publisherRepository;
+        private readonly Fixture _fixture;
 
         public PublisherServiceTests()
         {
@@ -27,6 +29,7 @@ namespace LibraryService.UnitTests
             _mapper = new Mapper(configuration);
             _context = new Mock<ApplicationContext>();
             _publisherRepository = new Mock<IBaseRepository<Publisher, ApplicationContext>>();
+            _fixture = new Fixture();
 
             _context.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult(1));
         }
@@ -36,13 +39,7 @@ namespace LibraryService.UnitTests
         public async Task GetAsync_ShouldReturnPublisherDTO(int id)
         {
             //Arrange
-            _publisherRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(new Publisher()
-            {
-                Id = id,
-                Name = "testName",
-                Address = "testAddress",
-                Books = null,
-            });
+            _publisherRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Publisher>());
 
             var publisherService = new PublisherService(_publisherRepository.Object, _context.Object, _mapper);
 
@@ -65,7 +62,7 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            publisherService.Invoking(async x => x.GetAsync(id)).Should().ThrowAsync<NotFoundException>();
+            publisherService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<NotFoundException>();
         }
 
         [Theory]
@@ -79,7 +76,7 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            publisherService.Invoking(async x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
+            publisherService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
         }
 
         [Fact]
@@ -91,12 +88,7 @@ namespace LibraryService.UnitTests
             var publisherService = new PublisherService(_publisherRepository.Object, _context.Object, _mapper);
 
             //Act
-            var actualResult = await publisherService.AddAsync(new PublisherDTO()
-            {
-                Name = "testName",
-                Address = "testAddress",
-                Books = null,
-            });
+            var actualResult = await publisherService.AddAsync(_fixture.Create<PublisherDTO>());
 
             //Assert
             actualResult.Should().BeOfType<string>("The record was successfully added");
@@ -112,12 +104,7 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            publisherService.Invoking(async x => x.AddAsync(new PublisherDTO()
-            {
-                Name = "testName",
-                Address = "testAddress",
-                Books = null,
-            })).Should().ThrowAsync<Exception>();
+            publisherService.Invoking(x => x.AddAsync(_fixture.Create<PublisherDTO>())).Should().ThrowAsync<Exception>();
         }
 
         [Theory]
@@ -125,24 +112,13 @@ namespace LibraryService.UnitTests
         public async Task UpdateAsync_ShouldReturnSuccessfullMessage(int id)
         {
             //Arrange
-            _publisherRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(new Publisher()
-            {
-                Id = id,
-                Name = "testName",
-                Address = "testName",
-                Books = null,
-            });
+            _publisherRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Publisher>());
             _publisherRepository.Setup(x => x.Update(It.IsAny<Publisher>()));
 
             var publisherService = new PublisherService(_publisherRepository.Object, _context.Object, _mapper);
 
             //Act
-            var actualResult = await publisherService.UpdateAsync(id, new PublisherDTO()
-            {
-                Name = "testName2",
-                Address = "testAddress2",
-                Books = null,
-            });
+            var actualResult = await publisherService.UpdateAsync(id, _fixture.Create<PublisherDTO>());
 
             //Assert
             actualResult.Should().BeOfType<string>("The record was successfully updated");
@@ -160,12 +136,8 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            publisherService.Invoking(async x => x.UpdateAsync(id, new PublisherDTO()
-            {
-                Name = "testName2",
-                Address = "testAddress2",
-                Books = null,
-            })).Should().ThrowAsync<NotFoundException>();
+            publisherService.Invoking(x => x.UpdateAsync(id, _fixture.Create<PublisherDTO>()))
+                .Should().ThrowAsync<NotFoundException>();
         }
 
         [Theory]
@@ -180,12 +152,8 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            publisherService.Invoking(x => x.UpdateAsync(id, new PublisherDTO()
-            {
-                Name = "testName",
-                Address = "testAddress",
-                Books = null,
-            })).Should().ThrowAsync<Exception>();
+            publisherService.Invoking(x => x.UpdateAsync(id, _fixture.Create<PublisherDTO>()))
+                .Should().ThrowAsync<Exception>();
         }
 
         [Theory]
@@ -193,13 +161,7 @@ namespace LibraryService.UnitTests
         public async Task DeleteAsync_ShouldReturnSuccessfullMessage(int id)
         {
             //Arrange
-            _publisherRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(new Publisher()
-            {
-                Id = id,
-                Name = "testName",
-                Address = "testAddress",
-                Books = null,
-            });
+            _publisherRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Publisher>());
             _publisherRepository.Setup(x => x.Delete(It.IsAny<Publisher>()));
 
             var genreService = new PublisherService(_publisherRepository.Object, _context.Object, _mapper);
@@ -223,7 +185,7 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            publisherService.Invoking(async x => x.DeleteAsync(id)).Should().ThrowAsync<NotFoundException>();
+            publisherService.Invoking(x => x.DeleteAsync(id)).Should().ThrowAsync<NotFoundException>();
         }
 
         [Theory]
@@ -238,7 +200,7 @@ namespace LibraryService.UnitTests
 
             //Act
             //Assert
-            publisherService.Invoking(async x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
+            publisherService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
         }
     }
 }
