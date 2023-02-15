@@ -14,6 +14,9 @@ namespace LibrarySevice.DataAccess
 
         public DbSet<Genre> Genres { get; set; }
 
+        public ApplicationContext()
+        { }
+
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         { }
 

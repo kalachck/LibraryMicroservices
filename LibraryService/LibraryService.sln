@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibrarySevice.BussinesLogic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibrarySevice.DataAccess", "src\LibraryService.DataAccess\LibrarySevice.DataAccess.csproj", "{C939F804-7FAE-4300-A6AF-27394C692278}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryService.UnitTests", "tests\LibraryService.Tests\LibraryService.UnitTests.csproj", "{6A67EEC6-5171-43B9-8CC5-16EE04001180}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{C939F804-7FAE-4300-A6AF-27394C692278}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C939F804-7FAE-4300-A6AF-27394C692278}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C939F804-7FAE-4300-A6AF-27394C692278}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A67EEC6-5171-43B9-8CC5-16EE04001180}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A67EEC6-5171-43B9-8CC5-16EE04001180}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A67EEC6-5171-43B9-8CC5-16EE04001180}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A67EEC6-5171-43B9-8CC5-16EE04001180}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -7,7 +7,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 
-namespace LibrarySevice.BussinesLogic.Services
+namespace LibrarySevice.BussinesLogic.BackgroundServices
 {
     public class RabbitService : BackgroundService
     {

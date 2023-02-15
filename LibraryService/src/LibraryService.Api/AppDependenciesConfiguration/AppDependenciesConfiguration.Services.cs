@@ -1,19 +1,20 @@
-﻿using LibrarySevice.Api.Models;
+﻿using FluentValidation;
+using LibrarySevice.Api.Models;
 using LibrarySevice.Api.Validators;
+using LibrarySevice.BussinesLogic.BackgroundServices;
+using LibrarySevice.BussinesLogic.Options;
 using LibrarySevice.BussinesLogic.Services;
+using LibrarySevice.BussinesLogic.Services.Abstract;
 using LibrarySevice.DataAccess;
+using LibrarySevice.DataAccess.Entities;
 using LibrarySevice.DataAccess.Repositories;
-using FluentValidation;
+using LibrarySevice.DataAccess.Repositories.Abstract;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using LibrarySevice.BussinesLogic.Services.Abstract;
-using LibrarySevice.DataAccess.Repositories.Abstract;
-using LibrarySevice.DataAccess.Entities;
-using LibrarySevice.BussinesLogic.Options;
 
 namespace LibrarySevice.Api.AppDependeciesConfiguration
 {
-    public static partial class AppDependeciesConfiguration
+    public static partial class AppDependenciesConfiguration
     {
         public static WebApplicationBuilder AddServices(this WebApplicationBuilder builder)
         {
