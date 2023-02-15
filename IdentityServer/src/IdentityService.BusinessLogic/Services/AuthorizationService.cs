@@ -27,8 +27,6 @@ namespace IdentityService.BusinessLogic.Services
                 if (((byte)_userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, identityUser.PasswordHash)) == 1)
                 {
                     var claimPrincipal = await SetClaimsAsync(user, request);
-                
-                    claimPrincipal.SetScopes(request.GetScopes());
 
                     return await Task.FromResult(claimPrincipal);
                 }

@@ -5,6 +5,7 @@
         public static WebApplicationBuilder ConfigureDependencies(this WebApplicationBuilder builder)
         {
             builder.AddServices();
+            builder.AddHealthChecks();
 
             return builder;
         }

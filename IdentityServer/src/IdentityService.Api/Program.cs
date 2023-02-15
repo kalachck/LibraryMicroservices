@@ -1,5 +1,7 @@
+using HealthChecks.UI.Client;
 using IdentityService.Api.AppDependenciesConfiguration;
 using IdentityService.BusinessLogic.Services;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 namespace IdentityService.Api
 {
@@ -33,6 +35,14 @@ namespace IdentityService.Api
             app.MapGrpcService<CheckUserService>();
 
             app.MapControllers();
+
+            app.UseHealthChecks("/hc", new HealthCheckOptions()
+            {
+                Predicate = _ => true,
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
+
+            app.UseHealthChecksUI(config => config.UIPath = "/hc-ui");
 
             app.Run();
         }
