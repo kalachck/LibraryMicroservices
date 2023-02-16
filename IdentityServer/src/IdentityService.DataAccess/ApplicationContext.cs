@@ -5,6 +5,9 @@ namespace IdentityService.DataAccess
 {
     public class ApplicationContext : IdentityDbContext
     {
+        public ApplicationContext()
+        { }
+
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         { }
     }
