@@ -6,6 +6,8 @@
         {
             builder.AddServices();
 
+            builder.AddHealthChecks();
+
             return builder;
         }
     }

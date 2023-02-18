@@ -1,5 +1,7 @@
 using BorrowService.Api.AppDependenciesConfiguration;
 using Hangfire;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace BorrowService.Api
@@ -34,6 +36,14 @@ namespace BorrowService.Api
             app.UseAuthorization();
 
             app.UseHangfireDashboard("/dashboard", options);
+
+            app.UseHealthChecks("/hc", new HealthCheckOptions()
+            {
+                Predicate = _ => true,
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
+
+            app.UseHealthChecksUI(config => config.UIPath = "/hc-ui");
 
             app.MapControllers();
 
