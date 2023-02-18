@@ -1,4 +1,5 @@
 using LibrarySevice.Api.AppDependeciesConfiguration;
+using LibrarySevice.BussinesLogic.Hubs;
 
 namespace LibrarySevice.Api
 {
@@ -26,6 +27,7 @@ namespace LibrarySevice.Api
 
             app.UseAuthorization();
 
+            app.MapHub<NotificationHub>("/notifications");
 
             app.MapControllers();
 

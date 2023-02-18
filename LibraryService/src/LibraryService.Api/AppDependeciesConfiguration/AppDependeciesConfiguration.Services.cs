@@ -38,6 +38,8 @@ namespace LibrarySevice.Api.AppDependeciesConfiguration
             builder.Services.AddScoped<IValidator<PublisherRequestModel>, PublisherValidator>();
             builder.Services.AddScoped<IValidator<GenreRequestModel>, GenreValidator>();
 
+            builder.Services.AddSignalR();
+
             return builder;
         }
     }
