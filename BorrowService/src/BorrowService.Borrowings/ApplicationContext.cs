@@ -8,6 +8,9 @@ namespace BorrowService.Borrowings
     {
         public DbSet<Borrowing> Borrowings { get; set; }
 
+        public ApplicationContext()
+        { }
+
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         { }
 

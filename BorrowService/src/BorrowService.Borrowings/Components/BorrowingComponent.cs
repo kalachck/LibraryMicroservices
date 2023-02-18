@@ -2,10 +2,8 @@
 using BorrowService.Borrowings.Entities;
 using BorrowService.Borrowings.Enums;
 using BorrowService.Borrowings.Exceptions;
-using BorrowService.Borrowings.Options;
 using BorrowService.Borrowings.Repositories.Abstract;
 using BorrowService.Borrowings.Services.Abstract;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace BorrowService.Borrowings.Components
@@ -17,11 +15,9 @@ namespace BorrowService.Borrowings.Components
         private readonly IHangfireService _hangfireService;
         private readonly IRabbitService _rabbitService;
         private readonly IGrpcService _grpcService;
-        private readonly CommunicationOptions _options;
 
         public BorrowingComponent(IBorrowingRepository repository,
             ApplicationContext applicationContext,
-            IOptions<CommunicationOptions> options,
             IHangfireService hangfireService,
             IRabbitService rabbitService,
             IGrpcService grpcService)
@@ -31,7 +27,6 @@ namespace BorrowService.Borrowings.Components
             _hangfireService = hangfireService;
             _rabbitService = rabbitService;
             _grpcService = grpcService;
-            _options = options.Value;
         }
 
         public async Task<Borrowing> GetAsync(int id)
@@ -117,7 +112,7 @@ namespace BorrowService.Borrowings.Components
                 var identityResult = await _grpcService.CheckUser(email);
                 var libraryResult = await _grpcService.CheckBook(bookId);
 
-                if(identityResult == true)
+                if (identityResult == true)
                 {
                     if (libraryResult.IsAvailable == true)
                     {
