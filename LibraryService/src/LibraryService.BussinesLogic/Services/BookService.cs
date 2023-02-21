@@ -4,17 +4,17 @@ using LibrarySevice.BussinesLogic.Exceptions;
 using LibrarySevice.BussinesLogic.Services.Abstract;
 using LibrarySevice.DataAccess;
 using LibrarySevice.DataAccess.Entities;
-using LibrarySevice.DataAccess.Repositories.Abstract;
+using LibrarySevice.DataAccess.Repositories;
 
 namespace LibrarySevice.BussinesLogic.Services
 {
     public class BookService : IBookService
     {
-        private readonly IBaseRepository<Book, ApplicationContext> _repository;
+        private readonly BookRepository _repository;
         private readonly ApplicationContext _applicationContext;
         private readonly IMapper _mapper;
 
-        public BookService(IBaseRepository<Book, ApplicationContext> repository,
+        public BookService(BookRepository repository,
             ApplicationContext applicationContext,
             IMapper mapper)
         {
@@ -40,6 +40,18 @@ namespace LibrarySevice.BussinesLogic.Services
             {
                 throw;
             }
+        }
+
+        public async Task<BookDTO> GetByTitleAsync(string title)
+        {
+            var book = await _repository.GetByTitleAsync(title);
+
+            if (book != null)
+            {
+                return await Task.FromResult(_mapper.Map<BookDTO>(book));
+            }
+
+            throw new NotFoundException("Record was not found");
         }
 
         public async Task<string> AddAsync(BookDTO book)

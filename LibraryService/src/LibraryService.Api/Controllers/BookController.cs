@@ -47,6 +47,15 @@ namespace LibrarySevice.Api.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("GetByTitle")]
+        public async Task<IActionResult> GetByTitle(string title)
+        {
+            var book = await _bookService.GetByTitleAsync(title);
+
+            return Ok(book);
+        }
+
         [HttpPost]
         [Route("Add")]
         public async Task<IActionResult> Add([FromQuery] BookRequestModel model)
