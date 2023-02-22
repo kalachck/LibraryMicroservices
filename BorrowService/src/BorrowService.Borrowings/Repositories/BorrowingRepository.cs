@@ -1,51 +1,56 @@
 ﻿using BorrowService.Borrowings.Entities;
 using BorrowService.Borrowings.Repositories.Abstract;
+using BorrowService.Borrowings.Services.Abstract;
 using Microsoft.EntityFrameworkCore;
 
 namespace BorrowService.Borrowings.Repositories
 {
     public class BorrowingRepository : IBorrowingRepository
     {
-        private readonly ApplicationContext _applicationContext;
+        private readonly DbSet<Borrowing> _borrowings;
+        private readonly IDbSaver _dbSaver;
 
-        public BorrowingRepository(ApplicationContext applicationContext)
+        public BorrowingRepository(ApplicationContext applicationContext,
+            IDbSaver dbSaver)
         {
-            _applicationContext = applicationContext;
-        }
-
-        public async Task<Borrowing> GetAsync(int id)
-        {
-            return await _applicationContext.Borrowings.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-        }
-
-        public async Task<Borrowing> GetByBookIdAsync(int bookId)
-        {
-            return await _applicationContext.Borrowings.AsNoTracking().FirstOrDefaultAsync(x => x.BookId == bookId);
+            _borrowings = applicationContext.Borrowings;
+            _dbSaver = dbSaver;
         }
 
         public async Task<Borrowing> GetByEmailAsync(string email)
         {
-            return await _applicationContext.Borrowings.AsNoTracking().FirstOrDefaultAsync(x => x.UserEmail == email);
+            return await _borrowings.AsNoTracking().FirstOrDefaultAsync(x => x.UserEmail == email);
         }
 
-        public async Task<Borrowing> GetByEmailAndBookIdAsync(string email, int bookId)
+        public async Task<Borrowing> GetByEmailAndTitleAsync(string email, string title)
         {
-            return await _applicationContext.Borrowings.AsNoTracking().FirstOrDefaultAsync(x => x.UserEmail == email && x.BookId == bookId);
+            return await _borrowings.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.UserEmail == email && x.BookTitle == title);
+        }
+
+        public async Task<List<Borrowing>> GetBorrowingsAsync()
+        {
+            return await _borrowings.Where(x => x.ExpirationDate == DateTime.Now.Date + TimeSpan.FromDays(3)).ToListAsync();
         }
 
         public void Add(Borrowing entity)
         {
-            _applicationContext.Borrowings.Add(entity);
+            _borrowings.Add(entity);
         }
 
         public void Update(Borrowing entity)
         {
-            _applicationContext.Borrowings.Update(entity);
+            _borrowings.Update(entity);
         }
 
         public void Delete(Borrowing entity)
         {
-            _applicationContext.Borrowings.Remove(entity);
+            _borrowings.Remove(entity);
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _dbSaver.SaveChangesAsync();
         }
     }
 }

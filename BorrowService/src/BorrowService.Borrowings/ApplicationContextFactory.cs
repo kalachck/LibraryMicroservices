@@ -18,6 +18,5 @@ namespace BorrowService.Borrowings
 
             return new ApplicationContext(optionsBuilder.Options);
         }
-
     }
 }

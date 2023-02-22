@@ -1,5 +1,5 @@
 using BorrowService.Api.AppDependenciesConfiguration;
-using Hangfire;
+using BorrowService.Api.Middlewares;
 
 namespace BorrowService.Api
 {
@@ -25,9 +25,10 @@ namespace BorrowService.Api
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            app.UseMiddleware<NotFoundExceptionHandlingMiddleware>();
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-            app.UseHangfireDashboard("/dashboard");
+            app.UseAuthorization();
 
             app.MapControllers();
 
