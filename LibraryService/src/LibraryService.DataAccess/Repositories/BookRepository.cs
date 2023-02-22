@@ -14,7 +14,7 @@ namespace LibrarySevice.DataAccess.Repositories
 
         public async Task<Book> GetByTitleAsync(string title)
         {
-            return await _books.AsNoTracking().FirstOrDefaultAsync(x => x.Title == title && x.IsAvailable == true);
+            return await _books.AsNoTracking().FirstOrDefaultAsync(x => x.Title.ToLower() == title.ToLower() && x.IsAvailable == true);
         }
     }
 }
