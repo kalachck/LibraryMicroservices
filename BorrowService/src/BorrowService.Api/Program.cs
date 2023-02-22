@@ -1,4 +1,5 @@
 using BorrowService.Api.AppDependenciesConfiguration;
+using BorrowService.Api.Middlewares;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -30,6 +31,11 @@ namespace BorrowService.Api
             }
 
             app.UseHttpsRedirection();
+
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
+            app.UseMiddleware<NotFoundExceptionHandlingMiddleware>();
+            app.UseMiddleware<AlreadyExistsExceptionHandlingMiddleware>();
+
 
             app.UseAuthorization();
 

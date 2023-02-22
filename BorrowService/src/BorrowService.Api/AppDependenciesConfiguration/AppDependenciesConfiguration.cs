@@ -4,8 +4,11 @@
     {
         public static WebApplicationBuilder ConfigureDependencies(this WebApplicationBuilder builder)
         {
-            builder.AddServices();
-
+            builder.AddServices()
+                .AddHostedServices()
+                .AddOptions()
+                .AddExternalDependencies();
+            
             return builder;
         }
     }

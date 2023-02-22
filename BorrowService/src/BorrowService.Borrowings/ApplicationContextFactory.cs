@@ -14,10 +14,9 @@ namespace BorrowService.Borrowings
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("MigrationConfiguration.json")
                 .Build(); 
-            optionsBuilder.UseNpgsql(configuration.GetConnectionString("BorrowConnection"));
+            optionsBuilder.UseNpgsql(configuration.GetConnectionString("Trusted"));
 
             return new ApplicationContext(optionsBuilder.Options);
         }
-
     }
 }

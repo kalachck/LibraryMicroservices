@@ -4,245 +4,165 @@ using BorrowService.Borrowings.Enums;
 using BorrowService.Borrowings.Exceptions;
 using BorrowService.Borrowings.Options;
 using BorrowService.Borrowings.Repositories.Abstract;
+<<<<<<< HEAD
 using BorrowService.Borrowings.Services.Abstract;
+=======
+>>>>>>> remotes/origin/BorrowServiceImplementation
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace BorrowService.Borrowings.Components
 {
     public class BorrowingComponent : IBorrowingComponent
     {
         private readonly IBorrowingRepository _repository;
-        private readonly ApplicationContext _applicationContext;
-        private readonly IHangfireService _hangfireService;
-        private readonly IRabbitService _rabbitService;
+        private readonly HttpClient _client;
         private readonly CommunicationOptions _options;
 
         public BorrowingComponent(IBorrowingRepository repository,
-            ApplicationContext applicationContext,
             IOptions<CommunicationOptions> options,
-            IHangfireService hangfireService,
-            IRabbitService rabbitService)
+            IHttpClientFactory clientFactory)
         {
             _repository = repository;
-            _applicationContext = applicationContext;
-            _hangfireService = hangfireService;
-            _rabbitService = rabbitService;
+            _client = clientFactory.CreateClient();
             _options = options.Value;
         }
 
-        public async Task<Borrowing> GetAsync(int id)
+        public async Task<Borrowing> GetAsync(string email, string title)
         {
-            try
+            var borrowing = await _repository.GetByEmailAndTitleAsync(email, title);
+
+            if (borrowing == null)
             {
-                var borrowing = await _repository.GetAsync(id);
-
-                if (borrowing != null)
-                {
-                    return await Task.FromResult(borrowing);
-                }
-
                 throw new NotFoundException("Record was not found");
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            return await Task.FromResult(borrowing);
         }
 
-        public async Task<Borrowing> GetByBookIdAsync(int bookId)
+        public async Task<bool> BorrowAsync(string email, string title, int period)
         {
-            try
+            var existingBorrowing = await _repository.GetByEmailAndTitleAsync(email, title);
+
+            if (existingBorrowing != null)
             {
-                var borrowing = await _repository.GetByBookIdAsync(bookId);
-
-                if (borrowing != null)
-                {
-                    return await Task.FromResult(borrowing);
-                }
-
-                throw new NotFoundException("Record was not found");
+                throw new AlreadyExistsException("This record already exists");
             }
-            catch (Exception)
+
+            if (await CheckUserAsync(email) == false)
             {
-                throw;
-            }
-        }
-
-        public async Task<Borrowing> GetByEmailAsync(string email)
-        {
-            try
-            {
-                var borrowing = await _repository.GetByEmailAsync(email);
-
-                if (borrowing != null)
-                {
-                    return await Task.FromResult(borrowing);
-                }
-
-                throw new NotFoundException("Record was not found");
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<Borrowing> GetByEmailAndBookIdAsync(string email, int bookId)
-        {
-            try
-            {
-                var borrowing = await _repository.GetByEmailAndBookIdAsync(email, bookId);
-
-                if (borrowing != null)
-                {
-                    return await Task.FromResult(borrowing);
-                }
-
-                throw new NotFoundException("Record was not found");
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<string> BorrowAsync(string email, int bookId, HttpClient client)
-        {
-            try
-            {
-                var identityResult = await client.GetAsync($"{_options.Identity}{email}");
-                var libraryResult = await client.GetAsync($"{_options.Library}{bookId}");
-
-                if (identityResult.StatusCode == System.Net.HttpStatusCode.OK && identityResult.Content != null)
-                {
-                    if (libraryResult.StatusCode == System.Net.HttpStatusCode.OK && libraryResult.Content != null)
-                    {
-                        var book = JsonConvert.DeserializeObject<Dictionary<string, string>>(await libraryResult.Content.ReadAsStringAsync());
-
-                        if (book["isAvailable"] == "true")
-                        {
-                            var identity = await identityResult.Content.ReadAsStringAsync();
-
-                            var borrowing = new Borrowing()
-                            {
-                                UserEmail = email,
-                                BookId = bookId,
-                                BookTitle = book["title"],
-                                AddingDate = DateTime.Now.Date,
-                                ExpirationDate = DateTime.Now.Date.AddDays(30),
-                            };
-
-                            _repository.Add(borrowing);
-
-                            await _applicationContext.SaveChangesAsync();
-
-                            _hangfireService.Run();
-
-                            var message = new RabbitMessage()
-                            {
-                                Topic = Topic.Borrow,
-                                BookId = bookId,
-                            };
-
-                            _rabbitService.SendMessage(JsonConvert.SerializeObject(message));
-
-                            return await Task.FromResult($"Book was borrowed successfully by user: {email}");
-                        }
-
-                        throw new NotAvailableException("Book is not available now");
-                    }
-
-                    throw new NotFoundException("Book was not found");
-                }
-
                 throw new NotFoundException("User was not found");
             }
-            catch (Exception)
+
+            var book = await GetBookAsync(title);
+
+            var borrowing = new Borrowing()
             {
-                throw;
-            }
+                UserEmail = email,
+                BookId = int.Parse(book["id"]),
+                BookTitle = title,
+                AddingDate = DateTime.Now.Date,
+                ExpirationDate = DateTime.Now.Date.AddDays(period),
+            };
+
+            _repository.Add(borrowing);
+
+            await _repository.SaveChangesAsync();
+
+            return await Task.FromResult(true);
         }
 
-        public async Task<string> ExtendAsync(string email, int bookId)
+        public async Task<bool> ExtendAsync(string email, string title, int period)
         {
-            try
+            var borrowing = await _repository.GetByEmailAndTitleAsync(email, title);
+
+            if (borrowing == null)
             {
-                var borrowing = await _repository.GetByEmailAndBookIdAsync(email, bookId);
-
-                if (borrowing != null)
-                {
-                    borrowing.AddingDate = DateTime.Now.Date;
-
-                    borrowing.ExpirationDate = DateTime.Now.AddDays(30);
-
-                    _repository.Update(borrowing);
-
-                    await _applicationContext.SaveChangesAsync();
-
-                    return await Task.FromResult("The record was successfully updated");
-                }
-
                 throw new NotFoundException("Record was not found");
             }
-            catch (Exception)
+
+            if (await CheckUserAsync(email) == false)
             {
-                throw;
+                throw new NotFoundException("User was not found");
             }
+
+            if (await CheckBookAsync(borrowing.BookId) == false)
+            {
+                throw new NotFoundException("Book was not found");
+            }
+
+            borrowing.ExpirationDate = borrowing.ExpirationDate.AddDays(period);
+
+            _repository.Update(borrowing);
+
+            await _repository.SaveChangesAsync();
+
+            return await Task.FromResult(true);
         }
 
-        public async Task<string> DeleteByEmailAndBookIdAsync(string email, int bookId)
+        public async Task<bool> DeleteAsync(string email, string title)
         {
-            try
+            var borrowing = await _repository.GetByEmailAndTitleAsync(email, title);
+
+            if (borrowing == null)
             {
-                var borrowing = await _repository.GetByEmailAndBookIdAsync(email, bookId);
-
-                if (borrowing != null)
-                {
-                    _repository.Delete(borrowing);
-
-                    await _applicationContext.SaveChangesAsync();
-
-                    return await Task.FromResult("The record was successfully deleted");
-                }
-
                 throw new NotFoundException("Record was not found");
             }
-            catch (Exception)
+
+            if (await CheckUserAsync(email) == false)
             {
-                throw;
+                throw new NotFoundException("User was not found");
             }
+
+            if (await CheckBookAsync(borrowing.BookId) == false)
+            {
+                throw new NotFoundException("Book was not found");
+            }
+
+            _repository.Delete(borrowing);
+
+            await _repository.SaveChangesAsync();
+
+            return await Task.FromResult(true);
         }
 
-        public async Task<string> DeleteAsync(int id)
+        public async Task<bool> CheckUserAsync(string email)
         {
-            try
+            var identityResult = await _client.GetAsync($"{_options.Identity}{email}");
+
+            if (identityResult.StatusCode != HttpStatusCode.OK)
             {
-                var borrowing = await _repository.GetAsync(id);
-
-                if (borrowing != null)
-                {
-                    _repository.Delete(borrowing);
-
-                    await _applicationContext.SaveChangesAsync();
-
-                    var message = new RabbitMessage()
-                    {
-                        Topic = Topic.Delete,
-                        BookId = borrowing.BookId,
-                    };
-
-                    _rabbitService.SendMessage(JsonConvert.SerializeObject(message));
-
-                    return await Task.FromResult("The record was successfully deleted");
-                }
-
-                throw new NotFoundException("Record was not found");
+                return await Task.FromResult(false);
             }
-            catch (Exception)
+
+            return await Task.FromResult(true);
+        }
+
+        public async Task<Dictionary<string, string>> GetBookAsync(string title)
+        {
+            var libraryResult = await _client.GetAsync($"{_options.LibraryByTitle}{title}");
+
+            if (libraryResult.StatusCode != HttpStatusCode.OK)
             {
-                throw;
+                throw new NotFoundException("Book was not found");
             }
+
+            var libraryContent = await libraryResult.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<Dictionary<string, string>>(libraryContent);
+        }
+
+        public async Task<bool> CheckBookAsync(int bookId)
+        {
+            var libraryResult = await _client.GetAsync($"{_options.LibraryById}{bookId}");
+
+            if (libraryResult.StatusCode != HttpStatusCode.OK)
+            {
+                return await Task.FromResult(false);
+            }
+
+            return await Task.FromResult(true);
         }
     }
 }
