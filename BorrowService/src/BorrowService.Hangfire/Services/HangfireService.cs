@@ -1,6 +1,7 @@
 ﻿using BorrowService.Borrowings.Repositories.Abstract;
 using BorrowService.Hangfire.Services.Abstract;
 using Hangfire;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace BorrowService.Hangfire.Services
@@ -10,21 +11,20 @@ namespace BorrowService.Hangfire.Services
         private readonly IBorrowingRepository _repository;
         private readonly IMailService _mailService;
 
-        public HangfireService(IBorrowingRepository repository,
-            IMailService mailService)
+        public HangfireService(IServiceScopeFactory factory)
         {
-            _repository = repository;
-            _mailService = mailService;
+            _repository = factory.CreateScope().ServiceProvider.GetRequiredService<IBorrowingRepository>();
+            _mailService = factory.CreateScope().ServiceProvider.GetRequiredService<IMailService>();
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             RecurringJob.AddOrUpdate("MailJob", () => SetJobs(), Cron.Daily);
 
-            return Task.CompletedTask;
+            await Task.Delay(5000);
         }
 
-        private async Task SetJobs()
+        public async Task SetJobs()
         {
             var borrowings = await _repository.GetBorrowingsAsync();
 

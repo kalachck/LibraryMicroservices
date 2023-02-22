@@ -9,7 +9,7 @@ namespace BorrowService.Api.AppDependenciesConfiguration
     {
         public static WebApplicationBuilder AddExternalDependencies(this WebApplicationBuilder builder)
         {
-            var connectionString = builder.Configuration.GetConnectionString("BorrowConnection");
+            var connectionString = builder.Configuration.GetConnectionString("Trusted");
 
             builder.Services.AddDbContext<ApplicationContext>(options =>
             {

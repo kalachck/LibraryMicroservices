@@ -4,8 +4,8 @@ using BorrowService.Borrowings.Exceptions;
 using BorrowService.Borrowings.Options;
 using BorrowService.Borrowings.Repositories.Abstract;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using System.Net;
-using System.Text.Json;
 
 namespace BorrowService.Borrowings.Components
 {
@@ -87,7 +87,7 @@ namespace BorrowService.Borrowings.Components
                 throw new NotFoundException("Book was not found");
             }
 
-            borrowing.ExpirationDate = DateTime.Now.AddDays(period);
+            borrowing.ExpirationDate = borrowing.ExpirationDate.AddDays(period);
 
             _repository.Update(borrowing);
 
@@ -138,21 +138,21 @@ namespace BorrowService.Borrowings.Components
         {
             var libraryResult = await _client.GetAsync($"{_options.LibraryByTitle}{title}");
 
-            if (libraryResult.StatusCode == HttpStatusCode.OK)
+            if (libraryResult.StatusCode != HttpStatusCode.OK)
             {
                 throw new NotFoundException("Book was not found");
             }
 
             var libraryContent = await libraryResult.Content.ReadAsStringAsync();
 
-            return JsonSerializer.Deserialize<Dictionary<string, string>>(libraryContent);
+            return JsonConvert.DeserializeObject<Dictionary<string, string>>(libraryContent);
         }
 
         public async Task<bool> CheckBookAsync(int bookId)
         {
             var libraryResult = await _client.GetAsync($"{_options.LibraryById}{bookId}");
 
-            if (libraryResult.StatusCode == HttpStatusCode.OK)
+            if (libraryResult.StatusCode != HttpStatusCode.OK)
             {
                 return await Task.FromResult(false);
             }

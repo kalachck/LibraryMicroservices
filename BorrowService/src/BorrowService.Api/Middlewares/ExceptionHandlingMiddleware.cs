@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using BorrowService.Borrowings.Exceptions;
+using System.Net;
 
 namespace BorrowService.Api.Middlewares
 {
@@ -11,7 +12,7 @@ namespace BorrowService.Api.Middlewares
             _next = next;
         }
 
-        public async void Invoke(HttpContext context)
+        public async Task Invoke(HttpContext context)
         {
             try
             {
