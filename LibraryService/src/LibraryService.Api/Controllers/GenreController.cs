@@ -5,7 +5,6 @@ using LibraryService.BussinesLogic.DTOs;
 using LibraryService.BussinesLogic.Exceptions;
 using LibraryService.BussinesLogic.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 
 namespace LibraryService.Api.Controllers
 {
@@ -17,8 +16,8 @@ namespace LibraryService.Api.Controllers
         private readonly IMapper _mapper;
         private readonly IValidator<GenreRequestModel> _validator;
 
-        public GenreController(IGenreService genreService, 
-            IMapper mapper, 
+        public GenreController(IGenreService genreService,
+            IMapper mapper,
             IValidator<GenreRequestModel> validator)
         {
             _genreService = genreService;

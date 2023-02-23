@@ -6,6 +6,8 @@ namespace LibraryService.BussinesLogic.Services.Abstract
     {
         Task<BookDTO> GetAsync(int id);
 
+        Task<BookDTO> GetByTitleAsync(string title);
+
         Task<string> AddAsync(BookDTO book);
 
         Task<string> UpdateAsync(int id, BookDTO book);

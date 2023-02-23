@@ -6,7 +6,7 @@ using LibraryService.DataAccess;
 using LibraryService.DataAccess.Entities;
 using LibraryService.DataAccess.Repositories.Abstract;
 
-namespace LibrarySevice.BussinesLogic.Services
+namespace LibraryService.BussinesLogic.Services
 {
     public class PublisherService : IPublisherService
     {

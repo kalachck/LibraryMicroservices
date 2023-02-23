@@ -5,7 +5,6 @@ using LibraryService.BussinesLogic.DTOs;
 using LibraryService.BussinesLogic.Exceptions;
 using LibraryService.BussinesLogic.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 
 namespace LibraryService.Api.Controllers
 {
@@ -17,7 +16,7 @@ namespace LibraryService.Api.Controllers
         private readonly IMapper _mapper;
         private readonly IValidator<AuthorRequestModel> _validator;
 
-        public AuthorController(IAuthorService authorService, 
+        public AuthorController(IAuthorService authorService,
             IMapper mapper,
             IValidator<AuthorRequestModel> validator)
         {
@@ -44,7 +43,7 @@ namespace LibraryService.Api.Controllers
                 }
 
                 return Conflict("Can't get this record. There were technical problems");
-            }  
+            }
         }
 
         [HttpPost]

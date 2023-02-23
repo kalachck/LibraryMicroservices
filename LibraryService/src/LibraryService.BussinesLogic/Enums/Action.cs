@@ -2,7 +2,7 @@
 {
     public enum Action
     {
-        Lock = 1,
-        Unlock = 2,
+        Lock = 0,
+        Unlock = 1,
     }
 }

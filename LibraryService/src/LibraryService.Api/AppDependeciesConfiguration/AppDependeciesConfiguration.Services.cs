@@ -7,9 +7,8 @@ using LibraryService.DataAccess;
 using LibraryService.DataAccess.Entities;
 using LibraryService.DataAccess.Repositories;
 using LibraryService.DataAccess.Repositories.Abstract;
+using LibraryService.RabbitMq.Options;
 using LibraryService.RabbitMq.Services;
-using LibrarySevice.BussinesLogic.Options;
-using LibrarySevice.BussinesLogic.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -30,6 +29,7 @@ namespace LibraryService.Api.AppDependeciesConfiguration
             builder.Services.AddScoped<IBaseRepository<Book, ApplicationContext>, BaseRepository<Book, ApplicationContext>>();
             builder.Services.AddScoped<IBaseRepository<Genre, ApplicationContext>, BaseRepository<Genre, ApplicationContext>>();
             builder.Services.AddScoped<IBaseRepository<Publisher, ApplicationContext>, BaseRepository<Publisher, ApplicationContext>>();
+            builder.Services.AddScoped<BookRepository>();
 
             builder.Services.AddScoped<IAuthorService, AuthorService>();
             builder.Services.AddScoped<IBookService, BookService>();
