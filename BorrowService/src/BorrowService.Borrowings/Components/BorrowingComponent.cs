@@ -1,13 +1,9 @@
 ﻿using BorrowService.Borrowings.Components.Abstract;
 using BorrowService.Borrowings.Entities;
-using BorrowService.Borrowings.Enums;
 using BorrowService.Borrowings.Exceptions;
 using BorrowService.Borrowings.Options;
 using BorrowService.Borrowings.Repositories.Abstract;
-<<<<<<< HEAD
-using BorrowService.Borrowings.Services.Abstract;
-=======
->>>>>>> remotes/origin/BorrowServiceImplementation
+using BorrowService.RabbitMq.Services.Abstract;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Net;
@@ -17,14 +13,17 @@ namespace BorrowService.Borrowings.Components
     public class BorrowingComponent : IBorrowingComponent
     {
         private readonly IBorrowingRepository _repository;
+        private readonly IRabbitService _rabbitService;
         private readonly HttpClient _client;
         private readonly CommunicationOptions _options;
 
         public BorrowingComponent(IBorrowingRepository repository,
             IOptions<CommunicationOptions> options,
-            IHttpClientFactory clientFactory)
+            IHttpClientFactory clientFactory,
+            IRabbitService rabbitService)
         {
             _repository = repository;
+            _rabbitService = rabbitService;
             _client = clientFactory.CreateClient();
             _options = options.Value;
         }
@@ -57,10 +56,12 @@ namespace BorrowService.Borrowings.Components
 
             var book = await GetBookAsync(title);
 
+            var bookId = int.Parse(book["id"]);
+
             var borrowing = new Borrowing()
             {
                 UserEmail = email,
-                BookId = int.Parse(book["id"]),
+                BookId = bookId,
                 BookTitle = title,
                 AddingDate = DateTime.Now.Date,
                 ExpirationDate = DateTime.Now.Date.AddDays(period),
@@ -69,6 +70,8 @@ namespace BorrowService.Borrowings.Components
             _repository.Add(borrowing);
 
             await _repository.SaveChangesAsync();
+
+            await _rabbitService.LockAsync(bookId);
 
             return await Task.FromResult(true);
         }
@@ -123,6 +126,8 @@ namespace BorrowService.Borrowings.Components
             _repository.Delete(borrowing);
 
             await _repository.SaveChangesAsync();
+
+            await _rabbitService.UnlockAsync(borrowing.BookId);
 
             return await Task.FromResult(true);
         }

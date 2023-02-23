@@ -14,12 +14,14 @@
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
     <PackageReference Include="Hangfire" Version="1.7.33" />
     <PackageReference Include="Hangfire.PostgreSql" Version="1.9.10" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BorrowService.Borrowings\BorrowService.Borrowings.csproj" />
     <ProjectReference Include="..\BorrowService.Hangfire\BorrowService.Hangfire.csproj" />
+    <ProjectReference Include="..\BorrowService.RabbitMq\BorrowService.RabbitMq.csproj" />
   </ItemGroup>
 
 </Project>

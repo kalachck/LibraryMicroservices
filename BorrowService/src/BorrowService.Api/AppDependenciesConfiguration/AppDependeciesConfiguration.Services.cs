@@ -8,6 +8,8 @@ using BorrowService.Borrowings.Services;
 using BorrowService.Borrowings.Services.Abstract;
 using BorrowService.Hangfire.Services;
 using BorrowService.Hangfire.Services.Abstract;
+using BorrowService.RabbitMq.Services;
+using BorrowService.RabbitMq.Services.Abstract;
 using FluentValidation;
 
 namespace BorrowService.Api.AppDependenciesConfiguration
@@ -26,6 +28,8 @@ namespace BorrowService.Api.AppDependenciesConfiguration
             builder.Services.AddScoped<IValidator<BorrowingRequestModel>, BorrowingValidator>();
 
             builder.Services.AddScoped<IMailService, MailService>();
+
+            builder.Services.AddScoped<IRabbitService, RabbitService>();
             
             return builder;
         }
