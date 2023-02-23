@@ -1,4 +1,4 @@
-﻿namespace LibrarySevice.BussinesLogic.DTOs
+﻿namespace LibraryService.BussinesLogic.DTOs
 {
     public class GenreDTO
     {

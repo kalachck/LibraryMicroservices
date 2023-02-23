@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
-using LibrarySevice.BussinesLogic.DTOs;
-using LibrarySevice.BussinesLogic.Exceptions;
-using LibrarySevice.BussinesLogic.Services.Abstract;
-using LibrarySevice.DataAccess;
-using LibrarySevice.DataAccess.Entities;
-using LibrarySevice.DataAccess.Repositories.Abstract;
+using LibraryService.BussinesLogic.DTOs;
+using LibraryService.BussinesLogic.Exceptions;
+using LibraryService.BussinesLogic.Services.Abstract;
+using LibraryService.DataAccess;
+using LibraryService.DataAccess.Entities;
+using LibraryService.DataAccess.Repositories.Abstract;
 using Newtonsoft.Json;
+using System;
 
-namespace LibrarySevice.BussinesLogic.Services
+namespace LibraryService.BussinesLogic.Services
 {
     public class BookService : IBookService
     {
@@ -109,17 +110,22 @@ namespace LibrarySevice.BussinesLogic.Services
             }
         }
 
-        public async void ChangeStatus(string message)
+        public async Task ChangeStatus(string message)
         {
             var rabbitMessage = JsonConvert.DeserializeObject<RabbitMessage>(message);
 
-            var book = await _repository.GetAsync(int.Parse(rabbitMessage.Message));
+            var book = await _repository.GetAsync(rabbitMessage.Id);
 
-            if (rabbitMessage.Topic == Enums.Topic.Borrow)
+            if (book == null)
+            {
+                throw new NotFoundException("Record was not found");
+            }
+
+            if (rabbitMessage.Action == Enums.Action.Lock)
             {
                 book.IsAvailable = false;
             }
-            if (rabbitMessage.Topic == Enums.Topic.Delete)
+            if (rabbitMessage.Action == Enums.Action.Unlock)
             {
                 book.IsAvailable = true;
             }

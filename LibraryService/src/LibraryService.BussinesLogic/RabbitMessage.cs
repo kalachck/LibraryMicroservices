@@ -1,11 +1,9 @@
-﻿using LibrarySevice.BussinesLogic.Enums;
-
-namespace LibrarySevice.BussinesLogic
+﻿namespace LibraryService.BussinesLogic
 {
     public class RabbitMessage
     {
-        public Topic Topic { get; set; }
+        public int Id { get; set; }
 
-        public string Message { get; set; }
+        public Enums.Action Action { get; set; }
     }
 }

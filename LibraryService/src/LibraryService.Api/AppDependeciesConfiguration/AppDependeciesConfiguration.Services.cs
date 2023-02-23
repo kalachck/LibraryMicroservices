@@ -1,17 +1,19 @@
-﻿using LibrarySevice.Api.Models;
-using LibrarySevice.Api.Validators;
+﻿using FluentValidation;
+using LibraryService.Api.Models;
+using LibraryService.Api.Validators;
+using LibraryService.BussinesLogic.Services;
+using LibraryService.BussinesLogic.Services.Abstract;
+using LibraryService.DataAccess;
+using LibraryService.DataAccess.Entities;
+using LibraryService.DataAccess.Repositories;
+using LibraryService.DataAccess.Repositories.Abstract;
+using LibraryService.RabbitMq.Services;
+using LibrarySevice.BussinesLogic.Options;
 using LibrarySevice.BussinesLogic.Services;
-using LibrarySevice.DataAccess;
-using LibrarySevice.DataAccess.Repositories;
-using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using LibrarySevice.BussinesLogic.Services.Abstract;
-using LibrarySevice.DataAccess.Repositories.Abstract;
-using LibrarySevice.DataAccess.Entities;
-using LibrarySevice.BussinesLogic.Options;
 
-namespace LibrarySevice.Api.AppDependeciesConfiguration
+namespace LibraryService.Api.AppDependeciesConfiguration
 {
     public static partial class AppDependeciesConfiguration
     {
@@ -20,6 +22,8 @@ namespace LibrarySevice.Api.AppDependeciesConfiguration
             builder.Services.AddDbContext<ApplicationContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("LibraryConnection"));
+
+                options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
 
             builder.Services.AddScoped<IBaseRepository<Author, ApplicationContext>, BaseRepository<Author, ApplicationContext>>();
@@ -28,7 +32,7 @@ namespace LibrarySevice.Api.AppDependeciesConfiguration
             builder.Services.AddScoped<IBaseRepository<Publisher, ApplicationContext>, BaseRepository<Publisher, ApplicationContext>>();
 
             builder.Services.AddScoped<IAuthorService, AuthorService>();
-            builder.Services.AddScoped<IBookService, BussinesLogic.Services.BookService>();
+            builder.Services.AddScoped<IBookService, BookService>();
             builder.Services.AddScoped<IPublisherService, PublisherService>();
             builder.Services.AddScoped<IGenreService, GenreService>();
 

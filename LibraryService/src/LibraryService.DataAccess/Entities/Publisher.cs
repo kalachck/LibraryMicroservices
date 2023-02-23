@@ -1,6 +1,6 @@
-﻿using LibrarySevice.DataAccess.Entities.Abstract;
+﻿using LibraryService.DataAccess.Entities.Abstract;
 
-namespace LibrarySevice.DataAccess.Entities
+namespace LibraryService.DataAccess.Entities
 {
     public class Publisher : Base
     {
