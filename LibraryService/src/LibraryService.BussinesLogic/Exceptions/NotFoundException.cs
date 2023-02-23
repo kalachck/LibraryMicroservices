@@ -1,4 +1,4 @@
-﻿namespace LibrarySevice.BussinesLogic.Exceptions
+﻿namespace LibraryService.BussinesLogic.Exceptions
 {
     public class NotFoundException : Exception
     {

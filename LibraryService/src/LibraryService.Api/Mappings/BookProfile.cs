@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using LibrarySevice.Api.Models;
-using LibrarySevice.BussinesLogic.DTOs;
-using LibrarySevice.DataAccess.Entities;
+using LibraryService.Api.Models;
+using LibraryService.BussinesLogic.DTOs;
+using LibraryService.DataAccess.Entities;
 
-namespace LibrarySevice.Api.Mappings
+namespace LibraryService.Api.Mappings
 {
     public class BookProfile : Profile
     {

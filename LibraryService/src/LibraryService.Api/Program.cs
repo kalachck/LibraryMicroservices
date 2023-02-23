@@ -1,4 +1,4 @@
-using LibrarySevice.Api.AppDependeciesConfiguration;
+using LibraryService.Api.AppDependeciesConfiguration;
 
 namespace LibrarySevice.Api
 {

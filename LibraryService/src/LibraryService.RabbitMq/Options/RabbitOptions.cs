@@ -1,4 +1,4 @@
-﻿namespace LibrarySevice.BussinesLogic.Options
+﻿namespace LibraryService.RabbitMq.Options
 {
     public class RabbitOptions
     {

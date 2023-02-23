@@ -1,8 +1,8 @@
-﻿using LibrarySevice.DataAccess.Entities;
+﻿using LibraryService.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace LibrarySevice.DataAccess.EntityConfigurations
+namespace LibraryService.DataAccess.EntityConfigurations
 {
     public class AuthorEntityConfiguration : IEntityTypeConfiguration<Author>
     {

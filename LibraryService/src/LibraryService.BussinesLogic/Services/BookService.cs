@@ -1,21 +1,22 @@
 ﻿using AutoMapper;
-using LibrarySevice.BussinesLogic.DTOs;
-using LibrarySevice.BussinesLogic.Exceptions;
-using LibrarySevice.BussinesLogic.Services.Abstract;
-using LibrarySevice.DataAccess;
-using LibrarySevice.DataAccess.Entities;
-using LibrarySevice.DataAccess.Repositories.Abstract;
+using LibraryService.BussinesLogic.DTOs;
+using LibraryService.BussinesLogic.Exceptions;
+using LibraryService.BussinesLogic.Services.Abstract;
+using LibraryService.DataAccess;
+using LibraryService.DataAccess.Entities;
+using LibraryService.DataAccess.Repositories;
+using LibraryService.BussinesLogic;
 using Newtonsoft.Json;
 
-namespace LibrarySevice.BussinesLogic.Services
+namespace LibraryService.BussinesLogic.Services
 {
     public class BookService : IBookService
     {
-        private readonly IBaseRepository<Book, ApplicationContext> _repository;
+        private readonly BookRepository _repository;
         private readonly ApplicationContext _applicationContext;
         private readonly IMapper _mapper;
 
-        public BookService(IBaseRepository<Book, ApplicationContext> repository,
+        public BookService(BookRepository repository,
             ApplicationContext applicationContext,
             IMapper mapper)
         {
@@ -41,6 +42,18 @@ namespace LibrarySevice.BussinesLogic.Services
             {
                 throw;
             }
+        }
+
+        public async Task<BookDTO> GetByTitleAsync(string title)
+        {
+            var book = await _repository.GetByTitleAsync(title);
+
+            if (book != null)
+            {
+                return await Task.FromResult(_mapper.Map<BookDTO>(book));
+            }
+
+            throw new NotFoundException("Record was not found");
         }
 
         public async Task<string> AddAsync(BookDTO book)
@@ -109,17 +122,22 @@ namespace LibrarySevice.BussinesLogic.Services
             }
         }
 
-        public async void ChangeStatus(string message)
+        public async Task ChangeStatus(string message)
         {
             var rabbitMessage = JsonConvert.DeserializeObject<RabbitMessage>(message);
 
-            var book = await _repository.GetAsync(int.Parse(rabbitMessage.Message));
+            var book = await _repository.GetAsync(rabbitMessage.Id);
 
-            if (rabbitMessage.Topic == Enums.Topic.Borrow)
+            if (book == null)
+            {
+                throw new NotFoundException("Record was not found");
+            }
+
+            if (rabbitMessage.Action == Enums.Action.Lock)
             {
                 book.IsAvailable = false;
             }
-            if (rabbitMessage.Topic == Enums.Topic.Delete)
+            if (rabbitMessage.Action == Enums.Action.Unlock)
             {
                 book.IsAvailable = true;
             }

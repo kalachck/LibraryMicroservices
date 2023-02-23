@@ -19,8 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LibraryService.BussinesLogic\LibrarySevice.BussinesLogic.csproj" />
-    <ProjectReference Include="..\LibraryService.DataAccess\LibrarySevice.DataAccess.csproj" />
+    <ProjectReference Include="..\LibraryService.BussinesLogic\LibraryService.BussinesLogic.csproj" />
+    <ProjectReference Include="..\LibraryService.DataAccess\LibraryService.DataAccess.csproj" />
+    <ProjectReference Include="..\LibraryService.RabbitMq\LibraryService.RabbitMq.csproj" />
   </ItemGroup>
 
 </Project>
