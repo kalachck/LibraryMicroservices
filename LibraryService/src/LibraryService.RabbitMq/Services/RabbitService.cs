@@ -13,6 +13,8 @@ namespace LibraryService.RabbitMq.Services
     {
         private readonly RabbitOptions _options;
         private readonly IBookService _bookService;
+        private IModel _channel;
+
 
         public RabbitService(IOptions<RabbitOptions> options,
             IServiceScopeFactory factory)
@@ -21,46 +23,55 @@ namespace LibraryService.RabbitMq.Services
             _bookService = factory.CreateScope().ServiceProvider.GetRequiredService<IBookService>();
         }
 
+        private async Task<IModel> CreateModel()
+        {
+            var factory = new ConnectionFactory()
+            {
+                HostName = _options.HostName,
+                Port = _options.Port,
+                UserName = _options.UserName,
+                Password = _options.Password
+            };
+
+            var connection = factory.CreateConnection();
+
+            var channel = connection.CreateModel();
+
+            return await Task.FromResult(channel);
+        }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
-                var factory = new ConnectionFactory()
+                _channel = await CreateModel();
+
+                _channel.QueueDeclare(queue: _options.Queue,
+                                exclusive: false,
+                                autoDelete: false);
+
+                var consumer = new EventingBasicConsumer(_channel);
+
+                consumer.Received += (sender, args) =>
                 {
-                    HostName = _options.HostName,
-                    Port = _options.Port,
-                    UserName = _options.UserName,
-                    Password = _options.Password,
+                    var body = args.Body.ToArray();
+
+                    var message = Encoding.UTF8.GetString(body);
+
+                    _bookService.ChangeStatus(message);
                 };
 
-                using (var connection = factory.CreateConnection())
-                {
-                    using (var channel = connection.CreateModel())
-                    {
-                        channel.QueueDeclare(queue: _options.Queue,
-                                             durable: false,
-                                             exclusive: false,
-                                             autoDelete: false,
-                                             arguments: null);
-
-                        var consumer = new EventingBasicConsumer(channel);
-
-                        consumer.Received += (sender, args) =>
-                        {
-                            var body = args.Body.ToArray();
-
-                            var message = Encoding.UTF8.GetString(body);
-
-                            _bookService.ChangeStatus(message);
-                        };
-
-                        channel.BasicConsume(queue: _options.Queue,
-                                             autoAck: true,
-                                             consumer: consumer);
-                    }
-                }
+                _channel.BasicConsume(queue: _options.Queue,
+                                        autoAck: true,
+                                        consumer: consumer);
             });
         }
 
+        public override void Dispose()
+        {
+            _channel.Dispose();
+
+            base.Dispose();
+        }
     }
 }
