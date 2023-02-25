@@ -12,15 +12,15 @@ namespace LibraryService.BussinesLogic.Services
     public class BookService : IBookService
     {
         private readonly BookRepository _repository;
-        private readonly ApplicationContext _applicationContext;
+        private readonly IDbManager<Book> _dbManager;
         private readonly IMapper _mapper;
 
         public BookService(BookRepository repository,
-            ApplicationContext applicationContext,
+            IDbManager<Book> dbManager,
             IMapper mapper)
         {
             _repository = repository;
-            _applicationContext = applicationContext;
+            _dbManager = dbManager;
             _mapper = mapper;
         }
 
@@ -61,7 +61,7 @@ namespace LibraryService.BussinesLogic.Services
             {
                 _repository.Add(_mapper.Map<Book>(book));
 
-                await _applicationContext.SaveChangesAsync();
+                await _dbManager.SaveChangesAsync();
 
                 return await Task.FromResult("The record was successfully added");
             }
@@ -85,7 +85,7 @@ namespace LibraryService.BussinesLogic.Services
 
                     _repository.Update(bookEntity);
 
-                    await _applicationContext.SaveChangesAsync();
+                    await _dbManager.SaveChangesAsync();
 
                     return await Task.FromResult("The record was successfully updated");
                 }
@@ -108,7 +108,7 @@ namespace LibraryService.BussinesLogic.Services
                 {
                     _repository.Delete(book);
 
-                    await _applicationContext.SaveChangesAsync();
+                    await _dbManager.SaveChangesAsync();
 
                     return await Task.FromResult("The record was successfully deleted");
                 }
@@ -132,6 +132,7 @@ namespace LibraryService.BussinesLogic.Services
                 throw new NotFoundException("Record was not found");
             }
 
+
             if (rabbitMessage.Action == Enums.Action.Lock)
             {
                 book.IsAvailable = false;
@@ -143,7 +144,9 @@ namespace LibraryService.BussinesLogic.Services
 
             _repository.Update(book);
 
-            await _applicationContext.SaveChangesAsync();
+            await _dbManager.SaveChangesAsync();
+
+            _dbManager.DetacheEntity(book);
         }
     }
 }

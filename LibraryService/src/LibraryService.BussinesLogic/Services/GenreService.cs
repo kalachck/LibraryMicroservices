@@ -11,15 +11,15 @@ namespace LibraryService.BussinesLogic.Services
     public class GenreService : IGenreService
     {
         private readonly IBaseRepository<Genre, ApplicationContext> _repository;
-        private readonly ApplicationContext _applicationContext;
+        private readonly IDbManager<Genre> _dbManager;
         private readonly IMapper _mapper;
 
         public GenreService(IBaseRepository<Genre, ApplicationContext> repository,
-            ApplicationContext applicationContext,
+            IDbManager<Genre> dbManager,
             IMapper mapper)
         {
             _repository = repository;
-            _applicationContext = applicationContext;
+            _dbManager = dbManager;
             _mapper = mapper;
         }
 
@@ -48,7 +48,7 @@ namespace LibraryService.BussinesLogic.Services
             {
                 _repository.Add(_mapper.Map<Genre>(genre));
 
-                await _applicationContext.SaveChangesAsync();
+                await _dbManager.SaveChangesAsync();
 
                 return await Task.FromResult("The record was successfully added");
             }
@@ -72,7 +72,7 @@ namespace LibraryService.BussinesLogic.Services
 
                     _repository.Update(genreEntity);
 
-                    await _applicationContext.SaveChangesAsync();
+                    await _dbManager.SaveChangesAsync();
 
                     return await Task.FromResult("The record was successfully updated");
                 }
@@ -95,7 +95,7 @@ namespace LibraryService.BussinesLogic.Services
                 {
                     _repository.Delete(genre);
 
-                    await _applicationContext.SaveChangesAsync();
+                    await _dbManager.SaveChangesAsync();
 
                     return await Task.FromResult("The record was successfully deleted");
                 }

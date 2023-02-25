@@ -21,8 +21,6 @@ namespace LibraryService.Api.AppDependeciesConfiguration
             builder.Services.AddDbContext<ApplicationContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("LibraryConnection"));
-
-                options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
 
             builder.Services.AddScoped<IBaseRepository<Author, ApplicationContext>, BaseRepository<Author, ApplicationContext>>();
@@ -42,6 +40,8 @@ namespace LibraryService.Api.AppDependeciesConfiguration
             builder.Services.AddScoped<IValidator<AuthorRequestModel>, AuthorValidator>();
             builder.Services.AddScoped<IValidator<PublisherRequestModel>, PublisherValidator>();
             builder.Services.AddScoped<IValidator<GenreRequestModel>, GenreValidator>();
+
+            builder.Services.AddScoped<IDbManager<Book>, DbManager<Book>>();
 
             builder.Services.Configure<RabbitOptions>(
                 builder.Configuration.GetSection(RabbitOptions.RabbitData));

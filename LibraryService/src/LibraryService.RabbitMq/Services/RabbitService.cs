@@ -62,7 +62,7 @@ namespace LibraryService.RabbitMq.Services
                 };
 
                 _channel.BasicConsume(queue: _options.Queue,
-                                        autoAck: true,
+                                        autoAck: false,
                                         consumer: consumer);
             });
         }

@@ -11,15 +11,15 @@ namespace LibraryService.BussinesLogic.Services
     public class PublisherService : IPublisherService
     {
         private readonly IBaseRepository<Publisher, ApplicationContext> _repository;
-        private readonly ApplicationContext _applicationContext;
+        private readonly IDbManager<Publisher> _dbManager;
         private readonly IMapper _mapper;
 
         public PublisherService(IBaseRepository<Publisher, ApplicationContext> repository,
-            ApplicationContext applicationContext,
+            IDbManager<Publisher> dbManager,
             IMapper mapper)
         {
             _repository = repository;
-            _applicationContext = applicationContext;
+            _dbManager = dbManager;
             _mapper = mapper;
         }
 
@@ -48,7 +48,7 @@ namespace LibraryService.BussinesLogic.Services
             {
                 _repository.Add(_mapper.Map<Publisher>(publisher));
 
-                await _applicationContext.SaveChangesAsync();
+                await _dbManager.SaveChangesAsync();
 
                 return await Task.FromResult("The record was successfully added");
             }
@@ -72,7 +72,7 @@ namespace LibraryService.BussinesLogic.Services
 
                     _repository.Update(publisherEntity);
 
-                    await _applicationContext.SaveChangesAsync();
+                    await _dbManager.SaveChangesAsync();
 
                     return await Task.FromResult("The record was successfully updated");
                 }
@@ -96,7 +96,7 @@ namespace LibraryService.BussinesLogic.Services
 
                     _repository.Delete(publisher);
 
-                    await _applicationContext.SaveChangesAsync();
+                    await _dbManager.SaveChangesAsync();
 
                     return await Task.FromResult("The record was successfully deleted");
                 }
