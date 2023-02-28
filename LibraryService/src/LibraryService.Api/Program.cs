@@ -27,7 +27,8 @@ namespace LibraryService.Api
 
             app.UseAuthorization();
 
-            app.MapGrpcService<CheckBookService>();
+            app.MapGrpcService<GrpcCheckBookService>();
+            app.MapGrpcService<GrpcGetBookService>();
 
             app.MapControllers();
 
