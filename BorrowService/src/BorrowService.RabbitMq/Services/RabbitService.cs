@@ -1,7 +1,6 @@
 ﻿using BorrowService.RabbitMq.Options;
 using BorrowService.RabbitMq.Services.Abstract;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System.Text;
 
@@ -11,69 +10,62 @@ namespace BorrowService.RabbitMq.Services
     {
         private readonly RabbitOptions _options;
 
+        private IConnectionFactory _factory;
+
         public RabbitService(IOptions<RabbitOptions> options)
         {
             _options = options.Value;
-        }
 
-        public async Task ExecuteAsync(string message)
-        {
-            await Task.Run(() =>
+            _factory = new ConnectionFactory()
             {
-
-                var factory = new ConnectionFactory()
-                {
-                    HostName = _options.HostName,
-                    Port = _options.Port,
-                    UserName = _options.UserName,
-                    Password = _options.Password
-                };
-
-                using (var connection = factory.CreateConnection())
-                {
-                    using (var channel = connection.CreateModel())
-                    {
-                        channel.QueueDeclare(queue: _options.Queue,
-                                             durable: false,
-                                             exclusive: false,
-                                             autoDelete: false,
-                                             arguments: null);
-
-                        var body = Encoding.UTF8.GetBytes(message);
-
-                        channel.BasicPublish(exchange: string.Empty,
-                                             routingKey: _options.Queue,
-                                             basicProperties: null,
-                                             body: body);
-                    }
-                }
-            });
+                HostName = _options.HostName,
+                Port = _options.Port,
+                UserName = _options.UserName,
+                Password = _options.Password,
+            };
         }
 
         public async Task LockAsync(int bookId)
         {
-            var rabbitMessage = new RabbitMessage()
-            {
-                Id = bookId,
-                Action = Enums.Action.Lock,
-            };
+            using var connection = _factory.CreateConnection();
+            using var channel = connection.CreateModel();
 
-            var message = JsonConvert.SerializeObject(rabbitMessage);
+            channel.ExchangeDeclare(exchange: _options.LockExchange, type: ExchangeType.Direct);
 
-            await ExecuteAsync(message);
+            channel.QueueDeclare(queue: _options.LockQueue,
+                                durable: false,
+                                exclusive: false,
+                                autoDelete: false,
+                                arguments: null);
+
+            var body = Encoding.UTF8.GetBytes(bookId.ToString());
+
+            channel.BasicPublish(exchange: _options.LockExchange,
+                                    routingKey: _options.LockQueue,
+                                    basicProperties: null,
+                                    body: body);
         }
 
         public async Task UnlockAsync(int bookId)
         {
-            var rabbitMessage = new RabbitMessage()
-            {
-                Id = bookId,
-                Action = Enums.Action.Lock,
-            };
+            using var connection = _factory.CreateConnection();
+            using var channel = connection.CreateModel();
 
-            var message = JsonConvert.SerializeObject(rabbitMessage);
+            channel.ExchangeDeclare(exchange: _options.UnlockExchange, type: ExchangeType.Direct);
 
-            await ExecuteAsync(message);
+            channel.QueueDeclare(queue: _options.UnlockQueue,
+                                durable: false,
+                                exclusive: false,
+                                autoDelete: false,
+                                arguments: null);
+
+            var body = Encoding.UTF8.GetBytes(bookId.ToString());
+
+            channel.BasicPublish(exchange: _options.UnlockExchange,
+                                    routingKey: _options.UnlockQueue,
+                                    basicProperties: null,
+                                    body: body);
+
         }
     }
 }
