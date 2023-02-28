@@ -8,6 +8,7 @@ WORKDIR /src
 COPY ["src/LibraryService.Api/LibraryService.Api.csproj", "src/LibraryService.Api/"]
 COPY ["src/LibraryService.BussinesLogic/LibraryService.BussinesLogic.csproj", "src/LibraryService.BussinesLogic/"]
 COPY ["src/LibraryService.DataAccess/LibraryService.DataAccess.csproj", "src/LibraryService.DataAccess/"]
+COPY ["src/LibraryService.RabbitMq/LibraryService.RabbitMq.csproj", "src/LibraryService/RabbitMq/"]
 RUN dotnet restore "src/LibraryService.Api/LibraryService.Api.csproj"
 COPY . .
 WORKDIR "/src/src/LibraryService.Api"
