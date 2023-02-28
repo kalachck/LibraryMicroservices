@@ -32,16 +32,10 @@ namespace BorrowService.RabbitMq.Services
 
             channel.ExchangeDeclare(exchange: _options.LockExchange, type: ExchangeType.Direct);
 
-            channel.QueueDeclare(queue: _options.LockQueue,
-                                durable: false,
-                                exclusive: false,
-                                autoDelete: false,
-                                arguments: null);
-
             var body = Encoding.UTF8.GetBytes(bookId.ToString());
 
             channel.BasicPublish(exchange: _options.LockExchange,
-                                    routingKey: _options.LockQueue,
+                                    routingKey: string.Empty,
                                     basicProperties: null,
                                     body: body);
         }
@@ -53,19 +47,12 @@ namespace BorrowService.RabbitMq.Services
 
             channel.ExchangeDeclare(exchange: _options.UnlockExchange, type: ExchangeType.Direct);
 
-            channel.QueueDeclare(queue: _options.UnlockQueue,
-                                durable: false,
-                                exclusive: false,
-                                autoDelete: false,
-                                arguments: null);
-
             var body = Encoding.UTF8.GetBytes(bookId.ToString());
 
             channel.BasicPublish(exchange: _options.UnlockExchange,
-                                    routingKey: _options.UnlockQueue,
+                                    routingKey: string.Empty,
                                     basicProperties: null,
                                     body: body);
-
         }
     }
 }

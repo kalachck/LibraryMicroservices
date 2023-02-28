@@ -1,5 +1,4 @@
-﻿using BorrowService.Borrowings.Exceptions;
-using System.Net;
+﻿using System.Net;
 
 namespace BorrowService.Api.Middlewares
 {
