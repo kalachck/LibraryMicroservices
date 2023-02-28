@@ -1,4 +1,4 @@
-﻿namespace BorrowService.Borrowings.Options
+﻿namespace BorrowService.Hangfire.Options
 {
     public class MailOptions
     {

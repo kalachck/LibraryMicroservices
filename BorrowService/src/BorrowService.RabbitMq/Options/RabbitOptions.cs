@@ -1,4 +1,4 @@
-﻿namespace BorrowService.Borrowings.Options
+﻿namespace BorrowService.RabbitMq.Options
 {
     public class RabbitOptions
     {
@@ -6,7 +6,11 @@
 
         public string HostName { get; set; }
 
-        public string Queue { get; set; }
+        public int Port { get; set; }
+
+        public string LockExchange { get; set; }
+
+        public string UnlockExchange { get; set; }
 
         public string UserName { get; set; }
 
