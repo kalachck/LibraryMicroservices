@@ -42,6 +42,9 @@ namespace LibraryService.Api.AppDependeciesConfiguration
             builder.Services.AddScoped<IValidator<GenreRequestModel>, GenreValidator>();
 
             builder.Services.AddScoped<IDbManager<Book>, DbManager<Book>>();
+            builder.Services.AddScoped<IDbManager<Author>, DbManager<Author>>();
+            builder.Services.AddScoped<IDbManager<Genre>, DbManager<Genre>>();
+            builder.Services.AddScoped<IDbManager<Publisher>, DbManager<Publisher>>();
 
             builder.Services.Configure<RabbitOptions>(
                 builder.Configuration.GetSection(RabbitOptions.RabbitData));
