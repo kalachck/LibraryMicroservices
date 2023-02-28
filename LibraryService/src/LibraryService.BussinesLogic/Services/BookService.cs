@@ -121,26 +121,34 @@ namespace LibraryService.BussinesLogic.Services
             }
         }
 
-        public async Task ChangeStatus(string message)
+        public async Task LockAsync(string message)
         {
-            var rabbitMessage = JsonConvert.DeserializeObject<RabbitMessage>(message);
-
-            var book = await _repository.GetAsync(rabbitMessage.Id);
-
-            if (book == null)
+            if (!int.TryParse(message, out int id))
             {
-                throw new NotFoundException("Record was not found");
+                throw new ParseException("Can't parse rabbit message");
             }
 
+            var book = await _repository.GetAsync(id);
 
-            if (rabbitMessage.Action == Enums.Action.Lock)
+            book.IsAvailable = false;
+
+            _repository.Update(book);
+
+            await _dbManager.SaveChangesAsync();
+
+            _dbManager.DetacheEntity(book);
+        }
+
+        public async Task UnlockAsync(string message)
+        {
+            if (!int.TryParse(message, out int id))
             {
-                book.IsAvailable = false;
+                throw new ParseException("Can't parse rabbit message");
             }
-            if (rabbitMessage.Action == Enums.Action.Unlock)
-            {
-                book.IsAvailable = true;
-            }
+
+            var book = await _repository.GetAsync(id);
+
+            book.IsAvailable = true;
 
             _repository.Update(book);
 

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
+using System.Threading.Channels;
 
 namespace LibraryService.RabbitMq.Services
 {
@@ -46,24 +47,54 @@ namespace LibraryService.RabbitMq.Services
             {
                 _channel = await CreateModel();
 
-                _channel.QueueDeclare(queue: _options.Queue,
-                                exclusive: false,
-                                autoDelete: false);
+                _channel.ExchangeDeclare(exchange: _options.LockExchange, type: ExchangeType.Direct);
+                _channel.ExchangeDeclare(exchange: _options.UnlockExchange, type: ExchangeType.Direct);
 
-                var consumer = new EventingBasicConsumer(_channel);
+                _channel.QueueDeclare(queue: _options.LockQueue,
+                                      exclusive: false,
+                                      autoDelete: false);
 
-                consumer.Received += (sender, args) =>
+                _channel.QueueDeclare(queue: _options.UnlockQueue,
+                                      exclusive: false,
+                                      autoDelete: false);
+
+                _channel.QueueBind(queue: _options.LockQueue,
+                                   exchange: _options.LockExchange,
+                                   routingKey: string.Empty);
+
+                _channel.QueueBind(queue: _options.UnlockQueue,
+                                   exchange: _options.UnlockExchange,
+                                   routingKey: string.Empty);
+
+                var lockConsumer = new EventingBasicConsumer(_channel);
+
+                lockConsumer.Received += (sender, args) =>
                 {
                     var body = args.Body.ToArray();
 
                     var message = Encoding.UTF8.GetString(body);
 
-                    _bookService.ChangeStatus(message);
+                    _bookService.LockAsync(message);
                 };
 
-                _channel.BasicConsume(queue: _options.Queue,
-                                        autoAck: false,
-                                        consumer: consumer);
+                var unlockConsumer = new EventingBasicConsumer(_channel);
+
+                unlockConsumer.Received += (sender, args) =>
+                {
+                    var body = args.Body.ToArray();
+
+                    var message = Encoding.UTF8.GetString(body);
+
+                    _bookService.UnlockAsync(message);
+                };
+
+                _channel.BasicConsume(queue: _options.LockQueue,
+                                      autoAck: false,
+                                      consumer: lockConsumer);
+
+                _channel.BasicConsume(queue: _options.UnlockQueue,
+                                      autoAck: false,
+                                      consumer: unlockConsumer);
             });
         }
 

@@ -14,6 +14,8 @@ namespace LibraryService.BussinesLogic.Services.Abstract
 
         Task<string> DeleteAsync(int id);
 
-        Task ChangeStatus(string message);
+        Task LockAsync(string message);
+
+        Task UnlockAsync(string message);
     }
 }
