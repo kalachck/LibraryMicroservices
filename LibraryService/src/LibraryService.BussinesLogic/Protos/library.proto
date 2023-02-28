@@ -1,18 +1,29 @@
 ﻿syntax = "proto3";
 
-option csharp_namespace = "LibrarySevice.BussinesLogic";
+option csharp_namespace = "LibraryService.BussinesLogic";
 
 package library;
 
 service CheckBook{
-	rpc Check (RequestId) returns (BookResponse);
+	rpc Check (RequestId) returns (CheckBookResponse);
+}
+
+service GetBook{
+	rpc Get (RequestTitle) returns (BookResponse);
 }
 
 message RequestId{
 	int32 Id = 1;
 }
 
-message BookResponse{
+message CheckBookResponse{
 	bool IsAvailable = 1;
-	string BookTitle = 2;
+}
+
+message RequestTitle{
+	string Title = 1;
+}
+
+message BookResponse{
+	string Book = 1;
 }

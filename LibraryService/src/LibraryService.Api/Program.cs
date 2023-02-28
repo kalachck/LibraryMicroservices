@@ -1,9 +1,7 @@
-using LibrarySevice.Api.AppDependeciesConfiguration;
-using LibrarySevice.BussinesLogic.Services;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
-using System.Net;
+using LibraryService.Api.AppDependeciesConfiguration;
+using LibraryService.BussinesLogic.Services;
 
-namespace LibrarySevice.Api
+namespace LibraryService.Api
 {
     public class Program
     {

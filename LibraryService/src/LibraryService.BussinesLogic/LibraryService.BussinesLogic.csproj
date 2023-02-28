@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LibraryService.DataAccess\LibrarySevice.DataAccess.csproj" />
+    <ProjectReference Include="..\LibraryService.DataAccess\LibraryService.DataAccess.csproj" />
   </ItemGroup>
 
   <ItemGroup>

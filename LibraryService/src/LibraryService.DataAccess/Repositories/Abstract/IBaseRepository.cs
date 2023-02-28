@@ -1,7 +1,7 @@
-﻿using LibrarySevice.DataAccess.Entities.Abstract;
+﻿using LibraryService.DataAccess.Entities.Abstract;
 using Microsoft.EntityFrameworkCore;
 
-namespace LibrarySevice.DataAccess.Repositories.Abstract
+namespace LibraryService.DataAccess.Repositories.Abstract
 {
     public interface IBaseRepository<TEntity, TContext> 
         where TEntity : Base

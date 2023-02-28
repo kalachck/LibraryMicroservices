@@ -1,4 +1,4 @@
-﻿namespace LibrarySevice.Api.AppDependeciesConfiguration
+﻿namespace LibraryService.Api.AppDependeciesConfiguration
 {
     public static partial class AppDependeciesConfiguration
     {

@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using LibrarySevice.Api.Models;
-using LibrarySevice.BussinesLogic.DTOs;
-using LibrarySevice.BussinesLogic.Exceptions;
-using LibrarySevice.BussinesLogic.Services.Abstract;
+using LibraryService.Api.Models;
+using LibraryService.BussinesLogic.DTOs;
+using LibraryService.BussinesLogic.Exceptions;
+using LibraryService.BussinesLogic.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 
-namespace LibrarySevice.Api.Controllers
+namespace LibraryService.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -45,6 +44,15 @@ namespace LibrarySevice.Api.Controllers
 
                 return Conflict("Can't get this record. There were technical problems");
             }
+        }
+
+        [HttpGet]
+        [Route("GetByTitle")]
+        public async Task<IActionResult> GetByTitle(string title)
+        {
+            var book = await _bookService.GetByTitleAsync(title);
+
+            return Ok(book);
         }
 
         [HttpPost]

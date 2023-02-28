@@ -1,26 +1,24 @@
 ﻿using AutoMapper;
-using LibrarySevice.BussinesLogic.DTOs;
-using LibrarySevice.BussinesLogic.Exceptions;
-using LibrarySevice.BussinesLogic.Services.Abstract;
-using LibrarySevice.DataAccess;
-using LibrarySevice.DataAccess.Entities;
-using LibrarySevice.DataAccess.Repositories.Abstract;
-using Newtonsoft.Json;
+using LibraryService.BussinesLogic.DTOs;
+using LibraryService.BussinesLogic.Exceptions;
+using LibraryService.BussinesLogic.Services.Abstract;
+using LibraryService.DataAccess.Entities;
+using LibraryService.DataAccess.Repositories;
 
-namespace LibrarySevice.BussinesLogic.Services
+namespace LibraryService.BussinesLogic.Services
 {
     public class BookService : IBookService
     {
-        private readonly IBaseRepository<Book, ApplicationContext> _repository;
-        private readonly ApplicationContext _applicationContext;
+        private readonly BookRepository _repository;
+        private readonly IDbManager<Book> _dbManager;
         private readonly IMapper _mapper;
 
-        public BookService(IBaseRepository<Book, ApplicationContext> repository,
-            ApplicationContext applicationContext,
+        public BookService(BookRepository repository,
+            IDbManager<Book> dbManager,
             IMapper mapper)
         {
             _repository = repository;
-            _applicationContext = applicationContext;
+            _dbManager = dbManager;
             _mapper = mapper;
         }
 
@@ -43,13 +41,25 @@ namespace LibrarySevice.BussinesLogic.Services
             }
         }
 
+        public async Task<BookDTO> GetByTitleAsync(string title)
+        {
+            var book = await _repository.GetByTitleAsync(title);
+
+            if (book != null)
+            {
+                return await Task.FromResult(_mapper.Map<BookDTO>(book));
+            }
+
+            throw new NotFoundException("Record was not found");
+        }
+
         public async Task<string> AddAsync(BookDTO book)
         {
             try
             {
                 _repository.Add(_mapper.Map<Book>(book));
 
-                await _applicationContext.SaveChangesAsync();
+                await _dbManager.SaveChangesAsync();
 
                 return await Task.FromResult("The record was successfully added");
             }
@@ -73,7 +83,7 @@ namespace LibrarySevice.BussinesLogic.Services
 
                     _repository.Update(bookEntity);
 
-                    await _applicationContext.SaveChangesAsync();
+                    await _dbManager.SaveChangesAsync();
 
                     return await Task.FromResult("The record was successfully updated");
                 }
@@ -96,7 +106,7 @@ namespace LibrarySevice.BussinesLogic.Services
                 {
                     _repository.Delete(book);
 
-                    await _applicationContext.SaveChangesAsync();
+                    await _dbManager.SaveChangesAsync();
 
                     return await Task.FromResult("The record was successfully deleted");
                 }
@@ -109,24 +119,40 @@ namespace LibrarySevice.BussinesLogic.Services
             }
         }
 
-        public async void ChangeStatus(string message)
+        public async Task LockAsync(string message)
         {
-            var rabbitMessage = JsonConvert.DeserializeObject<RabbitMessage>(message);
-
-            var book = await _repository.GetAsync(rabbitMessage.BookId);
-
-            if (rabbitMessage.Topic == Enums.Topic.Borrow)
+            if (!int.TryParse(message, out int id))
             {
-                book.IsAvailable = false;
+                throw new ParseException("Can't parse rabbit message");
             }
-            if (rabbitMessage.Topic == Enums.Topic.Delete)
-            {
-                book.IsAvailable = true;
-            }
+
+            var book = await _repository.GetAsync(id);
+
+            book.IsAvailable = false;
 
             _repository.Update(book);
 
-            await _applicationContext.SaveChangesAsync();
+            await _dbManager.SaveChangesAsync();
+
+            _dbManager.DetacheEntity(book);
+        }
+
+        public async Task UnlockAsync(string message)
+        {
+            if (!int.TryParse(message, out int id))
+            {
+                throw new ParseException("Can't parse rabbit message");
+            }
+
+            var book = await _repository.GetAsync(id);
+
+            book.IsAvailable = true;
+
+            _repository.Update(book);
+
+            await _dbManager.SaveChangesAsync();
+
+            _dbManager.DetacheEntity(book);
         }
     }
 }
