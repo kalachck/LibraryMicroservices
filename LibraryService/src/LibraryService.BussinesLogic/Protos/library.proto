@@ -17,7 +17,7 @@ message RequestId{
 }
 
 message CheckBookResponse{
-	bool IsAvailable = 1;
+	bool IsExist = 1;
 }
 
 message RequestTitle{

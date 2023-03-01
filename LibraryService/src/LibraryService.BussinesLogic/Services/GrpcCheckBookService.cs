@@ -20,7 +20,7 @@ namespace LibraryService.BussinesLogic.Services
 
                 return await Task.FromResult(new CheckBookResponse()
                 {
-                    IsAvailable = book.IsAvailable,
+                    IsExist = true
                 });
             }
 			catch (Exception)
