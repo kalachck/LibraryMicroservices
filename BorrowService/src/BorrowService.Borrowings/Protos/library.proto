@@ -5,14 +5,25 @@ option csharp_namespace = "BorrwoService.Borrowing";
 package library;
 
 service CheckBook{
-	rpc Check (RequestId) returns (BookResponse);
+	rpc Check (RequestId) returns (CheckBookResponse);
+}
+
+service GetBook{
+	rpc Get (RequestTitle) returns (BookResponse);
 }
 
 message RequestId{
 	int32 Id = 1;
 }
 
+message CheckBookResponse{
+	bool IsExist = 1;
+}
+
+message RequestTitle{
+	string Title = 1;
+}
+
 message BookResponse{
-	bool IsAvailable = 1;
-	string BookTitle = 2;
+	string Book = 1;
 }

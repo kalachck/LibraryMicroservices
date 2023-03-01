@@ -4,9 +4,10 @@ using BorrowService.Borrowings.Exceptions;
 using BorrowService.Borrowings.Options;
 using BorrowService.Borrowings.Repositories.Abstract;
 using BorrowService.RabbitMq.Services.Abstract;
+using BorrwoService.Borrowing;
+using Grpc.Net.Client;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System.Net;
 
 namespace BorrowService.Borrowings.Components
 {
@@ -14,18 +15,19 @@ namespace BorrowService.Borrowings.Components
     {
         private readonly IBorrowingRepository _repository;
         private readonly IRabbitService _rabbitService;
-        private readonly HttpClient _client;
         private readonly CommunicationOptions _options;
+        private HttpClientHandler _clientHandler;
 
         public BorrowingComponent(IBorrowingRepository repository,
             IOptions<CommunicationOptions> options,
-            IHttpClientFactory clientFactory,
             IRabbitService rabbitService)
         {
             _repository = repository;
             _rabbitService = rabbitService;
-            _client = clientFactory.CreateClient();
             _options = options.Value;
+            _clientHandler = new HttpClientHandler();
+
+            _clientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
         }
 
         public async Task<Borrowing> GetAsync(string email, string title)
@@ -134,40 +136,46 @@ namespace BorrowService.Borrowings.Components
 
         public async Task<bool> CheckUserAsync(string email)
         {
-            var identityResult = await _client.GetAsync($"{_options.Identity}{email}");
-
-            if (identityResult.StatusCode != HttpStatusCode.OK)
+            var channel = GrpcChannel.ForAddress(_options.Identity, new GrpcChannelOptions()
             {
-                return await Task.FromResult(false);
-            }
+                HttpHandler = _clientHandler
+            });
 
-            return await Task.FromResult(true);
+            var client = new CheckUser.CheckUserClient(channel);
+
+            UserResponse response = await client.CheckAsync(new RequestEmail() { Email = email });
+
+            return await Task.FromResult(response.IsExists);
         }
 
         public async Task<Dictionary<string, string>> GetBookAsync(string title)
         {
-            var libraryResult = await _client.GetAsync($"{_options.LibraryByTitle}{title}");
-
-            if (libraryResult.StatusCode != HttpStatusCode.OK)
+            var channel = GrpcChannel.ForAddress(_options.Library, new GrpcChannelOptions()
             {
-                throw new NotFoundException("Book was not found");
-            }
+                HttpHandler = _clientHandler
+            });
 
-            var libraryContent = await libraryResult.Content.ReadAsStringAsync();
+            var client = new GetBook.GetBookClient(channel);
 
-            return JsonConvert.DeserializeObject<Dictionary<string, string>>(libraryContent);
+            BookResponse response = await client.GetAsync(new RequestTitle() { Title = title });
+
+            var book = JsonConvert.DeserializeObject<Dictionary<string, string>>(response.Book);
+
+            return await Task.FromResult(book);
         }
 
         public async Task<bool> CheckBookAsync(int bookId)
         {
-            var libraryResult = await _client.GetAsync($"{_options.LibraryById}{bookId}");
-
-            if (libraryResult.StatusCode != HttpStatusCode.OK)
+            var channel = GrpcChannel.ForAddress(_options.Library, new GrpcChannelOptions()
             {
-                return await Task.FromResult(false);
-            }
+                HttpHandler = _clientHandler
+            });
 
-            return await Task.FromResult(true);
+            var client = new CheckBook.CheckBookClient(channel);
+
+            CheckBookResponse response = await client.CheckAsync(new RequestId() { Id = bookId });
+
+            return await Task.FromResult(response.IsExist);
         }
     }
 }
