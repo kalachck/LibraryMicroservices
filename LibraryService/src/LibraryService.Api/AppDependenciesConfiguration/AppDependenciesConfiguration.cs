@@ -1,6 +1,6 @@
-﻿using LibrarySevice.Api.AppDependenciesConfiguration;
+﻿using LibraryService.Api.AppDependenciesConfiguration;
 
-namespace LibrarySevice.Api.AppDependeciesConfiguration
+namespace LibraryService.Api.AppDependeciesConfiguration
 {
     public static partial class AppDependenciesConfiguration
     {

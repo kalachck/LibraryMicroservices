@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using LibrarySevice.Api.Models;
-using LibrarySevice.BussinesLogic.DTOs;
-using LibrarySevice.BussinesLogic.Exceptions;
-using LibrarySevice.BussinesLogic.Services.Abstract;
+using LibraryService.Api.Models;
+using LibraryService.BussinesLogic.DTOs;
+using LibraryService.BussinesLogic.Exceptions;
+using LibraryService.BussinesLogic.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 
-namespace LibrarySevice.Api.Controllers
+namespace LibraryService.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -17,8 +16,8 @@ namespace LibrarySevice.Api.Controllers
         private readonly IMapper _mapper;
         private readonly IValidator<PublisherRequestModel> _validator;
 
-        public PublisherController(IPublisherService publisherService, 
-            IMapper mapper, 
+        public PublisherController(IPublisherService publisherService,
+            IMapper mapper,
             IValidator<PublisherRequestModel> validator)
         {
             _publisherService = publisherService;

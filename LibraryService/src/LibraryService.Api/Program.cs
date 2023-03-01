@@ -1,9 +1,9 @@
 using HealthChecks.UI.Client;
-using LibrarySevice.Api.AppDependeciesConfiguration;
-using LibrarySevice.BussinesLogic.Services;
+using LibraryService.Api.AppDependeciesConfiguration;
+using LibraryService.BussinesLogic.Services;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
-namespace LibrarySevice.Api
+namespace LibraryService.Api
 {
     public class Program
     {
@@ -29,7 +29,8 @@ namespace LibrarySevice.Api
 
             app.UseAuthorization();
 
-            app.MapGrpcService<CheckBookService>();
+            app.MapGrpcService<GrpcCheckBookService>();
+            app.MapGrpcService<GrpcGetBookService>();
 
             app.MapControllers();
 

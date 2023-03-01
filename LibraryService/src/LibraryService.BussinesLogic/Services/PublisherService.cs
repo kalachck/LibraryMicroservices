@@ -1,25 +1,25 @@
 ﻿using AutoMapper;
-using LibrarySevice.BussinesLogic.DTOs;
-using LibrarySevice.BussinesLogic.Exceptions;
-using LibrarySevice.BussinesLogic.Services.Abstract;
-using LibrarySevice.DataAccess;
-using LibrarySevice.DataAccess.Entities;
-using LibrarySevice.DataAccess.Repositories.Abstract;
+using LibraryService.BussinesLogic.DTOs;
+using LibraryService.BussinesLogic.Exceptions;
+using LibraryService.BussinesLogic.Services.Abstract;
+using LibraryService.DataAccess;
+using LibraryService.DataAccess.Entities;
+using LibraryService.DataAccess.Repositories.Abstract;
 
-namespace LibrarySevice.BussinesLogic.Services
+namespace LibraryService.BussinesLogic.Services
 {
     public class PublisherService : IPublisherService
     {
         private readonly IBaseRepository<Publisher, ApplicationContext> _repository;
-        private readonly ApplicationContext _applicationContext;
+        private readonly IDbManager<Publisher> _dbManager;
         private readonly IMapper _mapper;
 
         public PublisherService(IBaseRepository<Publisher, ApplicationContext> repository,
-            ApplicationContext applicationContext,
+            IDbManager<Publisher> dbManager,
             IMapper mapper)
         {
             _repository = repository;
-            _applicationContext = applicationContext;
+            _dbManager = dbManager;
             _mapper = mapper;
         }
 
@@ -48,7 +48,7 @@ namespace LibrarySevice.BussinesLogic.Services
             {
                 _repository.Add(_mapper.Map<Publisher>(publisher));
 
-                await _applicationContext.SaveChangesAsync();
+                await _dbManager.SaveChangesAsync();
 
                 return await Task.FromResult("The record was successfully added");
             }
@@ -72,7 +72,7 @@ namespace LibrarySevice.BussinesLogic.Services
 
                     _repository.Update(publisherEntity);
 
-                    await _applicationContext.SaveChangesAsync();
+                    await _dbManager.SaveChangesAsync();
 
                     return await Task.FromResult("The record was successfully updated");
                 }
@@ -96,7 +96,7 @@ namespace LibrarySevice.BussinesLogic.Services
 
                     _repository.Delete(publisher);
 
-                    await _applicationContext.SaveChangesAsync();
+                    await _dbManager.SaveChangesAsync();
 
                     return await Task.FromResult("The record was successfully deleted");
                 }

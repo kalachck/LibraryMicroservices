@@ -1,6 +1,6 @@
-﻿using LibrarySevice.BussinesLogic.DTOs;
+﻿using LibraryService.BussinesLogic.DTOs;
 
-namespace LibrarySevice.BussinesLogic.Services.Abstract
+namespace LibraryService.BussinesLogic.Services.Abstract
 {
     public interface IPublisherService
     {

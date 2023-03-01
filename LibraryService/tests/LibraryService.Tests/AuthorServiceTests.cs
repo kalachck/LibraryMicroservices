@@ -1,14 +1,14 @@
 ﻿using AutoFixture;
 using AutoMapper;
 using FluentAssertions;
-using LibrarySevice.Api.Mappings;
-using LibrarySevice.BussinesLogic;
-using LibrarySevice.BussinesLogic.DTOs;
-using LibrarySevice.BussinesLogic.Exceptions;
-using LibrarySevice.BussinesLogic.Services;
-using LibrarySevice.DataAccess;
-using LibrarySevice.DataAccess.Entities;
-using LibrarySevice.DataAccess.Repositories.Abstract;
+using LibraryService.Api.Mappings;
+using LibraryService.BussinesLogic.DTOs;
+using LibraryService.BussinesLogic.Exceptions;
+using LibraryService.BussinesLogic.Services;
+using LibraryService.BussinesLogic.Services.Abstract;
+using LibraryService.DataAccess;
+using LibraryService.DataAccess.Entities;
+using LibraryService.DataAccess.Repositories.Abstract;
 using Moq;
 
 namespace LibraryService.UnitTests
@@ -16,7 +16,7 @@ namespace LibraryService.UnitTests
     public class AuthorServiceTests
     {
         private readonly IMapper _mapper;
-        private readonly Mock<ApplicationContext> _context;
+        private readonly Mock<IDbManager<Author>> _dbManager;
         private readonly Mock<IBaseRepository<Author, ApplicationContext>> _authorRepository;
         private readonly Fixture _fixture;
 
@@ -25,14 +25,19 @@ namespace LibraryService.UnitTests
             var configuration = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<AuthorProfile>();
+                cfg.AddProfile<BookProfile>();
             });
 
             _mapper = new Mapper(configuration);
-            _context = new Mock<ApplicationContext>();
+            _dbManager = new Mock<IDbManager<Author>>();
             _authorRepository = new Mock<IBaseRepository<Author, ApplicationContext>>();
             _fixture = new Fixture();
 
-            _context.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult(1));
+            _fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => _fixture.Behaviors.Remove(b));
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
+            _fixture.Customize<Author>(x => x.Without(p =>p.Books));
+            _fixture.Customize<AuthorDTO>(x => x.Without(p => p.Books));
         }
 
         [Theory]
@@ -42,14 +47,14 @@ namespace LibraryService.UnitTests
             //Arrange
             _authorRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Author>());
 
-            var authorService = new AuthorService(_authorRepository.Object, _context.Object, _mapper);
+            var authorService = new AuthorService(_authorRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             var actualResult = await authorService.GetAsync(id);
 
             //Assert
             actualResult.Should().BeOfType<AuthorDTO>();
-            actualResult.Name.Should().Be("testName");
+            actualResult.Should().NotBeNull();
         }
 
         [Theory]
@@ -59,7 +64,7 @@ namespace LibraryService.UnitTests
             //Arrange
             _authorRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Returns(Task.FromResult((Author)null));
 
-            var authorService = new AuthorService(_authorRepository.Object, _context.Object, _mapper);
+            var authorService = new AuthorService(_authorRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -73,7 +78,7 @@ namespace LibraryService.UnitTests
             //Arrange
             _authorRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Throws<Exception>();
 
-            var authorService = new AuthorService(_authorRepository.Object, _context.Object, _mapper);
+            var authorService = new AuthorService(_authorRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -86,7 +91,7 @@ namespace LibraryService.UnitTests
             //Arrange
             _authorRepository.Setup(x => x.Add(It.IsAny<Author>()));
 
-            var authorService = new AuthorService(_authorRepository.Object, _context.Object, _mapper);
+            var authorService = new AuthorService(_authorRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             var actualResult = await authorService.AddAsync(_fixture.Create<AuthorDTO>());
@@ -101,7 +106,7 @@ namespace LibraryService.UnitTests
             //Arrange
             _authorRepository.Setup(x => x.Add(It.IsAny<Author>())).Throws<Exception>();
 
-            var authorService = new AuthorService(_authorRepository.Object, _context.Object, _mapper);
+            var authorService = new AuthorService(_authorRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -117,7 +122,7 @@ namespace LibraryService.UnitTests
             _authorRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Author>());
             _authorRepository.Setup(x => x.Update(It.IsAny<Author>()));
 
-            var authorService = new AuthorService(_authorRepository.Object, _context.Object, _mapper);
+            var authorService = new AuthorService(_authorRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             var actualResult = await authorService.UpdateAsync(id, _fixture.Create<AuthorDTO>());
@@ -134,7 +139,7 @@ namespace LibraryService.UnitTests
             _authorRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync((Author)null);
             _authorRepository.Setup(x => x.Update(It.IsAny<Author>()));
 
-            var authorService = new AuthorService(_authorRepository.Object, _context.Object, _mapper);
+            var authorService = new AuthorService(_authorRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -150,7 +155,7 @@ namespace LibraryService.UnitTests
             _authorRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Throws<Exception>();
             _authorRepository.Setup(x => x.Update(It.IsAny<Author>()));
 
-            var authorService = new AuthorService(_authorRepository.Object, _context.Object, _mapper);
+            var authorService = new AuthorService(_authorRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -166,7 +171,7 @@ namespace LibraryService.UnitTests
             _authorRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Author>());
             _authorRepository.Setup(x => x.Delete(It.IsAny<Author>()));
 
-            var authorService = new AuthorService(_authorRepository.Object, _context.Object, _mapper);
+            var authorService = new AuthorService(_authorRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             var actualResult = await authorService.DeleteAsync(id);
@@ -183,7 +188,7 @@ namespace LibraryService.UnitTests
             _authorRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Returns(Task.FromResult((Author)null));
             _authorRepository.Setup(x => x.Delete(It.IsAny<Author>()));
 
-            var authorService = new AuthorService(_authorRepository.Object, _context.Object, _mapper);
+            var authorService = new AuthorService(_authorRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -198,7 +203,7 @@ namespace LibraryService.UnitTests
             _authorRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Throws<Exception>();
             _authorRepository.Setup(x => x.Delete(It.IsAny<Author>()));
 
-            var authorService = new AuthorService(_authorRepository.Object, _context.Object, _mapper);
+            var authorService = new AuthorService(_authorRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert

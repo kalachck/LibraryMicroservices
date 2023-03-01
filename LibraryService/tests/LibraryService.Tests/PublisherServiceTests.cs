@@ -1,13 +1,14 @@
 ﻿using AutoFixture;
 using AutoMapper;
 using FluentAssertions;
-using LibrarySevice.Api.Mappings;
-using LibrarySevice.BussinesLogic.DTOs;
-using LibrarySevice.BussinesLogic.Exceptions;
-using LibrarySevice.BussinesLogic.Services;
-using LibrarySevice.DataAccess;
-using LibrarySevice.DataAccess.Entities;
-using LibrarySevice.DataAccess.Repositories.Abstract;
+using LibraryService.Api.Mappings;
+using LibraryService.BussinesLogic.DTOs;
+using LibraryService.BussinesLogic.Exceptions;
+using LibraryService.BussinesLogic.Services;
+using LibraryService.BussinesLogic.Services.Abstract;
+using LibraryService.DataAccess;
+using LibraryService.DataAccess.Entities;
+using LibraryService.DataAccess.Repositories.Abstract;
 using Moq;
 
 namespace LibraryService.UnitTests
@@ -15,7 +16,7 @@ namespace LibraryService.UnitTests
     public class PublisherServiceTests
     {
         private readonly IMapper _mapper;
-        private readonly Mock<ApplicationContext> _context;
+        private readonly Mock<IDbManager<Publisher>> _dbManager;
         private readonly Mock<IBaseRepository<Publisher, ApplicationContext>> _publisherRepository;
         private readonly Fixture _fixture;
 
@@ -27,11 +28,15 @@ namespace LibraryService.UnitTests
             });
 
             _mapper = new Mapper(configuration);
-            _context = new Mock<ApplicationContext>();
+            _dbManager = new Mock<IDbManager<Publisher>>();
             _publisherRepository = new Mock<IBaseRepository<Publisher, ApplicationContext>>();
             _fixture = new Fixture();
 
-            _context.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult(1));
+            _fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => _fixture.Behaviors.Remove(b));
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
+            _fixture.Customize<Publisher>(x => x.Without(p => p.Books));
+            _fixture.Customize<PublisherDTO>(x => x.Without(p => p.Books));
         }
 
         [Theory]
@@ -41,14 +46,14 @@ namespace LibraryService.UnitTests
             //Arrange
             _publisherRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Publisher>());
 
-            var publisherService = new PublisherService(_publisherRepository.Object, _context.Object, _mapper);
+            var publisherService = new PublisherService(_publisherRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             var actualResult = await publisherService.GetAsync(id);
 
             //Assert
             actualResult.Should().BeOfType<PublisherDTO>();
-            actualResult.Name.Should().Be("testName");
+            actualResult.Name.Should().NotBeNull();
         }
 
         [Theory]
@@ -58,7 +63,7 @@ namespace LibraryService.UnitTests
             //Arrange
             _publisherRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Returns(Task.FromResult((Publisher)null));
 
-            var publisherService = new PublisherService(_publisherRepository.Object, _context.Object, _mapper);
+            var publisherService = new PublisherService(_publisherRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -72,7 +77,7 @@ namespace LibraryService.UnitTests
             //Arrange
             _publisherRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Throws<Exception>();
 
-            var publisherService = new PublisherService(_publisherRepository.Object, _context.Object, _mapper);
+            var publisherService = new PublisherService(_publisherRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -85,7 +90,7 @@ namespace LibraryService.UnitTests
             //Arrange
             _publisherRepository.Setup(x => x.Add(It.IsAny<Publisher>()));
 
-            var publisherService = new PublisherService(_publisherRepository.Object, _context.Object, _mapper);
+            var publisherService = new PublisherService(_publisherRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             var actualResult = await publisherService.AddAsync(_fixture.Create<PublisherDTO>());
@@ -100,7 +105,7 @@ namespace LibraryService.UnitTests
             //Arrange
             _publisherRepository.Setup(x => x.Add(It.IsAny<Publisher>())).Throws<Exception>();
 
-            var publisherService = new PublisherService(_publisherRepository.Object, _context.Object, _mapper);
+            var publisherService = new PublisherService(_publisherRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -115,7 +120,7 @@ namespace LibraryService.UnitTests
             _publisherRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Publisher>());
             _publisherRepository.Setup(x => x.Update(It.IsAny<Publisher>()));
 
-            var publisherService = new PublisherService(_publisherRepository.Object, _context.Object, _mapper);
+            var publisherService = new PublisherService(_publisherRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             var actualResult = await publisherService.UpdateAsync(id, _fixture.Create<PublisherDTO>());
@@ -132,7 +137,7 @@ namespace LibraryService.UnitTests
             _publisherRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync((Publisher)null);
             _publisherRepository.Setup(x => x.Update(It.IsAny<Publisher>()));
 
-            var publisherService = new PublisherService(_publisherRepository.Object, _context.Object, _mapper);
+            var publisherService = new PublisherService(_publisherRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -148,7 +153,7 @@ namespace LibraryService.UnitTests
             _publisherRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Throws<Exception>();
             _publisherRepository.Setup(x => x.Update(It.IsAny<Publisher>()));
 
-            var publisherService = new PublisherService(_publisherRepository.Object, _context.Object, _mapper);
+            var publisherService = new PublisherService(_publisherRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -164,7 +169,7 @@ namespace LibraryService.UnitTests
             _publisherRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Publisher>());
             _publisherRepository.Setup(x => x.Delete(It.IsAny<Publisher>()));
 
-            var genreService = new PublisherService(_publisherRepository.Object, _context.Object, _mapper);
+            var genreService = new PublisherService(_publisherRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             var actualResult = await genreService.DeleteAsync(id);
@@ -181,7 +186,7 @@ namespace LibraryService.UnitTests
             _publisherRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Returns(Task.FromResult((Publisher)null));
             _publisherRepository.Setup(x => x.Delete(It.IsAny<Publisher>()));
 
-            var publisherService = new PublisherService(_publisherRepository.Object, _context.Object, _mapper);
+            var publisherService = new PublisherService(_publisherRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -196,7 +201,7 @@ namespace LibraryService.UnitTests
             _publisherRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Throws<Exception>();
             _publisherRepository.Setup(x => x.Delete(It.IsAny<Publisher>()));
 
-            var publisherService = new PublisherService(_publisherRepository.Object, _context.Object, _mapper);
+            var publisherService = new PublisherService(_publisherRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System.Data.Common;
 
-namespace LibrarySevice.Api.HealthChecks
+namespace LibraryService.Api.HealthChecks
 {
     public class DatabaseHealthCheck : IHealthCheck
     {

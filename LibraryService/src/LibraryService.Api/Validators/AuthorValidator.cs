@@ -1,7 +1,7 @@
-﻿using LibrarySevice.Api.Models;
+﻿using LibraryService.Api.Models;
 using FluentValidation;
 
-namespace LibrarySevice.Api.Validators
+namespace LibraryService.Api.Validators
 {
     public class AuthorValidator : AbstractValidator<AuthorRequestModel>
     {

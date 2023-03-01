@@ -1,4 +1,4 @@
-﻿namespace LibrarySevice.DataAccess.Entities.Abstract
+﻿namespace LibraryService.DataAccess.Entities.Abstract
 {
     public abstract class Base
     {

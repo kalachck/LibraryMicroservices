@@ -1,6 +1,6 @@
-﻿using LibrarySevice.Api.HealthChecks;
+﻿using LibraryService.Api.HealthChecks;
 
-namespace LibrarySevice.Api.AppDependenciesConfiguration
+namespace LibraryService.Api.AppDependenciesConfiguration
 {
     public static partial class AppDependenciesConfiguration
     {

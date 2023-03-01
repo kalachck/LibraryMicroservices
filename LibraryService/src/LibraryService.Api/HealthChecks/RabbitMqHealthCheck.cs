@@ -1,15 +1,13 @@
-﻿using LibrarySevice.BussinesLogic.Options;
+﻿using LibraryService.RabbitMq.Options;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 
-namespace LibrarySevice.Api.HealthChecks
+namespace LibraryService.Api.HealthChecks
 {
     public class RabbitMqHealthCheck : IHealthCheck
     {
         private readonly RabbitOptions _options;
-        private IConnection _connection;
-        private IModel _channel;
 
         public RabbitMqHealthCheck(IOptions<RabbitOptions> options)
         {
@@ -28,8 +26,8 @@ namespace LibrarySevice.Api.HealthChecks
                     Password = _options.Password,
                 };
 
-                _connection = factory.CreateConnection();
-                _channel = _connection.CreateModel();
+                using var connection = factory.CreateConnection();
+                using var channel = connection.CreateModel();
             }
             catch (Exception ex)
             {

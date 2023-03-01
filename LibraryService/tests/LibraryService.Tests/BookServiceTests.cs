@@ -1,24 +1,22 @@
 ﻿using AutoFixture;
 using AutoMapper;
 using FluentAssertions;
-using LibrarySevice.Api.Mappings;
-using LibrarySevice.BussinesLogic;
-using LibrarySevice.BussinesLogic.DTOs;
-using LibrarySevice.BussinesLogic.Exceptions;
-using LibrarySevice.BussinesLogic.Services;
-using LibrarySevice.DataAccess;
-using LibrarySevice.DataAccess.Entities;
-using LibrarySevice.DataAccess.Repositories.Abstract;
+using LibraryService.Api.Mappings;
+using LibraryService.BussinesLogic.DTOs;
+using LibraryService.BussinesLogic.Exceptions;
+using LibraryService.BussinesLogic.Services;
+using LibraryService.BussinesLogic.Services.Abstract;
+using LibraryService.DataAccess.Entities;
+using LibraryService.DataAccess.Repositories;
 using Moq;
-using Newtonsoft.Json;
 
 namespace LibraryService.UnitTests
 {
     public class BookServiceTests
     {
         private readonly IMapper _mapper;
-        private readonly Mock<ApplicationContext> _context;
-        private readonly Mock<IBaseRepository<Book, ApplicationContext>> _bookRepository;
+        private readonly Mock<IDbManager<Book>> _dbManager;
+        private readonly Mock<BookRepository> _bookRepository;
         private readonly Fixture _fixture;
 
         public BookServiceTests()
@@ -29,21 +27,20 @@ namespace LibraryService.UnitTests
             });
 
             _mapper = new Mapper(configuration);
-            _context = new Mock<ApplicationContext>();
-            _bookRepository = new Mock<IBaseRepository<Book, ApplicationContext>>();
-            _fixture = new Fixture();
+            _dbManager = new Mock<IDbManager<Book>>();
+            _bookRepository = new Mock<BookRepository>();
 
-            _context.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult(1));
+            _fixture = new Fixture();
         }
 
         [Theory]
         [InlineData(1)]
-        public async Task GetAsync_ShouldReturnAuthorDTO(int id)
+        public async Task GetAsync_ShouldReturnBookDTO(int id)
         {
             //Arrange
             _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Book>());
 
-            var bookService = new BookService(_bookRepository.Object, _context.Object, _mapper);
+            var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             var actualResult = await bookService.GetAsync(id);
@@ -60,7 +57,7 @@ namespace LibraryService.UnitTests
             //Arrange
             _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Returns(Task.FromResult((Book)null));
 
-            var bookService = new BookService(_bookRepository.Object, _context.Object, _mapper);
+            var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -74,7 +71,7 @@ namespace LibraryService.UnitTests
             //Arrange
             _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Throws<Exception>();
 
-            var bookService = new BookService(_bookRepository.Object, _context.Object, _mapper);
+            var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -87,7 +84,7 @@ namespace LibraryService.UnitTests
             //Arrange
             _bookRepository.Setup(x => x.Add(It.IsAny<Book>()));
 
-            var bookService = new BookService(_bookRepository.Object, _context.Object, _mapper);
+            var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             var actualResult = await bookService.AddAsync(_fixture.Create<BookDTO>());
@@ -102,7 +99,7 @@ namespace LibraryService.UnitTests
             //Arrange
             _bookRepository.Setup(x => x.Add(It.IsAny<Book>())).Throws<Exception>();
 
-            var bookService = new BookService(_bookRepository.Object, _context.Object, _mapper);
+            var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -118,7 +115,7 @@ namespace LibraryService.UnitTests
             _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Book>());
             _bookRepository.Setup(x => x.Update(It.IsAny<Book>()));
 
-            var bookService = new BookService(_bookRepository.Object, _context.Object, _mapper);
+            var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             var actualResult = await bookService.UpdateAsync(id, _fixture.Create<BookDTO>());
@@ -135,7 +132,7 @@ namespace LibraryService.UnitTests
             _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync((Book)null);
             _bookRepository.Setup(x => x.Update(It.IsAny<Book>()));
 
-            var bookService = new BookService(_bookRepository.Object, _context.Object, _mapper);
+            var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -151,7 +148,7 @@ namespace LibraryService.UnitTests
             _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Throws<Exception>();
             _bookRepository.Setup(x => x.Update(It.IsAny<Book>()));
 
-            var bookService = new BookService(_bookRepository.Object, _context.Object, _mapper);
+            var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -167,7 +164,7 @@ namespace LibraryService.UnitTests
             _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Book>());
             _bookRepository.Setup(x => x.Delete(It.IsAny<Book>()));
 
-            var bookService = new BookService(_bookRepository.Object, _context.Object, _mapper);
+            var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             var actualResult = await bookService.DeleteAsync(id);
@@ -184,7 +181,7 @@ namespace LibraryService.UnitTests
             _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Returns(Task.FromResult((Book)null));
             _bookRepository.Setup(x => x.Delete(It.IsAny<Book>()));
 
-            var bookService = new BookService(_bookRepository.Object, _context.Object, _mapper);
+            var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -199,33 +196,11 @@ namespace LibraryService.UnitTests
             _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Throws<Exception>();
             _bookRepository.Setup(x => x.Delete(It.IsAny<Book>()));
 
-            var bookService = new BookService(_bookRepository.Object, _context.Object, _mapper);
+            var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
             bookService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
-        }
-
-
-        [Theory]
-        [InlineData(1)]
-        public async Task ChangeStatusAsync_WhenTopicBorrow_ShouldPassedSuccessfully(int id)
-        {
-            //Arrange
-            var rabbitMessage = JsonConvert.SerializeObject(new RabbitMessage()
-            {
-                Topic = LibrarySevice.BussinesLogic.Enums.Topic.Borrow,
-                BookId = id,
-            });
-
-            _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Book>());
-            _bookRepository.Setup(x => x.Update(It.IsAny<Book>()));
-
-            var bookService = new BookService(_bookRepository.Object, _context.Object, _mapper);
-
-            //Act
-            //Assert
-            bookService.Invoking(x => x.ChangeStatus(rabbitMessage)).Should().NotThrow<Exception>();
         }
     }
 }

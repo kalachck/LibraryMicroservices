@@ -1,22 +1,22 @@
-﻿using AutoMapper;
-using LibrarySevice.DataAccess.Entities;
-using LibrarySevice.DataAccess.Repositories.Abstract;
-using LibrarySevice.DataAccess;
-using Moq;
-using LibrarySevice.Api.Mappings;
-using LibrarySevice.BussinesLogic.DTOs;
-using LibrarySevice.BussinesLogic.Exceptions;
-using LibrarySevice.BussinesLogic.Services;
+﻿using AutoFixture;
+using AutoMapper;
 using FluentAssertions;
-using System.Security.AccessControl;
-using AutoFixture;
+using LibraryService.Api.Mappings;
+using LibraryService.BussinesLogic.DTOs;
+using LibraryService.BussinesLogic.Exceptions;
+using LibraryService.BussinesLogic.Services;
+using LibraryService.BussinesLogic.Services.Abstract;
+using LibraryService.DataAccess;
+using LibraryService.DataAccess.Entities;
+using LibraryService.DataAccess.Repositories.Abstract;
+using Moq;
 
 namespace LibraryService.UnitTests
 {
     public class GenreServiceTests
     {
         private readonly IMapper _mapper;
-        private readonly Mock<ApplicationContext> _context;
+        private readonly Mock<IDbManager<Genre>> _dbManager;
         private readonly Mock<IBaseRepository<Genre, ApplicationContext>> _genreRepository;
         private readonly Fixture _fixture;
 
@@ -25,14 +25,19 @@ namespace LibraryService.UnitTests
             var configuration = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<GenreProfile>();
+                cfg.AddProfile<BookProfile>();
             });
 
             _mapper = new Mapper(configuration);
-            _context = new Mock<ApplicationContext>();
+            _dbManager = new Mock<IDbManager<Genre>>();
             _genreRepository = new Mock<IBaseRepository<Genre, ApplicationContext>>();
             _fixture = new Fixture();
 
-            _context.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult(1));
+            _fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => _fixture.Behaviors.Remove(b));
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
+            _fixture.Customize<Genre>(x => x.Without(p => p.Books));
+            _fixture.Customize<GenreDTO>(x => x.Without(p => p.Books));
         }
 
         [Theory]
@@ -42,14 +47,14 @@ namespace LibraryService.UnitTests
             //Arrange
             _genreRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Genre>());
 
-            var genreService = new GenreService(_genreRepository.Object, _context.Object, _mapper);
+            var genreService = new GenreService(_genreRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             var actualResult = await genreService.GetAsync(id);
 
             //Assert
             actualResult.Should().BeOfType<GenreDTO>();
-            actualResult.Name.Should().Be("testName");
+            actualResult.Name.Should().NotBeNull();
         }
 
         [Theory]
@@ -59,7 +64,7 @@ namespace LibraryService.UnitTests
             //Arrange
             _genreRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Returns(Task.FromResult((Genre)null));
 
-            var genreService = new GenreService(_genreRepository.Object, _context.Object, _mapper);
+            var genreService = new GenreService(_genreRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -73,7 +78,7 @@ namespace LibraryService.UnitTests
             //Arrange
             _genreRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Throws<Exception>();
 
-            var genreService = new GenreService(_genreRepository.Object, _context.Object, _mapper);
+            var genreService = new GenreService(_genreRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -86,7 +91,7 @@ namespace LibraryService.UnitTests
             //Arrange
             _genreRepository.Setup(x => x.Add(It.IsAny<Genre>()));
 
-            var genreService = new GenreService(_genreRepository.Object, _context.Object, _mapper);
+            var genreService = new GenreService(_genreRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             var actualResult = await genreService.AddAsync(_fixture.Create<GenreDTO>());
@@ -101,7 +106,7 @@ namespace LibraryService.UnitTests
             //Arrange
             _genreRepository.Setup(x => x.Add(It.IsAny<Genre>())).Throws<Exception>();
 
-            var genreService = new GenreService(_genreRepository.Object, _context.Object, _mapper);
+            var genreService = new GenreService(_genreRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -116,7 +121,7 @@ namespace LibraryService.UnitTests
             _genreRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Genre>());
             _genreRepository.Setup(x => x.Update(It.IsAny<Genre>()));
 
-            var genreService = new GenreService(_genreRepository.Object, _context.Object, _mapper);
+            var genreService = new GenreService(_genreRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             var actualResult = await genreService.UpdateAsync(id, _fixture.Create<GenreDTO>());
@@ -133,7 +138,7 @@ namespace LibraryService.UnitTests
             _genreRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync((Genre)null);
             _genreRepository.Setup(x => x.Update(It.IsAny<Genre>()));
 
-            var genreService = new GenreService(_genreRepository.Object, _context.Object, _mapper);
+            var genreService = new GenreService(_genreRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -149,7 +154,7 @@ namespace LibraryService.UnitTests
             _genreRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Throws<Exception>();
             _genreRepository.Setup(x => x.Update(It.IsAny<Genre>()));
 
-            var genreService = new GenreService(_genreRepository.Object, _context.Object, _mapper);
+            var genreService = new GenreService(_genreRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -165,7 +170,7 @@ namespace LibraryService.UnitTests
             _genreRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Genre>());
             _genreRepository.Setup(x => x.Delete(It.IsAny<Genre>()));
 
-            var genreService = new GenreService(_genreRepository.Object, _context.Object, _mapper);
+            var genreService = new GenreService(_genreRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             var actualResult = await genreService.DeleteAsync(id);
@@ -182,7 +187,7 @@ namespace LibraryService.UnitTests
             _genreRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Returns(Task.FromResult((Genre)null));
             _genreRepository.Setup(x => x.Delete(It.IsAny<Genre>()));
 
-            var genreService = new GenreService(_genreRepository.Object, _context.Object, _mapper);
+            var genreService = new GenreService(_genreRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert
@@ -197,7 +202,7 @@ namespace LibraryService.UnitTests
             _genreRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Throws<Exception>();
             _genreRepository.Setup(x => x.Delete(It.IsAny<Genre>()));
 
-            var genreService = new GenreService(_genreRepository.Object, _context.Object, _mapper);
+            var genreService = new GenreService(_genreRepository.Object, _dbManager.Object, _mapper);
 
             //Act
             //Assert

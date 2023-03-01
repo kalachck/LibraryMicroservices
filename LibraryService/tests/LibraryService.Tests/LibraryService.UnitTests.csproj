@@ -29,9 +29,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\LibraryService.Api\LibrarySevice.Api.csproj" />
-    <ProjectReference Include="..\..\src\LibraryService.BussinesLogic\LibrarySevice.BussinesLogic.csproj" />
-    <ProjectReference Include="..\..\src\LibraryService.DataAccess\LibrarySevice.DataAccess.csproj" />
+    <ProjectReference Include="..\..\src\LibraryService.Api\LibraryService.Api.csproj" />
+    <ProjectReference Include="..\..\src\LibraryService.DataAccess\LibraryService.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>
