@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryService.DataAccess",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryService.RabbitMq", "src\LibraryService.RabbitMq\LibraryService.RabbitMq.csproj", "{72B1F0D3-E764-4C87-84A2-B3E552DED5F2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryService.UnitTests", "tests\LibraryService.Tests\LibraryService.UnitTests.csproj", "{6A67EEC6-5171-43B9-8CC5-16EE04001180}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{72B1F0D3-E764-4C87-84A2-B3E552DED5F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72B1F0D3-E764-4C87-84A2-B3E552DED5F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72B1F0D3-E764-4C87-84A2-B3E552DED5F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A67EEC6-5171-43B9-8CC5-16EE04001180}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A67EEC6-5171-43B9-8CC5-16EE04001180}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A67EEC6-5171-43B9-8CC5-16EE04001180}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A67EEC6-5171-43B9-8CC5-16EE04001180}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

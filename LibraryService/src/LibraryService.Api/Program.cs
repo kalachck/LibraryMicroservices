@@ -1,5 +1,7 @@
+using HealthChecks.UI.Client;
 using LibraryService.Api.AppDependeciesConfiguration;
 using LibraryService.BussinesLogic.Services;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 namespace LibraryService.Api
 {
@@ -31,6 +33,14 @@ namespace LibraryService.Api
             app.MapGrpcService<GrpcGetBookService>();
 
             app.MapControllers();
+
+            app.UseHealthChecks("/hc", new HealthCheckOptions()
+            {
+                Predicate = _ => true,
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
+
+            app.UseHealthChecksUI(config => config.UIPath = "/hc-ui");
 
             app.Run();
         }

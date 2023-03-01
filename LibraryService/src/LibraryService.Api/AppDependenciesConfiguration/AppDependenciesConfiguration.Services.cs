@@ -14,7 +14,7 @@ using System.Reflection;
 
 namespace LibraryService.Api.AppDependeciesConfiguration
 {
-    public static partial class AppDependeciesConfiguration
+    public static partial class AppDependenciesConfiguration
     {
         public static WebApplicationBuilder AddServices(this WebApplicationBuilder builder)
         {
