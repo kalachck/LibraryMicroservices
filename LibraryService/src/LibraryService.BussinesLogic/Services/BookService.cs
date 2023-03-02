@@ -3,17 +3,17 @@ using LibraryService.BussinesLogic.DTOs;
 using LibraryService.BussinesLogic.Exceptions;
 using LibraryService.BussinesLogic.Services.Abstract;
 using LibraryService.DataAccess.Entities;
-using LibraryService.DataAccess.Repositories;
+using LibraryService.DataAccess.Repositories.Abstract;
 
 namespace LibraryService.BussinesLogic.Services
 {
     public class BookService : IBookService
     {
-        private readonly BookRepository _repository;
+        private readonly IBookRepository _repository;
         private readonly IDbManager<Book> _dbManager;
         private readonly IMapper _mapper;
 
-        public BookService(BookRepository repository,
+        public BookService(IBookRepository repository,
             IDbManager<Book> dbManager,
             IMapper mapper)
         {

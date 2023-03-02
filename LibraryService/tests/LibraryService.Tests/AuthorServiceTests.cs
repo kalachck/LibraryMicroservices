@@ -67,13 +67,15 @@ namespace LibraryService.UnitTests
             var authorService = new AuthorService(_authorRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => authorService.GetAsync(id);
+
             //Assert
-            authorService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<NotFoundException>();
+            await act.Should().ThrowAsync<NotFoundException>("Record was not found");
         }
 
         [Theory]
         [InlineData(1)]
-        public void GetAsync_ShouldThrowException(int id)
+        public async Task GetAsync_ShouldThrowException(int id)
         {
             //Arrange
             _authorRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Throws<Exception>();
@@ -81,8 +83,10 @@ namespace LibraryService.UnitTests
             var authorService = new AuthorService(_authorRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => authorService.GetAsync(id);
+
             //Assert
-            authorService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
         }
 
         [Fact]
@@ -109,9 +113,10 @@ namespace LibraryService.UnitTests
             var authorService = new AuthorService(_authorRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => authorService.AddAsync(_fixture.Create<AuthorDTO>());
+
             //Assert
-            authorService.Invoking(x => x.AddAsync(_fixture.Create<AuthorDTO>()))
-                .Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
         }
 
         [Theory]
@@ -142,9 +147,10 @@ namespace LibraryService.UnitTests
             var authorService = new AuthorService(_authorRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => authorService.UpdateAsync(id, _fixture.Create<AuthorDTO>());
+
             //Assert
-            authorService.Invoking(x => x.UpdateAsync(id, _fixture.Create<AuthorDTO>()))
-                .Should().ThrowAsync<NotFoundException>();
+            await act.Should().ThrowAsync<NotFoundException>("Record was not found");
         }
 
         [Theory]
@@ -158,9 +164,10 @@ namespace LibraryService.UnitTests
             var authorService = new AuthorService(_authorRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => authorService.UpdateAsync(id, _fixture.Create<AuthorDTO>());
+
             //Assert
-            authorService.Invoking(x => x.UpdateAsync(id, _fixture.Create<AuthorDTO>()))
-                .Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
         }
 
         [Theory]
@@ -191,8 +198,10 @@ namespace LibraryService.UnitTests
             var authorService = new AuthorService(_authorRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => authorService.DeleteAsync(id);
+
             //Assert
-            authorService.Invoking(x => x.DeleteAsync(id)).Should().ThrowAsync<NotFoundException>();
+            await act.Should().ThrowAsync<NotFoundException>("Record was not found");
         }
 
         [Theory]
@@ -206,8 +215,10 @@ namespace LibraryService.UnitTests
             var authorService = new AuthorService(_authorRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => authorService.DeleteAsync(id);
+
             //Assert
-            authorService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
         }
     }
 }

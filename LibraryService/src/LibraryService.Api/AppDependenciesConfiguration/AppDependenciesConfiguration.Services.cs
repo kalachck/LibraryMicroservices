@@ -25,10 +25,9 @@ namespace LibraryService.Api.AppDependeciesConfiguration
             });
 
             builder.Services.AddScoped<IBaseRepository<Author, ApplicationContext>, BaseRepository<Author, ApplicationContext>>();
-            builder.Services.AddScoped<IBaseRepository<Book, ApplicationContext>, BaseRepository<Book, ApplicationContext>>();
             builder.Services.AddScoped<IBaseRepository<Genre, ApplicationContext>, BaseRepository<Genre, ApplicationContext>>();
             builder.Services.AddScoped<IBaseRepository<Publisher, ApplicationContext>, BaseRepository<Publisher, ApplicationContext>>();
-            builder.Services.AddScoped<BookRepository>();
+            builder.Services.AddScoped<IBookRepository, BookRepository>();
 
             builder.Services.AddScoped<IAuthorService, AuthorService>();
             builder.Services.AddScoped<IBookService, BookService>();

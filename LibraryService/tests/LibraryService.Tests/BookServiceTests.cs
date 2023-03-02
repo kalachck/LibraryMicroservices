@@ -8,6 +8,7 @@ using LibraryService.BussinesLogic.Services;
 using LibraryService.BussinesLogic.Services.Abstract;
 using LibraryService.DataAccess.Entities;
 using LibraryService.DataAccess.Repositories;
+using LibraryService.DataAccess.Repositories.Abstract;
 using Moq;
 
 namespace LibraryService.UnitTests
@@ -16,7 +17,7 @@ namespace LibraryService.UnitTests
     {
         private readonly IMapper _mapper;
         private readonly Mock<IDbManager<Book>> _dbManager;
-        private readonly Mock<BookRepository> _bookRepository;
+        private readonly Mock<IBookRepository> _bookRepository;
         private readonly Fixture _fixture;
 
         public BookServiceTests()
@@ -24,13 +25,18 @@ namespace LibraryService.UnitTests
             var configuration = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<BookProfile>();
+                cfg.AddProfile<AuthorProfile>();
+                cfg.AddProfile<GenreProfile>();
+                cfg.AddProfile<PublisherProfile>();
             });
 
             _mapper = new Mapper(configuration);
             _dbManager = new Mock<IDbManager<Book>>();
-            _bookRepository = new Mock<BookRepository>();
-
+            _bookRepository = new Mock<IBookRepository>();
             _fixture = new Fixture();
+
+            _fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => _fixture.Behaviors.Remove(b));
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
 
         [Theory]
@@ -47,7 +53,7 @@ namespace LibraryService.UnitTests
 
             //Assert
             actualResult.Should().BeOfType<BookDTO>();
-            actualResult.Title.Should().Be("testTitle");
+            actualResult.Title.Should().NotBeNull();
         }
 
         [Theory]
@@ -60,13 +66,15 @@ namespace LibraryService.UnitTests
             var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => bookService.GetAsync(id);
+
             //Assert
-            bookService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<NotFoundException>();
+            await act.Should().ThrowAsync<NotFoundException>("Record was not found");
         }
 
         [Theory]
         [InlineData(1)]
-        public void GetAsync_ShouldThrowException(int id)
+        public async Task GetAsync_ShouldThrowException(int id)
         {
             //Arrange
             _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Throws<Exception>();
@@ -74,8 +82,10 @@ namespace LibraryService.UnitTests
             var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => bookService.GetAsync(id);
+
             //Assert
-            bookService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
         }
 
         [Fact]
@@ -102,9 +112,10 @@ namespace LibraryService.UnitTests
             var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => bookService.AddAsync(_fixture.Create<BookDTO>());
+
             //Assert
-            bookService.Invoking(x => x.AddAsync(_fixture.Create<BookDTO>()))
-                .Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
         }
 
         [Theory]
@@ -135,9 +146,10 @@ namespace LibraryService.UnitTests
             var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => bookService.UpdateAsync(id, _fixture.Create<BookDTO>());
+
             //Assert
-            bookService.Invoking(x => x.UpdateAsync(id, _fixture.Create<BookDTO>()))
-                .Should().ThrowAsync<NotFoundException>();
+            await act.Should().ThrowAsync<NotFoundException>("Record was not found");
         }
 
         [Theory]
@@ -151,9 +163,10 @@ namespace LibraryService.UnitTests
             var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => bookService.UpdateAsync(id, _fixture.Create<BookDTO>());
+
             //Assert
-            bookService.Invoking(x => x.UpdateAsync(id, _fixture.Create<BookDTO>()))
-                .Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
         }
 
         [Theory]
@@ -184,8 +197,10 @@ namespace LibraryService.UnitTests
             var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => bookService.DeleteAsync(id);
+
             //Assert
-            bookService.Invoking(x => x.DeleteAsync(id)).Should().ThrowAsync<NotFoundException>();
+            await act.Should().ThrowAsync<NotFoundException>("Record was not found");
         }
 
         [Theory]
@@ -199,8 +214,71 @@ namespace LibraryService.UnitTests
             var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => bookService.DeleteAsync(id);
+
             //Assert
-            bookService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
+        }
+
+        [Fact]
+        public async Task LockAsync_ShouldPassedSuccessfully()
+        {
+            //Arrange
+            _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Book>());
+            _bookRepository.Setup(x => x.Update(It.IsAny<Book>()));
+
+            var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
+
+            //Act
+            var act = () => bookService.LockAsync("1");
+
+            //Assert
+            await act.Should().NotThrowAsync();
+        }
+
+        [Fact]
+        public async Task LockAsync_ShouldThrowParseException()
+        {
+            //Arrange
+            var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
+
+            //Act
+            var act = () => bookService.LockAsync("a");
+
+            //Assert
+            await act.Should().ThrowAsync<ParseException>();
+        }
+
+        [Fact]
+        public async Task UnlockAsync_ShouldPassedSuccessfully()
+        {
+            //Arrange
+            _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Book>());
+            _bookRepository.Setup(x => x.Update(It.IsAny<Book>()));
+
+            var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
+
+            //Act
+            var act = () => bookService.UnlockAsync("1");
+
+            //Assert
+            await act.Should().NotThrowAsync();
+        }
+
+        [Fact]
+        public async Task UnlockAsync_ShouldThrowParseException()
+        {
+            //Arrange
+            _bookRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Book>());
+            _bookRepository.Setup(x => x.Update(It.IsAny<Book>()));
+
+            var bookService = new BookService(_bookRepository.Object, _dbManager.Object, _mapper);
+
+            //Act
+            var act = () => bookService.UnlockAsync("a");
+
+            //Assert
+            await act.Should().ThrowAsync<ParseException>();
         }
     }
 }

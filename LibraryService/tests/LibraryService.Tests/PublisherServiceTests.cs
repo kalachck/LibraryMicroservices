@@ -66,13 +66,15 @@ namespace LibraryService.UnitTests
             var publisherService = new PublisherService(_publisherRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => publisherService.GetAsync(id);
+
             //Assert
-            publisherService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<NotFoundException>();
+            await act.Should().ThrowAsync<NotFoundException>("Record was not found");
         }
 
         [Theory]
         [InlineData(1)]
-        public void GetAsync_ShouldThrowException(int id)
+        public async Task GetAsync_ShouldThrowException(int id)
         {
             //Arrange
             _publisherRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Throws<Exception>();
@@ -80,8 +82,10 @@ namespace LibraryService.UnitTests
             var publisherService = new PublisherService(_publisherRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => publisherService.GetAsync(id);
+
             //Assert
-            publisherService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
         }
 
         [Fact]
@@ -108,8 +112,10 @@ namespace LibraryService.UnitTests
             var publisherService = new PublisherService(_publisherRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => publisherService.AddAsync(_fixture.Create<PublisherDTO>());
+
             //Assert
-            publisherService.Invoking(x => x.AddAsync(_fixture.Create<PublisherDTO>())).Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
         }
 
         [Theory]
@@ -140,9 +146,10 @@ namespace LibraryService.UnitTests
             var publisherService = new PublisherService(_publisherRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => publisherService.UpdateAsync(id, _fixture.Create<PublisherDTO>());
+
             //Assert
-            publisherService.Invoking(x => x.UpdateAsync(id, _fixture.Create<PublisherDTO>()))
-                .Should().ThrowAsync<NotFoundException>();
+            await act.Should().ThrowAsync<NotFoundException>("Record was not found");
         }
 
         [Theory]
@@ -156,9 +163,10 @@ namespace LibraryService.UnitTests
             var publisherService = new PublisherService(_publisherRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => publisherService.UpdateAsync(id, _fixture.Create<PublisherDTO>());
+
             //Assert
-            publisherService.Invoking(x => x.UpdateAsync(id, _fixture.Create<PublisherDTO>()))
-                .Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
         }
 
         [Theory]
@@ -189,8 +197,10 @@ namespace LibraryService.UnitTests
             var publisherService = new PublisherService(_publisherRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => publisherService.DeleteAsync(id);
+
             //Assert
-            publisherService.Invoking(x => x.DeleteAsync(id)).Should().ThrowAsync<NotFoundException>();
+            await act.Should().ThrowAsync<NotFoundException>("Record was not found");
         }
 
         [Theory]
@@ -204,8 +214,10 @@ namespace LibraryService.UnitTests
             var publisherService = new PublisherService(_publisherRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => publisherService.DeleteAsync(id);
+
             //Assert
-            publisherService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
         }
     }
 }

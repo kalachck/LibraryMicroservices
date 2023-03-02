@@ -67,13 +67,15 @@ namespace LibraryService.UnitTests
             var genreService = new GenreService(_genreRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => genreService.GetAsync(id);
+
             //Assert
-            genreService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<NotFoundException>();
+            await act.Should().ThrowAsync<NotFoundException>("Record was not found");
         }
 
         [Theory]
         [InlineData(1)]
-        public void GetAsync_ShouldThrowException(int id)
+        public async Task GetAsync_ShouldThrowException(int id)
         {
             //Arrange
             _genreRepository.Setup(x => x.GetAsync(It.IsAny<int>())).Throws<Exception>();
@@ -81,8 +83,10 @@ namespace LibraryService.UnitTests
             var genreService = new GenreService(_genreRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => genreService.GetAsync(id);
+
             //Assert
-            genreService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
         }
 
         [Fact]
@@ -109,8 +113,10 @@ namespace LibraryService.UnitTests
             var genreService = new GenreService(_genreRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => genreService.AddAsync(_fixture.Create<GenreDTO>());
+
             //Assert
-            genreService.Invoking(x => x.AddAsync(_fixture.Create<GenreDTO>())).Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
         }
 
         [Theory]
@@ -141,9 +147,10 @@ namespace LibraryService.UnitTests
             var genreService = new GenreService(_genreRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => genreService.UpdateAsync(id, _fixture.Create<GenreDTO>());
+
             //Assert
-            genreService.Invoking(x => x.UpdateAsync(id, _fixture.Create<GenreDTO>()))
-                .Should().ThrowAsync<NotFoundException>();
+            await act.Should().ThrowAsync<NotFoundException>("Record was not found");
         }
 
         [Theory]
@@ -157,9 +164,10 @@ namespace LibraryService.UnitTests
             var genreService = new GenreService(_genreRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => genreService.UpdateAsync(id, _fixture.Create<GenreDTO>());
+
             //Assert
-            genreService.Invoking(x => x.UpdateAsync(id, _fixture.Create<GenreDTO>()))
-                .Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
         }
 
         [Theory]
@@ -190,8 +198,10 @@ namespace LibraryService.UnitTests
             var genreService = new GenreService(_genreRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => genreService.DeleteAsync(id);
+
             //Assert
-            genreService.Invoking(x => x.DeleteAsync(id)).Should().ThrowAsync<NotFoundException>();
+            await act.Should().ThrowAsync<NotFoundException>("Record was not found");
         }
 
         [Theory]
@@ -205,8 +215,10 @@ namespace LibraryService.UnitTests
             var genreService = new GenreService(_genreRepository.Object, _dbManager.Object, _mapper);
 
             //Act
+            var act = () => genreService.DeleteAsync(id);
+
             //Assert
-            genreService.Invoking(x => x.GetAsync(id)).Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
         }
     }
 }
