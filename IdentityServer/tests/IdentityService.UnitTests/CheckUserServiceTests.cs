@@ -105,9 +105,10 @@ namespace IdentityService.UnitTests
                                             );
 
             //Act
+            var act = () => checkUserService.Check(_fixture.Create<RequestEmail>(), callContext);
+
             //Assert
-            checkUserService.Invoking(x => x.Check(_fixture.Create<RequestEmail>(), callContext))
-                .Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
         }
     }
 }

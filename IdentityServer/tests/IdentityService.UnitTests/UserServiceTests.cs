@@ -5,6 +5,7 @@ using IdentityService.Api.Mappings;
 using IdentityService.BusinessLogic.Exceptions;
 using IdentityService.BusinessLogic.Services;
 using IdentityService.BusinessLogic.Services.Abstarct;
+using k8s.KubeConfigModels;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 
@@ -24,7 +25,6 @@ namespace IdentityService.UnitTests
 
             _userManager.Object.UserValidators.Add(new UserValidator<IdentityUser>());
             _userManager.Object.PasswordValidators.Add(new PasswordValidator<IdentityUser>());
-            _userManager.Object.PasswordHasher = new PasswordHasher<IdentityUser>();
 
             var configuration = new MapperConfiguration(cfg =>
             {
@@ -61,8 +61,10 @@ namespace IdentityService.UnitTests
             var userService = new UserService(_userManager.Object, _mailService.Object, _mapper);
 
             //Act
+            var act = () => userService.GetAsync("testEMail");
+
             //Assert
-            userService.Invoking(x => x.GetAsync("testEmail")).Should().ThrowAsync<NotFoundException>();
+            await act.Should().ThrowAsync<NotFoundException>("User not found");
         }
 
         [Fact]
@@ -74,8 +76,10 @@ namespace IdentityService.UnitTests
             var userService = new UserService(_userManager.Object, _mailService.Object, _mapper);
 
             //Act
+            var act = () => userService.GetAsync("testEMail");
+
             //Assert
-            userService.Invoking(x => x.GetAsync("testEmail")).Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
         }
 
         [Fact]
@@ -84,6 +88,7 @@ namespace IdentityService.UnitTests
             //Arrange
             _userManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>())).Returns(Task.FromResult((IdentityUser)null));
             _userManager.Setup(x => x.CreateAsync(It.IsAny<IdentityUser>())).ReturnsAsync(IdentityResult.Success);
+            _userManager.Object.PasswordHasher = new PasswordHasher<IdentityUser>();
 
             var userService = new UserService(_userManager.Object, _mailService.Object, _mapper);
 
@@ -103,8 +108,10 @@ namespace IdentityService.UnitTests
             var userService = new UserService(_userManager.Object, _mailService.Object, _mapper);
 
             //Act
+            var act = () => userService.AddAsync(_fixture.Create<IdentityUser>());
+
             //Assert
-            userService.Invoking(x => x.AddAsync(_fixture.Create<IdentityUser>())).Should().ThrowAsync<AlreadyExistsException>();
+            await act.Should().ThrowAsync<AlreadyExistsException>("This user already exists");
         }
 
         [Fact]
@@ -116,8 +123,10 @@ namespace IdentityService.UnitTests
             var userService = new UserService(_userManager.Object, _mailService.Object, _mapper);
 
             //Act
+            var act = () => userService.AddAsync(_fixture.Create<IdentityUser>());
+
             //Assert
-            userService.Invoking(x => x.AddAsync(_fixture.Create<IdentityUser>())).Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
         }
 
         [Fact]
@@ -145,9 +154,10 @@ namespace IdentityService.UnitTests
             var userService = new UserService(_userManager.Object, _mailService.Object, _mapper);
 
             //Act
+            var act = () => userService.UpdateAsync("testEmail", _fixture.Create<IdentityUser>());
+
             //Assert
-            userService.Invoking(x => x.UpdateAsync("testEmail", _fixture.Create<IdentityUser>()))
-                .Should().ThrowAsync<NotFoundException>();
+            await act.Should().ThrowAsync<NotFoundException>("User not found");
         }
 
         [Fact]
@@ -159,9 +169,10 @@ namespace IdentityService.UnitTests
             var userService = new UserService(_userManager.Object, _mailService.Object, _mapper);
 
             //Act
+            var act = () => userService.UpdateAsync("testEmail", _fixture.Create<IdentityUser>());
+
             //Assert
-            userService.Invoking(x => x.UpdateAsync("testEmail", _fixture.Create<IdentityUser>()))
-                .Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
         }
 
         [Fact]
@@ -188,9 +199,10 @@ namespace IdentityService.UnitTests
             var userService = new UserService(_userManager.Object, _mailService.Object, _mapper);
 
             //Act
+            var act = () => userService.DeleteAsync("testEmail");
+
             //Assert
-            userService.Invoking(x => x.DeleteAsync("testEmail"))
-                .Should().ThrowAsync<NotFoundException>();
+            await act.Should().ThrowAsync<NotFoundException>("User not found");
         }
 
         [Fact]
@@ -202,8 +214,100 @@ namespace IdentityService.UnitTests
             var userService = new UserService(_userManager.Object, _mailService.Object, _mapper);
 
             //Act
+            var act = () => userService.DeleteAsync("testEmail");
+
             //Assert
-            userService.Invoking(x => x.DeleteAsync("testEmail")).Should().ThrowAsync<Exception>();
+            await act.Should().ThrowAsync<Exception>();
+        }
+
+        [Fact]
+        public async Task UpdatePasswordAsync_ShouldReturnSuccessfullMessage()
+        {
+            //Arrange
+            var passwordHasher = new Mock<IPasswordHasher<IdentityUser>>();
+
+            passwordHasher.Setup(x => x.VerifyHashedPassword(It.IsAny<IdentityUser>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(PasswordVerificationResult.Success);
+
+            _userManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(_fixture.Create<IdentityUser>());
+            _userManager.Setup(x => x.CreateAsync(It.IsAny<IdentityUser>())).ReturnsAsync(IdentityResult.Success);
+            _userManager.Object.PasswordHasher = passwordHasher.Object;
+
+            var userService = new UserService(_userManager.Object, _mailService.Object, _mapper);
+
+            //Act
+            var actualResult = await userService.UpdatePasswordAsync("testEmail", "currentPassword", "newPassword");
+
+            //Assert
+            actualResult.Should().NotBeNullOrWhiteSpace().And.BeOfType<string>("Password was successfully updated");
+        }
+
+        [Fact]
+        public async Task UpdatePasswordAsync_ShouldThrowInvalidPasswordException()
+        {
+            //Arrange
+            var passwordHasher = new Mock<IPasswordHasher<IdentityUser>>();
+
+            passwordHasher.Setup(x => x.VerifyHashedPassword(It.IsAny<IdentityUser>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(PasswordVerificationResult.Failed);
+
+            _userManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(_fixture.Create<IdentityUser>());
+            _userManager.Setup(x => x.CreateAsync(It.IsAny<IdentityUser>())).ReturnsAsync(IdentityResult.Success);
+            _userManager.Object.PasswordHasher = passwordHasher.Object;
+
+            var userService = new UserService(_userManager.Object, _mailService.Object, _mapper);
+
+            //Act
+            var act = () => userService.UpdatePasswordAsync("testEmail", "currentPassword", "newPassword");
+
+            //Assert
+            await act.Should().ThrowAsync<InvalidPasswordException>("Current password doesn't match with the typed one");
+        }
+
+        [Fact]
+        public async Task UpdatePasswordAsync_ShouldThrowNotFoundException()
+        {
+            //Arrange
+            _userManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync((IdentityUser)null);
+
+            var userService = new UserService(_userManager.Object, _mailService.Object, _mapper);
+
+            //Act
+            var act = () => userService.UpdatePasswordAsync("testEmail", "currentPassword", "newPassword");
+
+            //Assert
+            await act.Should().ThrowAsync<NotFoundException>("User with this email doesn't exists");
+        }
+
+        [Fact]
+        public async Task ReserPasswordAsync_ShouldReturnResetCode()
+        {
+            //Arrange
+            _userManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(_fixture.Create<IdentityUser>());
+            _mailService.Setup(x => x.SendMessageAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
+
+            var userService = new UserService(_userManager.Object, _mailService.Object, _mapper);
+
+            //Act
+            var actualResult = await userService.ResetPasswordAsync("testEmail");
+
+            //Assert
+            actualResult.Should().BeOfType<string>().And.NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
+        public async Task ReserPasswordAsync_ShouldThrowNotFoundException()
+        {
+            //Arrange
+            _userManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync((IdentityUser)null);
+
+            var userService = new UserService(_userManager.Object, _mailService.Object, _mapper);
+
+            //Act
+            var act = () => userService.ResetPasswordAsync("testEmail");
+
+            //Assert
+            await act.Should().ThrowAsync<NotFoundException>("User with this email doesn't exist");
         }
     }
 }

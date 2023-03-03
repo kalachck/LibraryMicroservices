@@ -59,14 +59,21 @@ namespace IdentityService.UnitTests
         public async Task LogInAsync_ShouldThrowInvalidPasswordException()
         {
             //Arrange
+            var passwordHasher = new Mock<IPasswordHasher<IdentityUser>>();
+
+            passwordHasher.Setup(x => x.VerifyHashedPassword(It.IsAny<IdentityUser>(), It.IsAny<string>(),
+                It.IsAny<string>())).Returns(PasswordVerificationResult.Failed);
+
             _userManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(_fixture.Create<IdentityUser>());
+            _userManager.Object.PasswordHasher = passwordHasher.Object;
 
             var authorizationService = new AuthorizationService(_userManager.Object);
 
             //Act
+            var act = () => authorizationService.LogInAsync(_fixture.Create<IdentityUser>(), _openIddictRequest.Object);
+
             //Assert
-            authorizationService.Invoking(x => x.LogInAsync(_fixture.Create<IdentityUser>(), _openIddictRequest.Object))
-                .Should().ThrowAsync<InvalidPasswordException>();
+            await act.Should().ThrowAsync<InvalidPasswordException>("Invalid password"); 
         }
 
         [Fact]
@@ -78,9 +85,10 @@ namespace IdentityService.UnitTests
             var authorizationService = new AuthorizationService(_userManager.Object);
 
             //Act
+            var act = () => authorizationService.LogInAsync(_fixture.Create<IdentityUser>(), _openIddictRequest.Object);
+
             //Assert
-            authorizationService.Invoking(x => x.LogInAsync(_fixture.Create<IdentityUser>(), _openIddictRequest.Object))
-                .Should().ThrowAsync<NotFoundException>();
+            await act.Should().ThrowAsync<NotFoundException>("User not found");
         }
     }
 }
