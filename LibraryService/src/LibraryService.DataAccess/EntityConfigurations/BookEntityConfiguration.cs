@@ -39,8 +39,7 @@ namespace LibraryService.DataAccess.EntityConfigurations
 
             builder.Property(x => x.Title)
                 .IsRequired()
-                .HasColumnType("nvarchar")
-                .HasMaxLength(50);
+                .HasColumnType("nvarchar");
 
             builder.Property(x => x.PublicationDate)
                 .IsRequired()

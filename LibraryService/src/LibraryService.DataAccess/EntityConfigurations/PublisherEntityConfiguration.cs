@@ -14,13 +14,11 @@ namespace LibraryService.DataAccess.EntityConfigurations
 
             builder.Property(x => x.Name)
                 .IsRequired()
-                .HasColumnType("nvarchar")
-                .HasMaxLength(50);
+                .HasColumnType("nvarchar");
 
             builder.Property(x => x.Address)
                 .IsRequired()
-                .HasColumnType("nvarchar")
-                .HasMaxLength(50);
+                .HasColumnType("nvarchar");
 
             builder.HasData
                 (

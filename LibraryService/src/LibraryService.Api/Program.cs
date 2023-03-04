@@ -1,4 +1,5 @@
 using LibraryService.Api.AppDependeciesConfiguration;
+using LibraryService.Api.Middlewares;
 using LibraryService.BussinesLogic.Services;
 
 namespace LibraryService.Api
@@ -24,6 +25,8 @@ namespace LibraryService.Api
             }
 
             app.UseHttpsRedirection();
+
+            app.UseMiddleware<ValidationExceptionHandlingMiddleware>();
 
             app.UseAuthorization();
 

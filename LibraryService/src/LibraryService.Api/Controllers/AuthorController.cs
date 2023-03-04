@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FluentValidation;
 using LibraryService.Api.Models;
 using LibraryService.BussinesLogic.DTOs;
 using LibraryService.BussinesLogic.Exceptions;
@@ -14,15 +13,12 @@ namespace LibraryService.Api.Controllers
     {
         private readonly IAuthorService _authorService;
         private readonly IMapper _mapper;
-        private readonly IValidator<AuthorRequestModel> _validator;
 
         public AuthorController(IAuthorService authorService,
-            IMapper mapper,
-            IValidator<AuthorRequestModel> validator)
+            IMapper mapper)
         {
             _authorService = authorService;
             _mapper = mapper;
-            _validator = validator;
         }
 
         [HttpGet]
@@ -52,8 +48,6 @@ namespace LibraryService.Api.Controllers
         {
             try
             {
-                await _validator.ValidateAsync(model);
-
                 var result = await _authorService.AddAsync(_mapper.Map<AuthorDTO>(model));
 
                 return Ok(result);
@@ -70,8 +64,6 @@ namespace LibraryService.Api.Controllers
         {
             try
             {
-                await _validator.ValidateAsync(model);
-
                 var result = await _authorService.UpdateAsync(id, _mapper.Map<AuthorDTO>(model));
 
                 return Ok(result);

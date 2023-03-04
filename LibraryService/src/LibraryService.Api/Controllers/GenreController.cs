@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FluentValidation;
 using LibraryService.Api.Models;
 using LibraryService.BussinesLogic.DTOs;
 using LibraryService.BussinesLogic.Exceptions;
@@ -14,15 +13,12 @@ namespace LibraryService.Api.Controllers
     {
         private readonly IGenreService _genreService;
         private readonly IMapper _mapper;
-        private readonly IValidator<GenreRequestModel> _validator;
 
         public GenreController(IGenreService genreService,
-            IMapper mapper,
-            IValidator<GenreRequestModel> validator)
+            IMapper mapper)
         {
             _genreService = genreService;
             _mapper = mapper;
-            _validator = validator;
         }
 
         [HttpGet]
@@ -52,8 +48,6 @@ namespace LibraryService.Api.Controllers
         {
             try
             {
-                await _validator.ValidateAsync(model);
-
                 var result = await _genreService.AddAsync(_mapper.Map<GenreDTO>(model));
 
                 return Ok(result);
@@ -70,8 +64,6 @@ namespace LibraryService.Api.Controllers
         {
             try
             {
-                await _validator.ValidateAsync(model);
-
                 var result = await _genreService.UpdateAsync(id, _mapper.Map<GenreDTO>(model));
 
                 return Ok(result);
