@@ -31,10 +31,11 @@ namespace BorrowService.Api
             }
 
             app.UseHttpsRedirection();
-
+            
             app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseMiddleware<NotFoundExceptionHandlingMiddleware>();
             app.UseMiddleware<AlreadyExistsExceptionHandlingMiddleware>();
+            app.UseMiddleware<ValidationExceptionHandlingMiddleware>();
 
 
             app.UseAuthorization();
