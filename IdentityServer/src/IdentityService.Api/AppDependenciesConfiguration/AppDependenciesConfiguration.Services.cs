@@ -18,7 +18,7 @@ namespace IdentityService.Api.AppDependenciesConfiguration
 
             builder.Services.AddDbContext<ApplicationContext>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(configuration.GetConnectionString("TrustedConnection"));
 
                 options.UseOpenIddict();
             });

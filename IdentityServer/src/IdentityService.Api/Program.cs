@@ -1,4 +1,5 @@
 using IdentityService.Api.AppDependenciesConfiguration;
+using IdentityService.Api.Middlewares;
 using IdentityService.BusinessLogic.Services;
 
 namespace IdentityService.Api
@@ -17,6 +18,8 @@ namespace IdentityService.Api
             builder.ConfigureDependencies();
 
             var app = builder.Build();
+
+            app.UseMiddleware<ValidationExceptionHandlingMiddleware>();
 
             app.UseAuthentication();
 
