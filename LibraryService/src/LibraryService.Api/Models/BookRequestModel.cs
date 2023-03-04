@@ -6,10 +6,8 @@ namespace LibraryService.Api.Models
     {
         [NotNullOrEmpty]
         [HasMaxLength(50)]
-        [NotNull]
         public string Title { get; set; }
 
-        [NotNull]
         public DateTime PublicationDate { get; set; }
 
         public bool? IsAvailable { get; set; } = true;

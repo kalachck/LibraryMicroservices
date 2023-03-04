@@ -25,87 +25,59 @@ namespace LibraryService.BussinesLogic.Services
 
         public async Task<AuthorDTO> GetAsync(int id)
         {
-            try
+            var author = await _repository.GetAsync(id);
+
+            if (author == null)
             {
-                var author = await _repository.GetAsync(id);
-
-                if (author != null)
-                {
-                    return await Task.FromResult(_mapper.Map<AuthorDTO>(author));
-                }
-
                 throw new NotFoundException("Record was not found");
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            return await Task.FromResult(_mapper.Map<AuthorDTO>(author));
         }
 
-        public async Task<string> AddAsync(AuthorDTO author)
+        public async Task<bool> AddAsync(AuthorDTO author)
         {
-            try
-            {
-                _repository.Add(_mapper.Map<Author>(author));
+            _repository.Add(_mapper.Map<Author>(author));
 
-                await _dbManager.SaveChangesAsync();
+            await _dbManager.SaveChangesAsync();
 
-                return await Task.FromResult("The record was successfully added");
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return await Task.FromResult(true);
         }
 
-        public async Task<string> UpdateAsync(int id, AuthorDTO author)
+        public async Task<bool> UpdateAsync(int id, AuthorDTO author)
         {
-            try
+            var authorEntity = await _repository.GetAsync(id);
+
+            if (authorEntity == null)
             {
-                var authorEntity = await _repository.GetAsync(id);
-
-                if (authorEntity != null)
-                {
-                    authorEntity = _mapper.Map<Author>(author);
-
-                    authorEntity.Id = id;
-
-                    _repository.Update(authorEntity);
-
-                    await _dbManager.SaveChangesAsync();
-
-                    return await Task.FromResult("The record was successfully updated");
-                }
-
                 throw new NotFoundException("Record was not found");
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            authorEntity = _mapper.Map<Author>(author);
+
+            authorEntity.Id = id;
+
+            _repository.Update(authorEntity);
+
+            await _dbManager.SaveChangesAsync();
+
+            return await Task.FromResult(true);
         }
 
-        public async Task<string> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            try
+            var author = await _repository.GetAsync(id);
+
+            if (author == null)
             {
-                var author = await _repository.GetAsync(id);
-
-                if (author != null)
-                {
-                    _repository.Delete(author);
-
-                    await _dbManager.SaveChangesAsync();
-
-                    return await Task.FromResult("The record was successfully deleted");
-                }
-
                 throw new NotFoundException("Record was not found");
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            _repository.Delete(author);
+
+            await _dbManager.SaveChangesAsync();
+
+            return await Task.FromResult(true);
         }
     }
 }

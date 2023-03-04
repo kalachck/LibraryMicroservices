@@ -1,6 +1,7 @@
 using LibraryService.Api.AppDependeciesConfiguration;
 using LibraryService.Api.Middlewares;
 using LibraryService.BussinesLogic.Services;
+using LibraryService.Api.Middlewares;
 
 namespace LibraryService.Api
 {
@@ -30,8 +31,14 @@ namespace LibraryService.Api
 
             app.UseAuthorization();
 
+            app.UseMiddleware<ExceptionHandlingMiddlware>();
+            app.UseMiddleware<NotFoundExceptionHandlingMiddleware>();
+
+
             app.MapGrpcService<GrpcCheckBookService>();
             app.MapGrpcService<GrpcGetBookService>();
+
+            app.UseAuthorization();
 
             app.MapControllers();
 

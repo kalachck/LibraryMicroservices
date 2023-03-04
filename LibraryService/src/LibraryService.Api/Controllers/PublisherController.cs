@@ -25,79 +25,36 @@ namespace LibraryService.Api.Controllers
         [Route("Get")]
         public async Task<IActionResult> Get(int id)
         {
-            try
-            {
-                var publisher = await _publisherService.GetAsync(id);
+            var publisher = await _publisherService.GetAsync(id);
 
-                return Ok(publisher);
-            }
-            catch (Exception ex)
-            {
-                if (ex is NotFoundException)
-                {
-                    return NotFound(ex.Message);
-                }
-
-                return Conflict("Can't get this record. There were technical problems");
-            }
+            return Ok(publisher);
         }
 
         [HttpPost]
         [Route("Add")]
         public async Task<IActionResult> Add([FromQuery] PublisherRequestModel model)
         {
-            try
-            {
-                var result = await _publisherService.AddAsync(_mapper.Map<PublisherDTO>(model));
+            var result = await _publisherService.AddAsync(_mapper.Map<PublisherDTO>(model));
 
-                return Ok(result);
-            }
-            catch (Exception)
-            {
-                return Conflict("The record was not added. There were technical problems");
-            }
+            return Ok(result);
         }
 
         [HttpPut]
         [Route("Update")]
         public async Task<IActionResult> Update(int id, [FromQuery] PublisherRequestModel model)
         {
-            try
-            {
-                var result = await _publisherService.UpdateAsync(id, _mapper.Map<PublisherDTO>(model));
+            var result = await _publisherService.UpdateAsync(id, _mapper.Map<PublisherDTO>(model));
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                if (ex is NotFoundException)
-                {
-                    return NotFound(ex.Message);
-                }
-
-                return Conflict("The record was not updated. There were technical problems");
-            }
+            return Ok(result);
         }
 
         [HttpDelete]
         [Route("Delete")]
         public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                var result = await _publisherService.DeleteAsync(id);
+            var result = await _publisherService.DeleteAsync(id);
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                if (ex is NotFoundException)
-                {
-                    return NotFound(ex.Message);
-                }
-
-                return Conflict("The record was not deleted. There were technical problems");
-            }
+            return Ok(result);
         }
     }
 }
