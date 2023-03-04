@@ -90,7 +90,7 @@ namespace LibraryService.UnitTests
         }
 
         [Fact]
-        public async Task AddAsync_ShouldReturnSuccessfullMessage()
+        public async Task AddAsync_ShouldReturnTrue()
         {
             //Arrange
             _genreRepository.Setup(x => x.Add(It.IsAny<Genre>()));
@@ -101,7 +101,7 @@ namespace LibraryService.UnitTests
             var actualResult = await genreService.AddAsync(_fixture.Create<GenreDTO>());
 
             //Assert
-            actualResult.Should().BeOfType<string>("The record was successfully added");
+            actualResult.Should().BeTrue();
         }
 
         [Fact]
@@ -121,7 +121,7 @@ namespace LibraryService.UnitTests
 
         [Theory]
         [InlineData(1)]
-        public async Task UpdateAsync_ShouldReturnSuccessfullMessage(int id)
+        public async Task UpdateAsync_ShouldReturnTrue(int id)
         {
             //Arrange
             _genreRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Genre>());
@@ -133,7 +133,7 @@ namespace LibraryService.UnitTests
             var actualResult = await genreService.UpdateAsync(id, _fixture.Create<GenreDTO>());
 
             //Assert
-            actualResult.Should().BeOfType<string>("The record was successfully updated");
+            actualResult.Should().BeTrue();
         }
 
         [Theory]
@@ -172,7 +172,7 @@ namespace LibraryService.UnitTests
 
         [Theory]
         [InlineData(1)]
-        public async Task DeleteAsync_ShouldReturnSuccessfullMessage(int id)
+        public async Task DeleteAsync_ShouldReturnTrue(int id)
         {
             //Arrange
             _genreRepository.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(_fixture.Create<Genre>());
@@ -184,7 +184,7 @@ namespace LibraryService.UnitTests
             var actualResult = await genreService.DeleteAsync(id);
 
             //Assert
-            actualResult.Should().BeOfType<string>("The record was successfully deleted");
+            actualResult.Should().BeTrue();
         }
 
         [Theory]
