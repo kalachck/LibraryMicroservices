@@ -6,10 +6,10 @@ namespace LibraryService.BussinesLogic.Services.Abstract
     {
         Task<PublisherDTO> GetAsync(int id);
 
-        Task<string> UpdateAsync(int id, PublisherDTO publisher);
+        Task<bool> UpdateAsync(int id, PublisherDTO publisher);
 
-        Task<string> AddAsync(PublisherDTO publisher);
+        Task<bool> AddAsync(PublisherDTO publisher);
 
-        Task<string> DeleteAsync(int id);
+        Task<bool> DeleteAsync(int id);
     }
 }

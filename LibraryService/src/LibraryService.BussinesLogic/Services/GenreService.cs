@@ -25,87 +25,59 @@ namespace LibraryService.BussinesLogic.Services
 
         public async Task<GenreDTO> GetAsync(int id)
         {
-            try
-            {
-                var genre = await _repository.GetAsync(id);
+            var genre = await _repository.GetAsync(id);
 
-                if (genre != null)
-                {
-                    return await Task.FromResult(_mapper.Map<GenreDTO>(genre));
-                }
-
-                throw new NotFoundException("Record was not found");
-            }
-            catch (Exception)
+            if (genre == null)
             {
-                throw;
+                throw new NotFoundException("Record was not found");   
             }
+
+            return await Task.FromResult(_mapper.Map<GenreDTO>(genre));
         }
 
-        public async Task<string> AddAsync(GenreDTO genre)
+        public async Task<bool> AddAsync(GenreDTO genre)
         {
-            try
-            {
-                _repository.Add(_mapper.Map<Genre>(genre));
+            _repository.Add(_mapper.Map<Genre>(genre));
+                
+            await _dbManager.SaveChangesAsync();
 
-                await _dbManager.SaveChangesAsync();
-
-                return await Task.FromResult("The record was successfully added");
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return await Task.FromResult(true);
         }
 
-        public async Task<string> UpdateAsync(int id, GenreDTO genre)
+        public async Task<bool> UpdateAsync(int id, GenreDTO genre)
         {
-            try
+            var genreEntity = await _repository.GetAsync(id);
+
+            if (genreEntity == null)
             {
-                var genreEntity = await _repository.GetAsync(id);
-
-                if (genreEntity != null)
-                {
-                    genreEntity = _mapper.Map<Genre>(genre);
-
-                    genreEntity.Id = id;
-
-                    _repository.Update(genreEntity);
-
-                    await _dbManager.SaveChangesAsync();
-
-                    return await Task.FromResult("The record was successfully updated");
-                }
-
                 throw new NotFoundException("Record was not found");
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            genreEntity = _mapper.Map<Genre>(genre);
+
+            genreEntity.Id = id;
+
+            _repository.Update(genreEntity);
+
+            await _dbManager.SaveChangesAsync();
+
+            return await Task.FromResult(true);
         }
 
-        public async Task<string> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            try
+            var genre = await _repository.GetAsync(id);
+
+            if (genre == null)
             {
-                var genre = await _repository.GetAsync(id);
-
-                if (genre != null)
-                {
-                    _repository.Delete(genre);
-
-                    await _dbManager.SaveChangesAsync();
-
-                    return await Task.FromResult("The record was successfully deleted");
-                }
-
                 throw new NotFoundException("Record was not found");
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            _repository.Delete(genre);
+
+            await _dbManager.SaveChangesAsync();
+
+            return await Task.FromResult(true);
         }
     }
 }
