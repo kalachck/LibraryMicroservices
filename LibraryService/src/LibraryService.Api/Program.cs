@@ -1,4 +1,5 @@
 using LibrarySevice.Api.AppDependeciesConfiguration;
+using LibrarySevice.Api.Middlewares;
 
 namespace LibrarySevice.Api
 {
@@ -24,8 +25,10 @@ namespace LibrarySevice.Api
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            app.UseMiddleware<ExceptionHandlingMiddlware>();
+            app.UseMiddleware<NotFoundExceptionHandlingMiddleware>();
 
+            app.UseAuthorization();
 
             app.MapControllers();
 

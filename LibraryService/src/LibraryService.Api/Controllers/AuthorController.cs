@@ -30,83 +30,40 @@ namespace LibrarySevice.Api.Controllers
         [Route("Get")]
         public async Task<IActionResult> Get(int id)
         {
-            try
-            {
-                var author = await _authorService.GetAsync(id);
+            var author = await _authorService.GetAsync(id);
 
-                return Ok(author);
-            }
-            catch (Exception ex)
-            {
-                if (ex is NotFoundException)
-                {
-                    return NotFound(ex.Message);
-                }
-
-                return Conflict("Can't get this record. There were technical problems");
-            }  
+            return Ok(author);
         }
 
         [HttpPost]
         [Route("Add")]
         public async Task<IActionResult> Add([FromQuery] AuthorRequestModel model)
         {
-            try
-            {
-                await _validator.ValidateAsync(model);
+            await _validator.ValidateAsync(model);
 
-                var result = await _authorService.AddAsync(_mapper.Map<AuthorDTO>(model));
+            var result = await _authorService.AddAsync(_mapper.Map<AuthorDTO>(model));
 
-                return Ok(result);
-            }
-            catch (Exception)
-            {
-                return Conflict("The record was not added. There were technical problems");
-            }
+            return Ok(result);
         }
 
         [HttpPut]
         [Route("Update")]
         public async Task<IActionResult> Update(int id, [FromQuery] AuthorRequestModel model)
         {
-            try
-            {
-                await _validator.ValidateAsync(model);
+            await _validator.ValidateAsync(model);
 
-                var result = await _authorService.UpdateAsync(id, _mapper.Map<AuthorDTO>(model));
+            var result = await _authorService.UpdateAsync(id, _mapper.Map<AuthorDTO>(model));
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                if (ex is NotFoundException)
-                {
-                    return NotFound(ex.Message);
-                }
-
-                return Conflict("The record was not updated. There were technical problems");
-            }
+            return Ok(result);
         }
 
         [HttpDelete]
         [Route("Delete")]
         public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                var result = await _authorService.DeleteAsync(id);
+            var result = await _authorService.DeleteAsync(id);
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                if (ex is NotFoundException)
-                {
-                    return NotFound(ex.Message);
-                }
-
-                return Conflict("The record was not deleted. There were technical problems");
-            }
+            return Ok(result);
         }
     }
 }

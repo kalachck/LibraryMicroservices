@@ -8,10 +8,10 @@ namespace LibrarySevice.BussinesLogic.Services.Abstract
 
         Task<BookDTO> GetByTitleAsync(string title);
 
-        Task<string> AddAsync(BookDTO book);
+        Task<bool> AddAsync(BookDTO book);
 
-        Task<string> UpdateAsync(int id, BookDTO book);
+        Task<bool> UpdateAsync(int id, BookDTO book);
 
-        Task<string> DeleteAsync(int id);
+        Task<bool> DeleteAsync(int id);
     }
 }

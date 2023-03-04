@@ -6,10 +6,10 @@ namespace LibrarySevice.BussinesLogic.Services.Abstract
     {
         Task<GenreDTO> GetAsync(int id);
 
-        Task<string> UpdateAsync(int id, GenreDTO genre);
+        Task<bool> UpdateAsync(int id, GenreDTO genre);
 
-        Task<string> AddAsync(GenreDTO genre);
+        Task<bool> AddAsync(GenreDTO genre);
 
-        Task<string> DeleteAsync(int id);
+        Task<bool> DeleteAsync(int id);
     }
 }
