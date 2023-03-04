@@ -25,88 +25,59 @@ namespace LibraryService.BussinesLogic.Services
 
         public async Task<PublisherDTO> GetAsync(int id)
         {
-            try
+            var publisher = await _repository.GetAsync(id);
+
+            if (publisher == null)
             {
-                var publisher = await _repository.GetAsync(id);
-
-                if (publisher != null)
-                {
-                    return await Task.FromResult(_mapper.Map<PublisherDTO>(publisher));
-                }
-
                 throw new NotFoundException("Record was not found");
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            return await Task.FromResult(_mapper.Map<PublisherDTO>(publisher));
         }
 
-        public async Task<string> AddAsync(PublisherDTO publisher)
+        public async Task<bool> AddAsync(PublisherDTO publisher)
         {
-            try
-            {
-                _repository.Add(_mapper.Map<Publisher>(publisher));
+            _repository.Add(_mapper.Map<Publisher>(publisher));
+                
+            await _dbManager.SaveChangesAsync();
 
-                await _dbManager.SaveChangesAsync();
-
-                return await Task.FromResult("The record was successfully added");
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return await Task.FromResult(true);
         }
 
-        public async Task<string> UpdateAsync(int id, PublisherDTO publisher)
+        public async Task<bool> UpdateAsync(int id, PublisherDTO publisher)
         {
-            try
+            var publisherEntity = await _repository.GetAsync(id);
+
+            if (publisherEntity == null)
             {
-                var publisherEntity = await _repository.GetAsync(id);
-
-                if (publisherEntity != null)
-                {
-                    publisherEntity = _mapper.Map<Publisher>(publisher);
-
-                    publisherEntity.Id = id;
-
-                    _repository.Update(publisherEntity);
-
-                    await _dbManager.SaveChangesAsync();
-
-                    return await Task.FromResult("The record was successfully updated");
-                }
-
                 throw new NotFoundException("Record was not found");
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            publisherEntity = _mapper.Map<Publisher>(publisher);
+
+            publisherEntity.Id = id;
+
+            _repository.Update(publisherEntity);
+
+            await _dbManager.SaveChangesAsync();
+
+            return await Task.FromResult(true);
         }
 
-        public async Task<string> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            try
+            var publisher = await _repository.GetAsync(id);
+
+            if (publisher == null)
             {
-                var publisher = await _repository.GetAsync(id);
-
-                if (publisher != null)
-                {
-
-                    _repository.Delete(publisher);
-
-                    await _dbManager.SaveChangesAsync();
-
-                    return await Task.FromResult("The record was successfully deleted");
-                }
-
                 throw new NotFoundException("Record was not found");
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            _repository.Delete(publisher);
+
+            await _dbManager.SaveChangesAsync();
+
+            return await Task.FromResult(true);
         }
     }
 }
