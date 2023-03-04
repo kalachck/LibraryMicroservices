@@ -6,9 +6,9 @@ namespace LibraryService.BussinesLogic.Validators
     {
         private readonly int _maxLength;
 
-        public HasMaxLength(int maxLenght)
+        public HasMaxLength(int maxLength)
         {
-            _maxLength = maxLenght;
+            _maxLength = maxLength;
         }
 
         public override bool IsValid(object? value)
