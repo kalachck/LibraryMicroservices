@@ -7,7 +7,8 @@
             builder.AddServices()
                 .AddHostedServices()
                 .AddOptions()
-                .AddExternalDependencies();
+                .AddExternalDependencies()
+                .AddLogging();
             
             return builder;
         }
