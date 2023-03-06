@@ -9,7 +9,6 @@ namespace BorrowService.RabbitMq.Services
     public class RabbitService : IRabbitService
     {
         private readonly RabbitOptions _options;
-
         private IConnectionFactory _factory;
 
         public RabbitService(IOptions<RabbitOptions> options)

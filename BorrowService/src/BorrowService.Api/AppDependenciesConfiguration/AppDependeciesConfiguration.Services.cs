@@ -26,7 +26,7 @@ namespace BorrowService.Api.AppDependenciesConfiguration
             builder.Services.AddScoped<IMailService, MailService>();
 
             builder.Services.AddScoped<IRabbitService, RabbitService>();
-            
+
             return builder;
         }
     }
