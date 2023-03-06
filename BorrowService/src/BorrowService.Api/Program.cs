@@ -1,7 +1,6 @@
 using BorrowService.Api.AppDependenciesConfiguration;
 using BorrowService.Api.Middlewares;
 using Hangfire;
-using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace BorrowService.Api
 {
@@ -35,7 +34,6 @@ namespace BorrowService.Api
             app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseMiddleware<NotFoundExceptionHandlingMiddleware>();
             app.UseMiddleware<AlreadyExistsExceptionHandlingMiddleware>();
-
 
             app.UseAuthorization();
 

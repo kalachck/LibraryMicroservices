@@ -16,20 +16,16 @@ namespace BorrowService.Borrowings.EntityConfigurations
                 .ValueGeneratedOnAdd();
 
             builder.Property(x => x.UserEmail)
-                .IsRequired()
-                .HasColumnType("text");
+                .IsRequired();
 
             builder.Property(x => x.BookId)
-                .IsRequired()
-                .HasColumnType("int");
+                .IsRequired();
 
             builder.Property(x => x.AddingDate)
-                .IsRequired()
-                .HasColumnType("date");
+                .IsRequired();
 
             builder.Property(x => x.ExpirationDate)
-                .IsRequired()
-                .HasColumnType("date");
+                .IsRequired();
         }
     }
 }

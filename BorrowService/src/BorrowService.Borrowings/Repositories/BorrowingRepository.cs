@@ -1,6 +1,5 @@
 ﻿using BorrowService.Borrowings.Entities;
 using BorrowService.Borrowings.Repositories.Abstract;
-using BorrowService.Borrowings.Services.Abstract;
 using Microsoft.EntityFrameworkCore;
 
 namespace BorrowService.Borrowings.Repositories
@@ -8,13 +7,12 @@ namespace BorrowService.Borrowings.Repositories
     public class BorrowingRepository : IBorrowingRepository
     {
         private readonly DbSet<Borrowing> _borrowings;
-        private readonly IDbSaver _dbSaver;
+        private readonly ApplicationContext _applicationContext;
 
-        public BorrowingRepository(ApplicationContext applicationContext,
-            IDbSaver dbSaver)
+        public BorrowingRepository(ApplicationContext applicationContext)
         {
             _borrowings = applicationContext.Borrowings;
-            _dbSaver = dbSaver;
+            _applicationContext = applicationContext;
         }
 
         public async Task<Borrowing> GetByEmailAsync(string email)
@@ -50,7 +48,7 @@ namespace BorrowService.Borrowings.Repositories
 
         public async Task SaveChangesAsync()
         {
-            await _dbSaver.SaveChangesAsync();
+            await _applicationContext.SaveChangesAsync();
         }
     }
 }

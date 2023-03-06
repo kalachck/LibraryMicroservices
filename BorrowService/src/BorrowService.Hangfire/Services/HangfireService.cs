@@ -19,9 +19,10 @@ namespace BorrowService.Hangfire.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            RecurringJob.AddOrUpdate("MailJob", () => SetJobs(), Cron.Daily);
-
-            await Task.Delay(5000);
+            await Task.Run(() =>
+            {
+                RecurringJob.AddOrUpdate("MailJob", () => SetJobs(), Cron.Daily);
+            });
         }
 
         public async Task SetJobs()

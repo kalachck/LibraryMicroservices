@@ -4,8 +4,6 @@ using BorrowService.Borrowings.Components;
 using BorrowService.Borrowings.Components.Abstract;
 using BorrowService.Borrowings.Repositories;
 using BorrowService.Borrowings.Repositories.Abstract;
-using BorrowService.Borrowings.Services;
-using BorrowService.Borrowings.Services.Abstract;
 using BorrowService.Hangfire.Services;
 using BorrowService.Hangfire.Services.Abstract;
 using BorrowService.RabbitMq.Services;
@@ -22,8 +20,6 @@ namespace BorrowService.Api.AppDependenciesConfiguration
 
             builder.Services.AddScoped<IBorrowingRepository, BorrowingRepository>();
             builder.Services.AddScoped<IBorrowingComponent, BorrowingComponent>();
-
-            builder.Services.AddScoped<IDbSaver, DbSaver>();
 
             builder.Services.AddScoped<IValidator<BorrowingRequestModel>, BorrowingValidator>();
 
