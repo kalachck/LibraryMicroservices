@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using LibrarySevice.Api.Models;
+using LibraryService.Api.Models;
 
-namespace LibrarySevice.Api.Validators
+namespace LibraryService.Api.Validators
 {
     public class GenreValidator : AbstractValidator<GenreRequestModel>
     {

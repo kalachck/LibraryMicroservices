@@ -1,16 +1,18 @@
-﻿using LibrarySevice.Api.Models;
-using LibrarySevice.Api.Validators;
-using LibrarySevice.BussinesLogic.Services;
-using LibrarySevice.DataAccess;
-using LibrarySevice.DataAccess.Repositories;
-using FluentValidation;
+﻿using FluentValidation;
+using LibraryService.Api.Models;
+using LibraryService.Api.Validators;
+using LibraryService.BussinesLogic.Services;
+using LibraryService.BussinesLogic.Services.Abstract;
+using LibraryService.DataAccess;
+using LibraryService.DataAccess.Entities;
+using LibraryService.DataAccess.Repositories;
+using LibraryService.DataAccess.Repositories.Abstract;
+using LibraryService.RabbitMq.Options;
+using LibraryService.RabbitMq.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using LibrarySevice.BussinesLogic.Services.Abstract;
-using LibrarySevice.DataAccess.Repositories.Abstract;
-using LibrarySevice.DataAccess.Entities;
 
-namespace LibrarySevice.Api.AppDependeciesConfiguration
+namespace LibraryService.Api.AppDependeciesConfiguration
 {
     public static partial class AppDependeciesConfiguration
     {
@@ -25,9 +27,10 @@ namespace LibrarySevice.Api.AppDependeciesConfiguration
             builder.Services.AddScoped<IBaseRepository<Book, ApplicationContext>, BaseRepository<Book, ApplicationContext>>();
             builder.Services.AddScoped<IBaseRepository<Genre, ApplicationContext>, BaseRepository<Genre, ApplicationContext>>();
             builder.Services.AddScoped<IBaseRepository<Publisher, ApplicationContext>, BaseRepository<Publisher, ApplicationContext>>();
+            builder.Services.AddScoped<BookRepository>();
 
             builder.Services.AddScoped<IAuthorService, AuthorService>();
-            builder.Services.AddScoped<IBookService, BussinesLogic.Services.BookService>();
+            builder.Services.AddScoped<IBookService, BookService>();
             builder.Services.AddScoped<IPublisherService, PublisherService>();
             builder.Services.AddScoped<IGenreService, GenreService>();
 
@@ -37,6 +40,16 @@ namespace LibrarySevice.Api.AppDependeciesConfiguration
             builder.Services.AddScoped<IValidator<AuthorRequestModel>, AuthorValidator>();
             builder.Services.AddScoped<IValidator<PublisherRequestModel>, PublisherValidator>();
             builder.Services.AddScoped<IValidator<GenreRequestModel>, GenreValidator>();
+
+            builder.Services.AddScoped<IDbManager<Book>, DbManager<Book>>();
+            builder.Services.AddScoped<IDbManager<Author>, DbManager<Author>>();
+            builder.Services.AddScoped<IDbManager<Genre>, DbManager<Genre>>();
+            builder.Services.AddScoped<IDbManager<Publisher>, DbManager<Publisher>>();
+
+            builder.Services.Configure<RabbitOptions>(
+                builder.Configuration.GetSection(RabbitOptions.RabbitData));
+
+            builder.Services.AddHostedService<RabbitService>();
 
             return builder;
         }

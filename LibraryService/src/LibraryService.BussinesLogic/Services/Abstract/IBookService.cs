@@ -1,15 +1,21 @@
-﻿using LibrarySevice.BussinesLogic.DTOs;
+﻿using LibraryService.BussinesLogic.DTOs;
 
-namespace LibrarySevice.BussinesLogic.Services.Abstract
+namespace LibraryService.BussinesLogic.Services.Abstract
 {
     public interface IBookService
     {
         Task<BookDTO> GetAsync(int id);
 
-        Task<string> AddAsync(BookDTO book);
+        Task<BookDTO> GetByTitleAsync(string title);
 
-        Task<string> UpdateAsync(int id, BookDTO book);
+        Task<bool> AddAsync(BookDTO book);
 
-        Task<string> DeleteAsync(int id);
+        Task<bool> UpdateAsync(int id, BookDTO book);
+
+        Task<bool> DeleteAsync(int id);
+
+        Task LockAsync(string message);
+
+        Task UnlockAsync(string message);
     }
 }

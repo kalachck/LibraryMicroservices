@@ -1,6 +1,7 @@
-using LibrarySevice.Api.AppDependeciesConfiguration;
+using LibraryService.Api.AppDependeciesConfiguration;
+using LibraryService.Api.Middlewares;
 
-namespace LibrarySevice.Api
+namespace LibraryService.Api
 {
     public class Program
     {
@@ -24,8 +25,10 @@ namespace LibrarySevice.Api
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            app.UseMiddleware<ExceptionHandlingMiddlware>();
+            app.UseMiddleware<NotFoundExceptionHandlingMiddleware>();
 
+            app.UseAuthorization();
 
             app.MapControllers();
 

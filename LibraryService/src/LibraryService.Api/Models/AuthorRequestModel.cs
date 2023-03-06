@@ -1,4 +1,4 @@
-﻿namespace LibrarySevice.Api.Models
+﻿namespace LibraryService.Api.Models
 {
     public class AuthorRequestModel
     {

@@ -1,8 +1,8 @@
-﻿using LibrarySevice.DataAccess.Entities;
-using LibrarySevice.DataAccess.EntityConfigurations;
+﻿using LibraryService.DataAccess.Entities;
+using LibraryService.DataAccess.EntityConfigurations;
 using Microsoft.EntityFrameworkCore;
 
-namespace LibrarySevice.DataAccess
+namespace LibraryService.DataAccess
 {
     public class ApplicationContext : DbContext
     {
