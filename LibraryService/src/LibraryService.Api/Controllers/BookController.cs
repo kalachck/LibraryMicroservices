@@ -2,6 +2,7 @@
 using LibraryService.Api.Models;
 using LibraryService.BussinesLogic.DTOs;
 using LibraryService.BussinesLogic.Services.Abstract;
+using LibraryService.BussinesLogic.Validators.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryService.Api.Controllers
@@ -12,12 +13,15 @@ namespace LibraryService.Api.Controllers
     {
         private readonly IBookService _bookService;
         private readonly IMapper _mapper;
+        private readonly IValidator<BookRequestModel> _validator;
 
         public BookController(IBookService bookService,
-            IMapper mapper)
+            IMapper mapper,
+            IValidator<BookRequestModel> validator)
         {
             _bookService = bookService;
             _mapper = mapper;
+            _validator = validator;
         }
 
         [HttpGet]
@@ -42,6 +46,8 @@ namespace LibraryService.Api.Controllers
         [Route("Add")]
         public async Task<IActionResult> Add([FromQuery] BookRequestModel model)
         {
+            await _validator.ValidateAsync(model);
+
             var result = await _bookService.AddAsync(_mapper.Map<BookDTO>(model));
 
             return Ok(result);
@@ -51,6 +57,8 @@ namespace LibraryService.Api.Controllers
         [Route("UpdateBook")]
         public async Task<IActionResult> UpdateBook(int id, [FromQuery] BookRequestModel model)
         {
+            await _validator.ValidateAsync(model);
+
             var result = await _bookService.UpdateAsync(id, _mapper.Map<BookDTO>(model));
 
             return Ok(result);

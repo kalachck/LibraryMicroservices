@@ -16,10 +16,12 @@ namespace LibraryService.Api.Middlewares
             {
                 await _next(context);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 context.Response.ContentType = "application/json";
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+                await context.Response.WriteAsync(ex.Message);
             }
         }
     }
