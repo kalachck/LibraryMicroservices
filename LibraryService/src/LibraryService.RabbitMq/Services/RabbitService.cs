@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
-using System.Threading.Channels;
 
 namespace LibraryService.RabbitMq.Services
 {
@@ -15,7 +14,6 @@ namespace LibraryService.RabbitMq.Services
         private readonly RabbitOptions _options;
         private readonly IBookService _bookService;
         private IModel _channel;
-
 
         public RabbitService(IOptions<RabbitOptions> options,
             IServiceScopeFactory factory)

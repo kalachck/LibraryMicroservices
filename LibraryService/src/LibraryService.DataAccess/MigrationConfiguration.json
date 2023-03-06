@@ -1,5 +1,0 @@
-{
-  "ConnectionStrings": {
-    "LibraryConnection": "Server=localhost, 1433;Initial Catalog=libraryservicedatabase;User ID=library;Password=LibraryPassword2023;"
-  }
-}
