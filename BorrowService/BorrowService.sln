@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BorrowService.Api", "src\BorrowService.Api\BorrowService.Api.csproj", "{1F65415F-B95E-4B52-986C-46344B01C282}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BorrowService.Borrowings", "src\BorrowService.Borrowings\BorrowService.Borrowings.csproj", "{4D2C3468-72A8-4121-AFED-E7113140B22E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BorrowService.Hangfire", "src\BorrowService.Hangfire\BorrowService.Hangfire.csproj", "{937F18C0-D06E-4D2D-A1DA-019B4F5022D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BorrowService.Hangfire", "src\BorrowService.Hangfire\BorrowService.Hangfire.csproj", "{937F18C0-D06E-4D2D-A1DA-019B4F5022D0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BorrowService.RabbitMq", "src\BorrowService.RabbitMq\BorrowService.RabbitMq.csproj", "{21A3F082-44BC-4878-BE96-2CEA137D2A99}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BorrowService.Api", "src\BorrowService.Api\BorrowService.Api.csproj", "{39E88170-43AB-46AB-80AA-59CBD02BA7CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1F65415F-B95E-4B52-986C-46344B01C282}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1F65415F-B95E-4B52-986C-46344B01C282}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1F65415F-B95E-4B52-986C-46344B01C282}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1F65415F-B95E-4B52-986C-46344B01C282}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4D2C3468-72A8-4121-AFED-E7113140B22E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4D2C3468-72A8-4121-AFED-E7113140B22E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D2C3468-72A8-4121-AFED-E7113140B22E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -27,6 +25,14 @@ Global
 		{937F18C0-D06E-4D2D-A1DA-019B4F5022D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{937F18C0-D06E-4D2D-A1DA-019B4F5022D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{937F18C0-D06E-4D2D-A1DA-019B4F5022D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21A3F082-44BC-4878-BE96-2CEA137D2A99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21A3F082-44BC-4878-BE96-2CEA137D2A99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21A3F082-44BC-4878-BE96-2CEA137D2A99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21A3F082-44BC-4878-BE96-2CEA137D2A99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39E88170-43AB-46AB-80AA-59CBD02BA7CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39E88170-43AB-46AB-80AA-59CBD02BA7CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39E88170-43AB-46AB-80AA-59CBD02BA7CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39E88170-43AB-46AB-80AA-59CBD02BA7CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

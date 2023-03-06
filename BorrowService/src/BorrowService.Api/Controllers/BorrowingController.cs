@@ -19,7 +19,6 @@ namespace BorrowService.Api.Controllers
             _validator = validator;
         }
 
-
         [HttpGet]
         [Route("GetByEmail")]
         public async Task<IActionResult> Get([FromQuery] BorrowingRequestModel model)
@@ -35,7 +34,6 @@ namespace BorrowService.Api.Controllers
         [Route("Borrow")]
         public async Task<IActionResult> Borrow([FromQuery] BorrowingRequestModel model, int borrowingPeriod)
         {
-
             await _validator.ValidateAsync(model);
 
             var result = await _component.BorrowAsync(model.UserEmail, model.BookTitle, borrowingPeriod);
