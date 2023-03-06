@@ -7,6 +7,8 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["src/BorrowService.Api/BorrowService.Api.csproj", "src/BorrowService.Api/"]
 COPY ["src/BorrowService.Borrowings/BorrowService.Borrowings.csproj", "src/BorrowService.Borrowings/"]
+COPY ["src/BorrowService.Hangfire/BorrowService.Hangfire.csproj", "src/BorrowService.Hangfire/"]
+COPY ["src/BorrowService.RabbitMq/BorrowService.RabbitMq.csproj", "src/BorrowService.RabbitMq/"]
 RUN dotnet restore "src/BorrowService.Api/BorrowService.Api.csproj"
 COPY . .
 WORKDIR "/src/src/BorrowService.Api"
