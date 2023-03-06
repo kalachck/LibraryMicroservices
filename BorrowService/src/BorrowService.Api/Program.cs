@@ -30,7 +30,6 @@ namespace BorrowService.Api
             app.UseMiddleware<NotFoundExceptionHandlingMiddleware>();
             app.UseMiddleware<AlreadyExistsExceptionHandlingMiddleware>();
 
-
             app.UseAuthorization();
 
             app.UseHangfireDashboard("/dashboard");

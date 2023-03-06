@@ -58,7 +58,6 @@ namespace BorrowService.Api.Controllers
         [Route("Delete")]
         public async Task<IActionResult> Delete([FromQuery] BorrowingRequestModel model)
         {
-
             await _validator.ValidateAsync(model);
 
             var result = await _component.DeleteAsync(model.UserEmail, model.BookTitle);

@@ -1,6 +1,0 @@
-{
-	"ConnectionStrings": {
-		"BorrowConnection": "Host=localhost;Port=5433;Database=borrowingdatabase;Username=borrowing;Password=BorrowingPassword;Integrated Security=true;Pooling=true;",
-		"Trusted": "Host=localhost;Port=5432;Database=borrowingdatabase;Username=postgres;Password=secret"
-	}
-}
