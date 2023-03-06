@@ -2,6 +2,7 @@
 using LibraryService.Api.Models;
 using LibraryService.BussinesLogic.DTOs;
 using LibraryService.BussinesLogic.Services.Abstract;
+using LibraryService.BussinesLogic.Validators.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryService.Api.Controllers
@@ -12,12 +13,15 @@ namespace LibraryService.Api.Controllers
     {
         private readonly IGenreService _genreService;
         private readonly IMapper _mapper;
+        private readonly IValidator<GenreRequestModel> _validator;
 
         public GenreController(IGenreService genreService,
-            IMapper mapper)
+            IMapper mapper,
+            IValidator<GenreRequestModel> validator)
         {
             _genreService = genreService;
             _mapper = mapper;
+            _validator = validator;
         }
 
         [HttpGet]
@@ -33,6 +37,8 @@ namespace LibraryService.Api.Controllers
         [Route("Add")]
         public async Task<IActionResult> Add([FromQuery] GenreRequestModel model)
         {
+            await _validator.ValidateAsync(model);
+
             var result = await _genreService.AddAsync(_mapper.Map<GenreDTO>(model));
 
             return Ok(result);
@@ -42,6 +48,8 @@ namespace LibraryService.Api.Controllers
         [Route("Update")]
         public async Task<IActionResult> Update(int id, [FromQuery] GenreRequestModel model)
         {
+            await _validator.ValidateAsync(model);
+
             var result = await _genreService.UpdateAsync(id, _mapper.Map<GenreDTO>(model));
 
             return Ok(result);

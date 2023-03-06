@@ -1,11 +1,7 @@
-﻿using LibraryService.BussinesLogic.Validators;
-
-namespace LibraryService.Api.Models
+﻿namespace LibraryService.Api.Models
 {
     public class BookRequestModel
     {
-        [NotNullOrEmpty]
-        [HasMaxLength(50)]
         public string Title { get; set; }
 
         public DateTime PublicationDate { get; set; }

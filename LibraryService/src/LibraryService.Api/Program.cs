@@ -27,13 +27,11 @@ namespace LibraryService.Api
 
             app.UseHttpsRedirection();
 
-            app.UseMiddleware<ValidationExceptionHandlingMiddleware>();
-
             app.UseAuthorization();
 
             app.UseMiddleware<ExceptionHandlingMiddlware>();
+            app.UseMiddleware<ValidationExceptionHandlingMiddleware>();
             app.UseMiddleware<NotFoundExceptionHandlingMiddleware>();
-
 
             app.MapGrpcService<GrpcCheckBookService>();
             app.MapGrpcService<GrpcGetBookService>();
