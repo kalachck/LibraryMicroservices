@@ -22,115 +22,87 @@ namespace IdentityService.BusinessLogic.Services
 
         public async Task<IdentityUser> GetAsync(string email)
         {
-            try
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
             {
-                var user = await _userManager.FindByEmailAsync(email);
-
-                if (user != null)
-                {
-                    return await Task.FromResult(user);
-                }
-
                 throw new NotFoundException("User not found");
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            return await Task.FromResult(user);
         }
 
         public async Task<string> AddAsync(IdentityUser identityUser)
         {
-            try
+            if (await _userManager.FindByEmailAsync(identityUser.Email) != null)
             {
-                if (await _userManager.FindByEmailAsync(identityUser.Email) == null)
-                {
-                    identityUser.PasswordHash = _userManager.PasswordHasher.HashPassword(identityUser, identityUser.PasswordHash);
-
-                    await _userManager.CreateAsync(identityUser);
-
-                    return await Task.FromResult("The record was successfully added");
-                }
-
                 throw new AlreadyExistsException("This user already exists");
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            identityUser.PasswordHash = _userManager.PasswordHasher.HashPassword(identityUser, identityUser.PasswordHash);
+
+            await _userManager.CreateAsync(identityUser);
+
+            return await Task.FromResult("The record was successfully added");
         }
 
         public async Task<string> UpdateAsync(string email, IdentityUser identityUser)
         {
-            try
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
             {
-                var user = await _userManager.FindByEmailAsync(email);
-
-                if (user != null)
-                {
-                    var id = user.Id;
-
-                    user = _mapper.Map(identityUser, user);
-
-                    user.Id = id;
-
-                    await _userManager.UpdateAsync(user);
-
-                    return await Task.FromResult("The record was successfully updated");
-                }
-
-                throw new NotFoundException("User not found");
+                throw new NotFoundException("User not found"); 
             }
-            catch (Exception)
-            {
-                throw;
-            }       
+
+            var id = user.Id;
+
+            user = _mapper.Map(identityUser, user);
+
+            user.Id = id;
+
+            await _userManager.UpdateAsync(user);
+
+            return await Task.FromResult("The record was successfully updated");
         }
 
         public async Task<string> DeleteAsync(string email)
         {
-            try
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
             {
-                var user = await _userManager.FindByEmailAsync(email);
-
-                if (user != null)
-                {
-                    await _userManager.DeleteAsync(user);
-
-                    return await Task.FromResult("The record was successfully deleted");
-                }
-
                 throw new NotFoundException("User not found");
             }
-            catch (Exception)
-            {
-                throw;
-            }     
+
+            await _userManager.DeleteAsync(user);
+
+            return await Task.FromResult("The record was successfully deleted");
         }
 
         public async Task<string> UpdatePasswordAsync(string email, string currentPassword, string newPassword)
         {
             var user = await _userManager.FindByEmailAsync(email);
 
-            if (user != null)
+            if (user == null)
             {
-                var verificationResult = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, currentPassword);
+                throw new NotFoundException("User with this email doesn't exists");
+            }
 
-                if (((byte)verificationResult) == 1)
-                {
-                    newPassword = _userManager.PasswordHasher.HashPassword(user, newPassword);
+            var verificationResult = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, currentPassword);
 
-                    user.PasswordHash = newPassword;
-
-                    await _userManager.UpdateAsync(user);
-
-                    return await Task.FromResult("Password was successfully updated");
-                }
-
+            if (((byte)verificationResult) != 1)
+            {
                 throw new InvalidPasswordException("Current password doesn't match with the typed one");
             }
 
-            throw new NotFoundException("User with this email doesn't exists");
+            newPassword = _userManager.PasswordHasher.HashPassword(user, newPassword);
+
+            user.PasswordHash = newPassword;
+
+            await _userManager.UpdateAsync(user);
+
+            return await Task.FromResult("Password was successfully updated");
         }
 
         public async Task<string> ResetPasswordAsync(string email)
@@ -139,14 +111,14 @@ namespace IdentityService.BusinessLogic.Services
 
             var user = await _userManager.FindByEmailAsync(email);
 
-            if (user != null)
+            if (user == null)
             {
-                await _mailService.SendMessageAsync(email, resetCode, "Reset password");
-
-                return await Task.FromResult(resetCode);
+                throw new NotFoundException("User with this email doesn't exists");
             }
 
-            throw new NotFoundException("User with this email doesn't exists");
+            await _mailService.SendMessageAsync(email, resetCode, "Reset password");
+
+            return await Task.FromResult(resetCode);
         }
 
         private async Task<string> GenerateResetCodeAsync()
