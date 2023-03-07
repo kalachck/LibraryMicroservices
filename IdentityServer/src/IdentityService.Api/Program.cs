@@ -20,6 +20,10 @@ namespace IdentityService.Api
             var app = builder.Build();
 
             app.UseMiddleware<ValidationExceptionHandlingMiddleware>();
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
+            app.UseMiddleware<NotFoundExceptionHandlingMiddleware>();
+            app.UseMiddleware<AlreadyExistsExceptionHandlingMiddleware>();
+            app.UseMiddleware<InvalidPasswordExceptionHandlingMiddleware>();
 
             app.UseAuthentication();
 
