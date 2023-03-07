@@ -19,9 +19,6 @@ namespace GatewayService.Api
 
             app.UseHttpsRedirection();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
-
             app.UseOcelot();
 
             app.Run();

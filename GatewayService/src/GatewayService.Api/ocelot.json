@@ -11,7 +11,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Author/Get"
+			"DownstreamPathTemplate": "/api/Author/Get",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/Author/Add",
@@ -23,7 +24,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Author/Add"
+			"DownstreamPathTemplate": "/api/Author/Add",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/Author/Update",
@@ -35,7 +37,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Author/Update"
+			"DownstreamPathTemplate": "/api/Author/Update",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/Author/Delete",
@@ -47,7 +50,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Author/Delete"
+			"DownstreamPathTemplate": "/api/Author/Delete",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		//LibraryService Book
 		{
@@ -60,7 +64,21 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Book/Get"
+			"DownstreamPathTemplate": "/api/Book/Get",
+			"DangerousAcceptAnyServerCertificateValidator": true
+		},
+		{
+			"UpstreamPathTemplate": "/api/Book/GetByTitle",
+			"UpstreamHttpMethod": [ "Get" ],
+			"DownstreamScheme": "https",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "library_service_container",
+					"Port": 443
+				}
+			],
+			"DownstreamPathTemplate": "/api/Book/GetByTitle",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/Book/Add",
@@ -72,7 +90,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Book/Add"
+			"DownstreamPathTemplate": "/api/Book/Add",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/Book/Update",
@@ -84,7 +103,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Book/UpdateBook"
+			"DownstreamPathTemplate": "/api/Book/UpdateBook",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/Book/Delete",
@@ -96,7 +116,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Book/Delete"
+			"DownstreamPathTemplate": "/api/Book/Delete",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		//LibraryService Genre
 		{
@@ -109,7 +130,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Genre/Get"
+			"DownstreamPathTemplate": "/api/Genre/Get",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/Genre/Add",
@@ -121,7 +143,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Genre/Add"
+			"DownstreamPathTemplate": "/api/Genre/Add",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/Genre/Update",
@@ -133,7 +156,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Genre/Update"
+			"DownstreamPathTemplate": "/api/Genre/Update",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/Genre/Delete",
@@ -145,7 +169,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Genre/Delete"
+			"DownstreamPathTemplate": "/api/Genre/Delete",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		//LibraryService Publisher
 		{
@@ -158,7 +183,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Publisher/Get"
+			"DownstreamPathTemplate": "/api/Publisher/Get",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/Publisher/Add",
@@ -170,7 +196,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Publisher/Add"
+			"DownstreamPathTemplate": "/api/Publisher/Add",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/Publisher/Update",
@@ -182,7 +209,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Publisher/Update"
+			"DownstreamPathTemplate": "/api/Publisher/Update",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/Publisher/Delete",
@@ -194,7 +222,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Publisher/Delete"
+			"DownstreamPathTemplate": "/api/Publisher/Delete",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		//BorrowService
 		{
@@ -207,31 +236,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Borrowing/Get"
-		},
-		{
-			"UpstreamPathTemplate": "/api/Borrowing/GetByBookId",
-			"UpstreamHttpMethod": [ "Get" ],
-			"DownstreamScheme": "https",
-			"DownstreamHostAndPorts": [
-				{
-					"Host": "borrow_service_container",
-					"Port": 443
-				}
-			],
-			"DownstreamPathTemplate": "/api/Borrowing/GetByBookId"
-		},
-		{
-			"UpstreamPathTemplate": "/api/Borrowing/GetByEmail",
-			"UpstreamHttpMethod": [ "Get" ],
-			"DownstreamScheme": "https",
-			"DownstreamHostAndPorts": [
-				{
-					"Host": "borrow_service_container",
-					"Port": 443
-				}
-			],
-			"DownstreamPathTemplate": "/api/Borrowing/GetByEmail"
+			"DownstreamPathTemplate": "/api/Borrowing/Get",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/Borrowing/Borrow",
@@ -243,7 +249,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Borrowing/Borrow"
+			"DownstreamPathTemplate": "/api/Borrowing/Borrow",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/Borrowing/Extend",
@@ -255,7 +262,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Borrowing/Extend"
+			"DownstreamPathTemplate": "/api/Borrowing/Extend",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/Borrowing/Delete",
@@ -267,9 +275,10 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Borrowing/Delete"
+			"DownstreamPathTemplate": "/api/Borrowing/Delete",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
-		//IdentityServer
+		//IdentityService User
 		{
 			"UpstreamPathTemplate": "/api/User/Get/Email",
 			"UpstreamHttpMethod": [ "Get" ],
@@ -280,7 +289,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/User/Get/Email"
+			"DownstreamPathTemplate": "/api/User/Get/Email",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/User/Add",
@@ -292,7 +302,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/User/Add"
+			"DownstreamPathTemplate": "/api/User/Add",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/User/Update",
@@ -304,7 +315,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/User/Update"
+			"DownstreamPathTemplate": "/api/User/Update",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/User/Delete",
@@ -316,7 +328,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/User/Delete"
+			"DownstreamPathTemplate": "/api/User/Delete",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/User/UpdatePassword",
@@ -328,7 +341,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/User/UpdatePassword"
+			"DownstreamPathTemplate": "/api/User/UpdatePassword",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/User/ResetPassword",
@@ -340,8 +354,10 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/User/ResetPassword"
+			"DownstreamPathTemplate": "/api/User/ResetPassword",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
+		//IdentityService Authorization
 		{
 			"UpstreamPathTemplate": "/api/Authorization/LogIn",
 			"UpstreamHttpMethod": [ "Get" ],
@@ -352,7 +368,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Authorization/LogIn"
+			"DownstreamPathTemplate": "/api/Authorization/LogIn",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/Authorization/LogIn",
@@ -364,7 +381,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Authorization/LogIn"
+			"DownstreamPathTemplate": "/api/Authorization/LogIn",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/Authorization/LogOut",
@@ -376,7 +394,8 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Authorization/LogOut"
+			"DownstreamPathTemplate": "/api/Authorization/LogOut",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"UpstreamPathTemplate": "/api/Authorization/Token",
@@ -388,7 +407,22 @@
 					"Port": 443
 				}
 			],
-			"DownstreamPathTemplate": "/api/Authorization/Token"
+			"DownstreamPathTemplate": "/api/Authorization/Token",
+			"DangerousAcceptAnyServerCertificateValidator": true
+		},
+		//IdentityService GoogleAuth
+		{
+			"UpstreamPathTemplate": "/api/Google/GoogleLogIn",
+			"UpstreamHttpMethod": [ "Post" ],
+			"DownstreamScheme": "https",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "identity_service_container",
+					"Port": 443
+				}
+			],
+			"DownstreamPathTemplate": "/api/Google/GoogleLogIn",
+			"DangerousAcceptAnyServerCertificateValidator": true
 		}
 	],
 	"GlobalConfiguration": {
