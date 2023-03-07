@@ -1,4 +1,6 @@
 using IdentityService.Api.AppDependenciesConfiguration;
+using IdentityService.BusinessLogic.Services;
+using IdentityService.Api.Middlewares;
 
 namespace IdentityService.Api
 {
@@ -17,6 +19,11 @@ namespace IdentityService.Api
 
             var app = builder.Build();
 
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
+            app.UseMiddleware<NotFoundExceptionHandlingMiddleware>();
+            app.UseMiddleware<AlreadyExistsExceptionHandlingMiddleware>();
+            app.UseMiddleware<InvalidPasswordExceptionHandlingMiddleware>();
+
             app.UseAuthentication();
 
             app.UseAuthorization();
@@ -27,7 +34,9 @@ namespace IdentityService.Api
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection(); 
+            app.UseHttpsRedirection();
+
+            app.MapGrpcService<CheckUserService>();
 
             app.MapControllers();
 

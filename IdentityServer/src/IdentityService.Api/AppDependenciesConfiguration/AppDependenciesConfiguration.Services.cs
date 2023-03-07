@@ -81,6 +81,8 @@ namespace IdentityService.Api.AppDependenciesConfiguration
             builder.Services.Configure<MailOptions>(
                 builder.Configuration.GetSection(MailOptions.MailData));
 
+            builder.Services.AddGrpc();
+
             return builder;
         }
     }

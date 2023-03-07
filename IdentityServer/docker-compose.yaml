@@ -14,11 +14,16 @@ services:
 
   identity:
     image: identity_image
-    container_name: identity_service_container
+    container_name: identity_service_container 
+    ports:
+      - "5000:443"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-    ports:
-      - "5000:80"
+      ASPNETCORE_URLS: https://+:443
+      ASPNETCORE_Kestrel__Certificates__Default__Password: sergey@$
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/aspnetapp.pfx
+    volumes:
+      - ~/.aspnet/https:/https:ro
     networks:
       - microservices
 
