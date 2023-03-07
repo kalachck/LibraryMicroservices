@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using IdentityService.Api.Models;
 using IdentityService.BusinessLogic.Services.Abstarct;
+using IdentityService.BusinessLogic.Validators.Abstract;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -20,17 +21,20 @@ namespace IdentityService.Api.Controllers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IMapper _mapper;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IValidator<LoginModel> _validator;
 
         public AuthorizationController(
             IAuthorizationService authorizationService,
             SignInManager<IdentityUser> signInManager,
             IMapper mapper,
-            UserManager<IdentityUser> userManager)
+            UserManager<IdentityUser> userManager,
+            IValidator<LoginModel> validator)
         {
             _authorizationService = authorizationService;
             _signInManager = signInManager;
             _mapper = mapper;
             _userManager = userManager;
+            _validator = validator;
         }
 
         [HttpGet]
@@ -39,6 +43,8 @@ namespace IdentityService.Api.Controllers
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> LogIn([FromQuery] LoginModel model)
         {
+            await _validator.ValidateAsync(model);
+
             var request = HttpContext.GetOpenIddictServerRequest();
 
             if (request == null)

@@ -4,7 +4,8 @@
     {
         public static WebApplicationBuilder ConfigureDependencies(this WebApplicationBuilder builder)
         {
-            builder.AddServices();
+            builder.AddServices()
+                .AddValidators();
 
             return builder;
         }
