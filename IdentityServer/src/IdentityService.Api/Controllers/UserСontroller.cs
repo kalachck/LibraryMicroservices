@@ -24,84 +24,36 @@ namespace IdentityService.Api.Controllers
         [Route("Get/Email")]
         public async Task<IActionResult> Get(string email)
         {
-            try
-            {
-                var result = await _userService.GetAsync(email);
+            var result = await _userService.GetAsync(email);
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                if (ex is NotFoundException)
-                {
-                    return NotFound(ex.Message);
-                }
-
-                return Conflict("Can't get this record. There were technical problems");
-            }
+            return Ok(result);
         }
 
         [HttpPost]
         [Route("Add")]
         public async Task<IActionResult> Add([FromQuery] LoginModel model)
         {
-            try
-            {
-                var result = await _userService.AddAsync(_autoMapper.Map<IdentityUser>(model));
+            var result = await _userService.AddAsync(_autoMapper.Map<IdentityUser>(model));
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                if (ex is AlreadyExistsException)
-                {
-                    return BadRequest(ex.Message);
-                }
-
-                return Conflict("Can't get this record. There were technical problems");
-            }
+            return Ok(result);
         }
 
         [HttpPut]
         [Route("Update")]
         public async Task<IActionResult> Update(string email, [FromQuery] LoginModel model)
         {
-            try
-            {
-                var result = await _userService.UpdateAsync(email, _autoMapper.Map<IdentityUser>(model));
+            var result = await _userService.UpdateAsync(email, _autoMapper.Map<IdentityUser>(model));
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                if (ex is NotFoundException)
-                {
-                    return NotFound(ex.Message);
-                }
-
-                return Conflict("Can't get this record. There were technical problems");
-            }
+            return Ok(result);
         }
 
         [HttpDelete]
         [Route("Delete")]
         public async Task<IActionResult> Delete(string email)
         {
-            try
-            {
-                var result = await _userService.DeleteAsync(email);
+            var result = await _userService.DeleteAsync(email);
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                if (ex is NotFoundException)
-                {
-                    return NotFound(ex.Message);
-                }
-
-                return Conflict("Can't get this record. There were technical problems");
-            }
+            return Ok(result);
         }
 
         [HttpPut]

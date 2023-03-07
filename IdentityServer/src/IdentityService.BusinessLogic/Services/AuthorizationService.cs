@@ -22,21 +22,21 @@ namespace IdentityService.BusinessLogic.Services
         {
             var user = await _userManager.FindByEmailAsync(identityUser.Email);
 
-            if (user != null)
+            if (user == null)
             {
-                if (((byte)_userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, identityUser.PasswordHash)) == 1)
-                {
-                    var claimPrincipal = await SetClaimsAsync(user, request);
-                
-                    claimPrincipal.SetScopes(request.GetScopes());
+                throw new NotFoundException("User not found");
+            }
 
-                    return await Task.FromResult(claimPrincipal);
-                }
-
+            if (((byte)_userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, identityUser.PasswordHash)) != 1)
+            {
                 throw new InvalidPasswordException("Invalid password");
             }
 
-            throw new NotFoundException("User not found");
+            var claimPrincipal = await SetClaimsAsync(user, request);
+
+            claimPrincipal.SetScopes(request.GetScopes());
+
+            return await Task.FromResult(claimPrincipal);
         }
 
         public async Task<ClaimsPrincipal> SetClaimsAsync(IdentityUser identityUser, OpenIddictRequest request)
