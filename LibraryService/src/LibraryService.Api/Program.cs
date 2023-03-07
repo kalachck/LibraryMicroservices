@@ -1,4 +1,5 @@
 using LibraryService.Api.AppDependeciesConfiguration;
+using LibraryService.Api.Middlewares;
 using LibraryService.BussinesLogic.Services;
 using LibraryService.Api.Middlewares;
 
@@ -26,7 +27,10 @@ namespace LibraryService.Api
 
             app.UseHttpsRedirection();
 
+            app.UseAuthorization();
+
             app.UseMiddleware<ExceptionHandlingMiddlware>();
+            app.UseMiddleware<ValidationExceptionHandlingMiddleware>();
             app.UseMiddleware<NotFoundExceptionHandlingMiddleware>();
 
             app.MapGrpcService<GrpcCheckBookService>();

@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using FluentValidation;
 using LibraryService.Api.Models;
 using LibraryService.BussinesLogic.DTOs;
 using LibraryService.BussinesLogic.Services.Abstract;
+using LibraryService.BussinesLogic.Validators.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryService.Api.Controllers
@@ -41,7 +41,7 @@ namespace LibraryService.Api.Controllers
 
             var result = await _authorService.AddAsync(_mapper.Map<AuthorDTO>(model));
 
-            return Ok(result);
+            return Ok();
         }
 
         [HttpPut]

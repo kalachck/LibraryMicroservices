@@ -1,7 +1,4 @@
-﻿using FluentValidation;
-using LibraryService.Api.Models;
-using LibraryService.Api.Validators;
-using LibraryService.BussinesLogic.Services;
+﻿using LibraryService.BussinesLogic.Services;
 using LibraryService.BussinesLogic.Services.Abstract;
 using LibraryService.DataAccess;
 using LibraryService.DataAccess.Entities;
@@ -36,11 +33,6 @@ namespace LibraryService.Api.AppDependeciesConfiguration
             builder.Services.AddScoped<IGenreService, GenreService>();
 
             builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
-
-            builder.Services.AddScoped<IValidator<BookRequestModel>, BookValidator>();
-            builder.Services.AddScoped<IValidator<AuthorRequestModel>, AuthorValidator>();
-            builder.Services.AddScoped<IValidator<PublisherRequestModel>, PublisherValidator>();
-            builder.Services.AddScoped<IValidator<GenreRequestModel>, GenreValidator>();
 
             builder.Services.AddScoped<IDbManager<Book>, DbManager<Book>>();
             builder.Services.AddScoped<IDbManager<Author>, DbManager<Author>>();

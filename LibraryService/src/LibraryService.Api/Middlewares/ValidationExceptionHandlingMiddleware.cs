@@ -1,22 +1,24 @@
-﻿using System.Net;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 namespace LibraryService.Api.Middlewares
 {
-    public class ExceptionHandlingMiddlware
+    public class ValidationExceptionHandlingMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public ExceptionHandlingMiddlware(RequestDelegate next)
+        public ValidationExceptionHandlingMiddleware(RequestDelegate next)
         {
             _next = next;
         }
+
         public async Task Invoke(HttpContext context)
         {
             try
             {
                 await _next(context);
             }
-            catch (Exception ex)
+            catch (ValidationException ex)
             {
                 context.Response.ContentType = "application/json";
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
