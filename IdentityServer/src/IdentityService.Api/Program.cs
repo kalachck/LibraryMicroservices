@@ -1,4 +1,5 @@
 using IdentityService.Api.AppDependenciesConfiguration;
+using IdentityService.Api.Middlewares;
 
 namespace IdentityService.Api
 {
@@ -16,6 +17,11 @@ namespace IdentityService.Api
             builder.ConfigureDependencies();
 
             var app = builder.Build();
+
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
+            app.UseMiddleware<NotFoundExceptionHandlingMiddleware>();
+            app.UseMiddleware<AlreadyExistsExceptionHandlingMiddleware>();
+            app.UseMiddleware<InvalidPasswordExceptionHandlingMiddleware>();
 
             app.UseAuthentication();
 
